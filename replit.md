@@ -13,7 +13,32 @@ Repo GitHub: https://github.com/Kztutorial99/TermuxMod
 - Selalu push ke GitHub setelah perubahan signifikan
 - Selalu jalankan safety-check sebelum dan sesudah edit apapun
 
-## ⛔ ATURAN WAJIB SEBELUM EDIT APAPUN
+## Arah Desain — WAJIB DIIKUTI SEMUA AGENT
+
+Proyek ini bertujuan membuat TermuxMod dengan tampilan **modern & smooth**.
+
+### DILARANG keras menggunakan:
+- Material Design klasik (warna-warna flat default Android lama)
+- Template klasik / boilerplate UI generik
+- Emoji di dalam kode, UI, string resources, layout, atau komentar
+- Pola UI kuno: AlertDialog default, ProgressDialog, Toast biasa, menu overflow klasik
+- Warna hardcoded seperti `#FF4081`, `#3F51B5`, atau palet Material klasik
+- Icon set lama (mdpi/hdpi drawable klasik yang pixelated)
+- Font default Android (Roboto standar tanpa kustomisasi)
+
+### WAJIB menggunakan pendekatan:
+- Modern Android UI: smooth animation, custom transitions, fluid motion
+- Palette gelap / dark-first dengan aksen yang kontras dan elegan
+- Typography yang bersih dan terbaca
+- Rounded corners, blur/glass efek jika memungkinkan
+- Bottom sheet menggantikan dialog klasik
+- Snackbar menggantikan Toast
+- Ripple effect yang halus, bukan jarring
+- Konsistensi visual di seluruh layar
+
+---
+
+## ATURAN WAJIB SEBELUM EDIT APAPUN
 
 **BACA DULU:** `.agents/memory/termuxmod-crash-zones.md` dan `.agents/skills/termuxmod-safety/SKILL.md`
 

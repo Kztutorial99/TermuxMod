@@ -1,1 +1,2 @@
 - [TermuxMod Crash Zones](termuxmod-crash-zones.md) — 10 zona kritis TermuxMod yang JANGAN diubah (applicationId, JNI, paths, intents, bootstrap order, env vars, state machine, dll.) atau app crash.
+- [TermuxMod Design Direction](termuxmod-design-direction.md) — UI/UX wajib modern & smooth. Dilarang: emoji, Material klasik, template klasik, Toast, AlertDialog default. Wajib: BottomSheet, Snackbar, dark theme, animasi halus.

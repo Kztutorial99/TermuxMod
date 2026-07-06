@@ -1,6 +1,6 @@
 ---
 name: termuxmod-safety
-description: Wajib digunakan sebelum melakukan edit APAPUN di repo TermuxMod. Berisi daftar zona crash, aturan keamanan, dan cara verifikasi. Gunakan skill ini setiap kali akan memodifikasi file di project TermuxMod (Termux App v0.118.3 fork).
+description: Wajib digunakan sebelum melakukan edit APAPUN di repo TermuxMod. Berisi daftar zona crash, aturan keamanan, arah desain modern, dan cara verifikasi. Gunakan skill ini setiap kali akan memodifikasi file di project TermuxMod (Termux App v0.118.3 fork).
 ---
 
 # TermuxMod Safety — Baca Sebelum Edit Apapun
@@ -77,6 +77,28 @@ backups/
   original-source/      ← Source asli Termux v0.118.3 (jangan edit)
   agent-memory/         ← Backup memory agent
 ```
+
+---
+
+## ARAH DESAIN — WAJIB DIIKUTI
+
+Baca detail lengkap di `.agents/memory/termuxmod-design-direction.md`.
+
+Ringkasan cepat:
+
+**DILARANG:**
+- Emoji di mana pun (kode, layout XML, strings.xml, komentar, log)
+- Material Design klasik, template UI generik, warna flat default Android
+- `AlertDialog` default, `ProgressDialog`, `Toast`
+- Icon lama pixelated, Roboto default tanpa kustomisasi
+
+**WAJIB:**
+- Tema dark-first, aksen kontras dan elegan
+- `BottomSheetDialog` ganti AlertDialog
+- `Snackbar` ganti Toast
+- Animasi smooth (`MotionLayout`, shared element transitions)
+- Rounded corners, tipografi bersih, ripple halus
+- Konsistensi visual di semua layar
 
 ---
 
