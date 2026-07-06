@@ -281,7 +281,7 @@ public class PluginUtils {
         final Context context, final CharSequence title, final CharSequence notificationText,
         final CharSequence notificationBigText, final PendingIntent contentIntent, final PendingIntent deleteIntent, final int notificationMode) {
 
-        Notification.Builder builder =  NotificationUtils.geNotificationBuilder(context,
+        Notification.Builder builder =  NotificationUtils.getNotificationBuilder(context,
             TermuxConstants.TERMUX_PLUGIN_COMMAND_ERRORS_NOTIFICATION_CHANNEL_ID, Notification.PRIORITY_HIGH,
             title, notificationText, notificationBigText, contentIntent, deleteIntent, notificationMode);
 

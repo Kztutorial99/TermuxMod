@@ -179,7 +179,7 @@ public class CrashUtils {
     @Nullable
     public static Notification.Builder getCrashReportsNotificationBuilder(final Context context, final CharSequence title, final CharSequence notificationText, final CharSequence notificationBigText, final PendingIntent contentIntent, final PendingIntent deleteIntent, final int notificationMode) {
 
-        Notification.Builder builder =  NotificationUtils.geNotificationBuilder(context,
+        Notification.Builder builder =  NotificationUtils.getNotificationBuilder(context,
             TermuxConstants.TERMUX_CRASH_REPORTS_NOTIFICATION_CHANNEL_ID, Notification.PRIORITY_HIGH,
             title, notificationText, notificationBigText, contentIntent, deleteIntent, notificationMode);
 

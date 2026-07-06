@@ -61,7 +61,7 @@ public class NotificationUtils {
      * @return Returns the {@link Notification.Builder}.
      */
     @Nullable
-    public static Notification.Builder geNotificationBuilder(
+    public static Notification.Builder getNotificationBuilder(
         final Context context, final String channelId, final int priority, final CharSequence title,
         final CharSequence notificationText, final CharSequence notificationBigText,
         final PendingIntent contentIntent, final PendingIntent deleteIntent, final int notificationMode) {
@@ -97,8 +97,11 @@ public class NotificationUtils {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
 
         NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+        channel.setDescription("TermuxMod foreground service — active sessions and tasks");
         channel.setShowBadge(false);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        channel.enableVibration(false);
+        channel.setSound(null, null);
 
         NotificationManager notificationManager = getNotificationManager(context);
         if (notificationManager != null)
