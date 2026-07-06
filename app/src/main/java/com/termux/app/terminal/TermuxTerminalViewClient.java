@@ -50,6 +50,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import android.os.Build;
+
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsAnimationCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
@@ -598,6 +603,8 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             }
         });
 
+        setupKeyboardAnimation();
+
         // Do not force show soft keyboard if termux-reload-settings command was run with hardware keyboard
         // or soft keyboard is to be hidden or is disabled
         if (!isReloadTermuxProperties && !noShowKeyboard) {
@@ -619,6 +626,42 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             };
         }
         return mShowSoftKeyboardRunnable;
+    }
+
+    /**
+     * Set up smooth keyboard show/hide animation using WindowInsetsAnimationCompat.
+     * On API 30+ (Android 11), intercepts the IME animation and applies a subtle alpha
+     * transition synchronized with the keyboard. On older APIs this is a no-op (safe fallback).
+     */
+    private void setupKeyboardAnimation() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return;
+        View terminalView = mActivity.getTerminalView();
+        if (terminalView == null) return;
+        ViewCompat.setWindowInsetsAnimationCallback(terminalView,
+            new WindowInsetsAnimationCompat.Callback(
+                WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+
+                @Override
+                public WindowInsetsCompat onProgress(WindowInsetsCompat insets,
+                        List<WindowInsetsAnimationCompat> runningAnimations) {
+                    for (WindowInsetsAnimationCompat anim : runningAnimations) {
+                        if ((anim.getTypeMask() & WindowInsetsCompat.Type.ime()) != 0) {
+                            float fraction = anim.getInterpolatedFraction();
+                            terminalView.setAlpha(0.95f + 0.05f * fraction);
+                            break;
+                        }
+                    }
+                    return insets;
+                }
+
+                @Override
+                public void onEnd(WindowInsetsAnimationCompat animation) {
+                    if ((animation.getTypeMask() & WindowInsetsCompat.Type.ime()) != 0) {
+                        terminalView.setAlpha(1f);
+                    }
+                }
+            }
+        );
     }
 
 
