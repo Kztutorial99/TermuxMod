@@ -58,8 +58,8 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 ## STATUS PROGRES KESELURUHAN
 
 - Total item: 42
-- Selesai: 14
-- Sisa: 28
+- Selesai: 28
+- Sisa: 14
 
 ---
 
@@ -285,17 +285,17 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 6.1 Notification Style
 
-- [ ] **`app/src/main/java/com/termux/app/TermuxService.java`** (hanya bagian `buildNotification()`)
+- [x] **`app/src/main/java/com/termux/app/TermuxService.java`** (hanya bagian `buildNotification()`)
   - Notifikasi dengan BigTextStyle
-  - Icon kecil monochrome yang baru
-  - Warna notifikasi: aksen utama
-  - Tombol aksi: "Stop", "Wake Lock" dengan ikon
-  - Status: belum dikerjakan
+  - Icon kecil monochrome yang baru (ic_service_notification, ic_notification_stop, ic_notification_wake_lock, ic_notification_wake_unlock)
+  - Warna notifikasi: aksen utama #00E5CC
+  - Tombol aksi: "Stop", "Wake Lock" dengan ikon + FLAG_IMMUTABLE Android 12+
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`termux-shared/src/main/java/com/termux/shared/notification/NotificationUtils.java`**
-  - Channel ID dengan nama yang proper
-  - Importance dan behavior yang tepat
-  - Status: belum dikerjakan
+- [x] **`termux-shared/src/main/java/com/termux/shared/notification/NotificationUtils.java`**
+  - Channel ID dengan nama yang proper, description, showBadge false
+  - Importance dan behavior yang tepat (vibration off, sound null, lockscreen visibility public)
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 
@@ -305,17 +305,18 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 7.1 Terminal Renderer
 
-- [ ] **`terminal-view/src/main/java/com/termux/view/TerminalRenderer.java`**
+- [x] **`terminal-view/src/main/java/com/termux/view/TerminalRenderer.java`**
   - Font rendering: anti-alias aktif
-  - Kursor: blinking caret modern (slim, rounded)
-  - Selection highlight: warna aksen dengan 30% opacity
-  - Status: belum dikerjakan
+  - Kursor: BAR slim ~2dp kiri, UNDERLINE slim ~2dp bawah (modern, tidak block penuh)
+  - Selection highlight: warna aksen cyan #00E5CC dengan 30% opacity (0x4D)
+  - Status: SELESAI — 6 Jul 2026
 
 ### 7.2 Text Selection Handle
 
-- [ ] **`terminal-view/src/main/java/com/termux/view/textselection/TextSelectionHandleView.java`**
-  - Handle selection modern: teardrop shape dengan warna aksen
-  - Status: belum dikerjakan
+- [x] **`terminal-view/src/main/java/com/termux/view/textselection/TextSelectionHandleView.java`**
+  - Handle selection modern: warna diganti dari #2196F3 (Material biru) ke aksen #00E5CC
+  - Diterapkan di drawable `text_select_handle_left_material.xml` dan `text_select_handle_right_material.xml`
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 
@@ -409,4 +410,4 @@ Fase 8 dan 9 dikerjakan terakhir.
 
 | Tanggal | Agent | Item | Catatan |
 |---------|-------|------|---------|
-| — | — | — | Belum ada progres |
+| 6 Jul 2026 | agent | Fase 6 & 7 | Sinkronisasi PLAN.md — checkbox belum ter-update walau kode sudah selesai (commit sebelumnya: f534be4, 5d49d5c). Status keseluruhan diperbaiki jadi Selesai: 28, Sisa: 14 |
