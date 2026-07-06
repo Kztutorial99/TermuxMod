@@ -21,6 +21,8 @@ public final class TerminalRenderer {
     final int mTextSize;
     final Typeface mTypeface;
     private final Paint mTextPaint = new Paint();
+    /** Paint for selection highlight — accent cyan at 30% opacity */
+    private final Paint mSelectionPaint = new Paint();
 
     /** The width of a single mono spaced character obtained by {@link Paint#measureText(String)} on a single 'X'. */
     final float mFontWidth;
@@ -42,6 +44,10 @@ public final class TerminalRenderer {
         mTextPaint.setSubpixelText(true);
         mTextPaint.setHinting(Paint.HINTING_ON);
         mTextPaint.setTextSize(textSize);
+
+        // Selection highlight: accent cyan #00E5CC at 30% opacity (0x4D = 77)
+        mSelectionPaint.setStyle(Paint.Style.FILL);
+        mSelectionPaint.setColor(0x4D00E5CC);
 
         mFontLineSpacing = (int) Math.ceil(mTextPaint.getFontSpacing());
         mFontAscent = (int) Math.ceil(mTextPaint.ascent());
@@ -126,7 +132,7 @@ public final class TerminalRenderer {
                         }
                         drawTextRun(canvas, line, palette, heightOffset, lastRunStartColumn, columnWidthSinceLastRun,
                             lastRunStartIndex, charsSinceLastRun, measuredWidthForRun,
-                            cursorColor, cursorShape, lastRunStyle, reverseVideo || invertCursorTextColor || lastRunInsideSelection);
+                            cursorColor, cursorShape, lastRunStyle, reverseVideo || invertCursorTextColor, lastRunInsideSelection);
                     }
                     measuredWidthForRun = 0.f;
                     lastRunStyle = style;
@@ -154,13 +160,13 @@ public final class TerminalRenderer {
                 invertCursorTextColor = true;
             }
             drawTextRun(canvas, line, palette, heightOffset, lastRunStartColumn, columnWidthSinceLastRun, lastRunStartIndex, charsSinceLastRun,
-                measuredWidthForRun, cursorColor, cursorShape, lastRunStyle, reverseVideo || invertCursorTextColor || lastRunInsideSelection);
+                measuredWidthForRun, cursorColor, cursorShape, lastRunStyle, reverseVideo || invertCursorTextColor, lastRunInsideSelection);
         }
     }
 
     private void drawTextRun(Canvas canvas, char[] text, int[] palette, float y, int startColumn, int runWidthColumns,
                              int startCharIndex, int runWidthChars, float mes, int cursor, int cursorStyle,
-                             long textStyle, boolean reverseVideo) {
+                             long textStyle, boolean reverseVideo, boolean insideSelection) {
         int foreColor = TextStyle.decodeForeColor(textStyle);
         final int effect = TextStyle.decodeEffect(textStyle);
         int backColor = TextStyle.decodeBackColor(textStyle);
@@ -207,11 +213,21 @@ public final class TerminalRenderer {
             canvas.drawRect(left, y - mFontLineSpacingAndAscent + mFontAscent, right, y, mTextPaint);
         }
 
+        // Selection highlight: accent cyan overlay at 30% opacity
+        if (insideSelection) {
+            canvas.drawRect(left, y - mFontLineSpacingAndAscent + mFontAscent, right, y, mSelectionPaint);
+        }
+
         if (cursor != 0) {
             mTextPaint.setColor(cursor);
             float cursorHeight = mFontLineSpacingAndAscent - mFontAscent;
-            if (cursorStyle == TerminalEmulator.TERMINAL_CURSOR_STYLE_UNDERLINE) cursorHeight /= 4.;
-            else if (cursorStyle == TerminalEmulator.TERMINAL_CURSOR_STYLE_BAR) right -= ((right - left) * 3) / 4.;
+            if (cursorStyle == TerminalEmulator.TERMINAL_CURSOR_STYLE_UNDERLINE) {
+                // Slim modern underline — 2dp at bottom
+                cursorHeight = Math.max(2f, mFontLineSpacing * 0.07f);
+            } else if (cursorStyle == TerminalEmulator.TERMINAL_CURSOR_STYLE_BAR) {
+                // Slim vertical bar on left — ~2dp wide
+                right = left + Math.max(2f, mFontWidth * 0.1f);
+            }
             canvas.drawRect(left, y - cursorHeight, right, y, mTextPaint);
         }
 
