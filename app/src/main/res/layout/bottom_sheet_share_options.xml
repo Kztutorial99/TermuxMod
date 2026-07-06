@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/space_lg">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_sm"
+        android:layout_marginBottom="@dimen/space_md"
+        android:background="@drawable/shape_drag_handle" />
+
+    <TextView
+        android:id="@+id/share_sheet_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md"
+        android:paddingBottom="@dimen/space_sm"
+        android:text="@string/share_options_title"
+        android:textColor="@color/color_text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_share_text"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md"
+        android:text="@string/share_options_share_text"
+        android:textColor="@color/color_text_primary"
+        app:icon="@drawable/ic_file_text"
+        app:iconTint="@color/color_accent_primary"
+        app:rippleColor="@color/color_ripple" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_share_file"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md"
+        android:text="@string/share_options_share_file"
+        android:textColor="@color/color_text_primary"
+        app:icon="@drawable/ic_file_generic"
+        app:iconTint="@color/color_accent_primary"
+        app:rippleColor="@color/color_ripple" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_open_with"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md"
+        android:text="@string/share_options_open_with"
+        android:textColor="@color/color_text_primary"
+        app:icon="@drawable/ic_settings"
+        app:iconTint="@color/color_accent_secondary"
+        app:rippleColor="@color/color_ripple" />
+
+</LinearLayout>

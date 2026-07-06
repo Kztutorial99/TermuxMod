@@ -293,8 +293,8 @@ public class PluginUtils {
         // Set notification icon
         builder.setSmallIcon(R.drawable.ic_error_notification);
 
-        // Set background color for small notification icon
-        builder.setColor(0xFF607D8B);
+        // Set background color for small notification icon — aksen utama TermuxMod 2026
+        builder.setColor(0xFF00E5CC);
 
         // Dismiss on click
         builder.setAutoCancel(true);

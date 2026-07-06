@@ -4,25 +4,20 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Keep in sync with non-adaptive ic_launcher.xml -->
+    <!-- TermuxMod 2026 adaptive icon foreground -->
+    <!-- Bracket left: cyan-teal accent -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M34,38
-                          h6
-                          l12,16
-                          l-12,16
-                          h-6
-                          l12,-16
-                          "
-        />
+        android:fillColor="#00E5CC"
+        android:pathData="M34,30 h8 l-14,24 l14,24 h-8 L18,54 Z" />
 
+    <!-- Bracket right: violet accent -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M56,66
-                          h18
-                          v4
-                          h-18
-                          "
-        />
+        android:fillColor="#7B61FF"
+        android:pathData="M74,30 h-8 l14,24 l-14,24 h8 L90,54 Z" />
+
+    <!-- Underscore cursor: cyan-teal -->
+    <path
+        android:fillColor="#00E5CC"
+        android:pathData="M44,72 h20 v4 h-20 Z" />
 
 </vector>

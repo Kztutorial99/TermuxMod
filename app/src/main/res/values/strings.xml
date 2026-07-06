@@ -230,4 +230,44 @@
     <!-- Donate Preference -->
     <string name="donate_preference_title">Donate</string>
 
+
+
+    <!-- Fase 11.2 — Share Options Bottom Sheet -->
+    <string name="share_options_title">Share</string>
+    <string name="share_options_share_text">Share as text</string>
+    <string name="share_options_share_file">Share file</string>
+    <string name="share_options_open_with">Open with</string>
+
+    <!-- Fase 12.1 — Styling Install Sheet -->
+    <string name="styling_not_installed_title">Termux:Styling not installed</string>
+
+    <!-- Fase 12.2 — Color Swatch Labels -->
+    <string name="color_swatch_label">Active color scheme</string>
+    <string name="color_swatch_bg">BG</string>
+    <string name="color_swatch_surface">Surface</string>
+    <string name="color_swatch_accent">Accent</string>
+    <string name="color_swatch_secondary">Secondary</string>
+
+    <!-- Fase 15.1 — Onboarding -->
+    <string name="onboarding_title_sessions">Terminal Sessions</string>
+    <string name="onboarding_body_sessions">Swipe right to open the session drawer. Create multiple terminal sessions and switch between them instantly.</string>
+    <string name="onboarding_title_extrakeys">Extra Keys Row</string>
+    <string name="onboarding_body_extrakeys">The extra keys row gives you quick access to Tab, Ctrl, and other keys not found on a standard mobile keyboard. Swipe up on a key to see more options.</string>
+    <string name="onboarding_title_settings">Customize</string>
+    <string name="onboarding_body_settings">Open Settings from the drawer to customize font size, keyboard behavior, and appearance. Install Termux:Styling for color schemes and fonts.</string>
+    <string name="onboarding_btn_skip">Skip</string>
+    <string name="onboarding_btn_next">Next</string>
+    <string name="onboarding_btn_start">Get started</string>
+
+    <!-- Fase 16.1 — Search Overlay -->
+    <string name="search_overlay_hint">Search terminal output…</string>
+    <string name="search_overlay_prev">Previous result</string>
+    <string name="search_overlay_next">Next result</string>
+    <string name="search_overlay_close">Close search</string>
+
+    <!-- Fase 19.2 — Reduce Animations -->
+    <string name="reduce_animations_title">Reduce animations</string>
+    <string name="reduce_animations_summary_on">Heavy animations disabled (parallax, slide transitions)</string>
+    <string name="reduce_animations_summary_off">All animations enabled</string>
+
 </resources>

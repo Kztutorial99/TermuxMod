@@ -1,5 +1,11 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- Color swatch preview — non-interactive, hanya visual -->
+    <androidx.preference.Preference
+        app:key="color_swatch_preview"
+        app:selectable="false"
+        app:layout="@layout/item_color_swatch_preference" />
+
     <PreferenceCategory
         app:key="view"
         app:title="@string/termux_terminal_view_view_header">
@@ -9,6 +15,12 @@
             app:summaryOff="@string/termux_terminal_view_terminal_margin_adjustment_off"
             app:summaryOn="@string/termux_terminal_view_terminal_margin_adjustment_on"
             app:title="@string/termux_terminal_view_terminal_margin_adjustment_title" />
+
+        <SwitchPreferenceCompat
+            app:key="reduce_animations"
+            app:summaryOff="@string/reduce_animations_summary_off"
+            app:summaryOn="@string/reduce_animations_summary_on"
+            app:title="@string/reduce_animations_title" />
 
     </PreferenceCategory>
 

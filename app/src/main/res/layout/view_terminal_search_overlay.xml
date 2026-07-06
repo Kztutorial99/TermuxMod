@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_overlay_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/space_sm"
+    android:alpha="0"
+    android:visibility="gone"
+    app:cardBackgroundColor="@color/color_surface_variant"
+    app:cardCornerRadius="@dimen/radius_md"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_sm"
+        android:paddingEnd="@dimen/space_xs"
+        android:paddingTop="@dimen/space_xs"
+        android:paddingBottom="@dimen/space_xs">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/search_input"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/search_overlay_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="@dimen/space_sm"
+            android:textColor="@color/color_text_primary"
+            android:textColorHint="@color/color_text_secondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/search_result_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:textColor="@color/color_text_secondary"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_search_prev"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/search_overlay_prev"
+            android:src="@drawable/ic_arrow_up"
+            android:tint="@color/color_text_primary"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_search_next"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/search_overlay_next"
+            android:src="@drawable/ic_arrow_down"
+            android:tint="@color/color_text_primary"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_search_close"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/search_overlay_close"
+            android:src="@drawable/ic_close"
+            android:tint="@color/color_text_secondary" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

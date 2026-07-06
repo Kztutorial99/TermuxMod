@@ -449,15 +449,22 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
+                // Lepas hardware layer setelah animasi selesai
+                terminalContent.setLayerType(View.LAYER_TYPE_NONE, null);
             }
 
             @Override
             public void onDrawerClosed(@NonNull View drawerView) {
                 terminalContent.setTranslationX(0f);
+                terminalContent.setLayerType(View.LAYER_TYPE_NONE, null);
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
+                if (newState == DrawerLayout.STATE_SETTLING || newState == DrawerLayout.STATE_DRAGGING) {
+                    // Aktifkan hardware layer saat animasi drawer berjalan agar parallax smooth
+                    terminalContent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                }
             }
         });
     }
@@ -808,10 +815,16 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         try {
             startActivity(stylingIntent);
         } catch (ActivityNotFoundException | IllegalArgumentException e) {
-            // The startActivity() call is not documented to throw IllegalArgumentException.
-            // However, crash reporting shows that it sometimes does, so catch it here.
-            new AlertDialog.Builder(this).setMessage(getString(R.string.error_styling_not_installed))
-                .setPositiveButton(R.string.action_styling_install, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(TermuxConstants.TERMUX_STYLING_FDROID_PACKAGE_URL)))).setNegativeButton(android.R.string.cancel, null).show();
+            // Tampilkan BottomSheet modern sebagai pengganti AlertDialog klasik
+            BottomSheetDialog sheet = new BottomSheetDialog(this);
+            View sheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_styling_install, null);
+            sheet.setContentView(sheetView);
+            sheetView.findViewById(R.id.btn_styling_install).setOnClickListener(v -> {
+                sheet.dismiss();
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(TermuxConstants.TERMUX_STYLING_FDROID_PACKAGE_URL)));
+            });
+            sheetView.findViewById(R.id.btn_styling_cancel).setOnClickListener(v -> sheet.dismiss());
+            sheet.show();
         }
     }
     private void toggleKeepScreenOn() {

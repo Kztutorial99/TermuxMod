@@ -213,6 +213,41 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
         return f;
     }
 
+    /**
+     * Return a drawable resource id representing the file type based on its MIME type.
+     * Used to show contextual icons in the system file picker.
+     */
+    private static int getIconForMimeType(String mimeType) {
+        if (mimeType == null) return R.mipmap.ic_launcher;
+        if (Document.MIME_TYPE_DIR.equals(mimeType)) return R.drawable.ic_file_folder;
+        if (mimeType.startsWith("image/")) return R.drawable.ic_file_image;
+        if (mimeType.startsWith("audio/")) return R.drawable.ic_file_audio;
+        if (mimeType.startsWith("video/")) return R.drawable.ic_file_video;
+        if (mimeType.startsWith("text/")) return R.drawable.ic_file_text;
+        switch (mimeType) {
+            case "application/pdf":
+                return R.drawable.ic_file_text;
+            case "application/zip":
+            case "application/x-tar":
+            case "application/x-gzip":
+            case "application/x-bzip2":
+            case "application/x-xz":
+            case "application/x-7z-compressed":
+            case "application/x-rar-compressed":
+                return R.drawable.ic_file_archive;
+            case "text/x-c":
+            case "text/x-java":
+            case "text/x-python":
+            case "text/x-script.sh":
+            case "application/javascript":
+            case "application/json":
+            case "application/xml":
+                return R.drawable.ic_file_code;
+            default:
+                return R.drawable.ic_file_generic;
+        }
+    }
+
     private static String getMimeType(File file) {
         if (file.isDirectory()) {
             return Document.MIME_TYPE_DIR;
@@ -262,7 +297,7 @@ public class TermuxDocumentsProvider extends DocumentsProvider {
         row.add(Document.COLUMN_MIME_TYPE, mimeType);
         row.add(Document.COLUMN_LAST_MODIFIED, file.lastModified());
         row.add(Document.COLUMN_FLAGS, flags);
-        row.add(Document.COLUMN_ICON, R.mipmap.ic_launcher);
+        row.add(Document.COLUMN_ICON, getIconForMimeType(mimeType));
     }
 
 }

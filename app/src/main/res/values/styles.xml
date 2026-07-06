@@ -90,6 +90,13 @@
         <item name="android:textColor">@color/color_text_primary</item>
     </style>
 
+    <!-- Splash Screen — dark background tanpa flicker putih (API 12+, tanpa dependency tambahan) -->
+    <style name="Theme.Termux.Splash" parent="Theme.Termux">
+        <item name="android:windowBackground">@color/color_background</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <!-- Divider -->
     <style name="ViewDivider">
         <item name="android:layout_width">match_parent</item>

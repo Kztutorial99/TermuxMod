@@ -55,7 +55,11 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
 
         switch (key) {
             case "terminal_margin_adjustment":
-                    mPreferences.setTerminalMarginAdjustment(value);
+                mPreferences.setTerminalMarginAdjustment(value);
+                break;
+            case "reduce_animations":
+                mContext.getSharedPreferences("termuxmod_ui", android.content.Context.MODE_PRIVATE)
+                    .edit().putBoolean("reduce_animations", value).apply();
                 break;
             default:
                 break;
@@ -69,6 +73,9 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
         switch (key) {
             case "terminal_margin_adjustment":
                 return mPreferences.isTerminalMarginAdjustmentEnabled();
+            case "reduce_animations":
+                return mContext.getSharedPreferences("termuxmod_ui", android.content.Context.MODE_PRIVATE)
+                    .getBoolean("reduce_animations", false);
             default:
                 return false;
         }
