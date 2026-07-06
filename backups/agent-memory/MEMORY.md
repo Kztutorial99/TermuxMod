@@ -1,0 +1,1 @@
+- [TermuxMod Crash Zones](termuxmod-crash-zones.md) — 10 zona kritis TermuxMod yang JANGAN diubah (applicationId, JNI, paths, intents, bootstrap order, env vars, state machine, dll.) atau app crash.
