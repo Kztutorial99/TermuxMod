@@ -13,6 +13,7 @@ Repo GitHub: https://github.com/Kztutorial99/TermuxMod
 - Selalu push ke GitHub setelah perubahan signifikan
 - Selalu jalankan safety-check sebelum dan sesudah edit apapun
 - JANGAN propose/usulkan follow-up tasks di akhir setiap sesi — fitur ini dimatikan
+- **WAJIB setelah setiap push:** pantau GitHub Actions sampai semua workflow selesai (status bukan `in_progress`). Jika ada `failure` → analisis log, fix segera, push ulang. Jangan lanjut ke item PLAN berikutnya sebelum build hijau semua.
 
 ## Arah Desain — WAJIB DIIKUTI SEMUA AGENT
 

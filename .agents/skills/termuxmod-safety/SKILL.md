@@ -79,8 +79,19 @@ Setelah selesai 1 item:
 bash scripts/safety-check.sh   # wajib
 git add -A
 git commit -m "ui: selesai [nama item]"
-git push origin main
+# push via GitHub API curl (BUKAN git push langsung)
 ```
+
+### WAJIB setelah setiap push — Pantau Build:
+```bash
+# Cek sampai semua status BUKAN in_progress
+curl -s -H "Authorization: token $GITHUB_TOKEN" \
+  "https://api.github.com/repos/Kztutorial99/TermuxMod/actions/runs?per_page=5" \
+  | jq '[.workflow_runs[] | {name:.name, status:.status, conclusion:.conclusion, commit:.head_sha[0:7]}]'
+```
+- Jika ada `"conclusion": "failure"` → ambil log, analisis, fix, push ulang
+- **Jangan lanjut item PLAN berikutnya sebelum semua build success**
+- Build Android butuh 5-10 menit, pantau minimal 2x polling
 
 ---
 
