@@ -1,4 +1,5 @@
 - [TermuxMod Crash Zones](termuxmod-crash-zones.md) — 10 zona kritis TermuxMod yang JANGAN diubah (applicationId, JNI, paths, intents, bootstrap order, env vars, state machine, dll.) atau app crash.
 - [TermuxMod Design Direction](termuxmod-design-direction.md) — UI/UX wajib modern & smooth. Dilarang: emoji, Material klasik, template klasik, Toast, AlertDialog default. Wajib: BottomSheet, Snackbar, dark theme, animasi halus.
-- [TermuxMod Modernization Plan](../../../PLAN.md) — 42 item, 9 fase modernisasi UX/UI. Cek PLAN.md dulu, temukan item [ ] pertama, lanjutkan dari sana. Jangan ulangi item [x].
+- [TermuxMod Modernization Plan](../../../PLAN.md) — 62 item, 20 fase modernisasi UX/UI. Cek PLAN.md dulu, temukan item [ ] pertama, lanjutkan dari sana. Jangan ulangi item [x].
 - [TermuxMod Layout Casting Bug](termuxmod-layout-casting-bug.md) — WAJIB BACA sebelum ubah root element layout XML. Jika root diubah dari custom View ke wrapper (LinearLayout dll.), semua inflate+cast di Java HARUS diganti ke findViewById().
+- [TermuxMod Material Version Limits](termuxmod-material-version-limits.md) — material:1.4.0 tidak punya widget Material baru (mis. BottomSheetDragHandleView) → ClassNotFoundException runtime crash meski CI build sukses. Cek versi sebelum pakai widget baru.
