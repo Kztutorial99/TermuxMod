@@ -423,6 +423,7 @@ public final class ExtraKeysView extends GridLayout {
                                 }
                                 if (mPopupWindow != null && event.getY() > 0) {
                                     view.setBackgroundColor(mButtonActiveBackgroundColor);
+                                    view.animate().scaleX(0.92f).scaleY(0.92f).setDuration(60).start();
                                     dismissPopup();
                                 }
                             }

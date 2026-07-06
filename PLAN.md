@@ -389,9 +389,12 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 10.2 Soft Keyboard Transition
 
-- [ ] **`app/src/main/java/com/termux/app/terminal/TermuxTerminalViewClient.java`** (bagian toggle soft keyboard)
-  - Animasi smooth saat keyboard show/hide menggunakan `WindowInsetsAnimation` (API 30+) dengan fallback aman di bawahnya
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/terminal/TermuxTerminalViewClient.java`** (bagian toggle soft keyboard)
+  - Tambah `setupKeyboardAnimation()` — set `WindowInsetsAnimationCompat.Callback` pada terminal view
+  - API 30+: alpha fade 0.95→1.0 tersinkronisasi dengan animasi IME via `getInterpolatedFraction()`
+  - API < 30: early return (no-op), fallback aman, tidak ada perubahan perilaku
+  - Dipanggil dari `setSoftKeyboardState()` setelah focus listener di-set
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 
