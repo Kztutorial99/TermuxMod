@@ -3,3 +3,4 @@
 - [TermuxMod Modernization Plan](../../../PLAN.md) — 62 item, 20 fase modernisasi UX/UI. Cek PLAN.md dulu, temukan item [ ] pertama, lanjutkan dari sana. Jangan ulangi item [x].
 - [TermuxMod Layout Casting Bug](termuxmod-layout-casting-bug.md) — WAJIB BACA sebelum ubah root element layout XML. Jika root diubah dari custom View ke wrapper (LinearLayout dll.), semua inflate+cast di Java HARUS diganti ke findViewById().
 - [TermuxMod Material Version Limits](termuxmod-material-version-limits.md) — material:1.4.0 tidak punya widget Material baru (mis. BottomSheetDragHandleView) → ClassNotFoundException runtime crash meski CI build sukses. Cek versi sebelum pakai widget baru.
+- [TermuxMod ActionBar Conflict Crash](termuxmod-actionbar-crash.md) — Activity yang call setSupportActionBar() WAJIB pakai theme NoActionBar (Theme.Termux), bukan Theme.AppCompat.Light.DarkActionBar dll. atau crash IllegalStateException.
