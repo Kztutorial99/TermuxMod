@@ -1,14 +1,14 @@
 package com.termux.app;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Environment;
 import android.system.Os;
 import android.util.Pair;
 import android.view.WindowManager;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.termux.R;
 import com.termux.app.utils.CrashUtils;
 import com.termux.shared.file.FileUtils;
@@ -45,7 +45,7 @@ import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR
  * (1) If $PREFIX already exist, assume that it is correct and be done. Note that this relies on that we do not create a
  * broken $PREFIX directory below.
  * <p/>
- * (2) A progress dialog is shown with "Installing..." message and a spinner.
+ * (2) A progress bottom sheet is shown with "Installing..." message and a progress indicator.
  * <p/>
  * (3) A staging directory, $STAGING_PREFIX, is cleared if left over from broken installation below.
  * <p/>
@@ -109,7 +109,12 @@ final class TermuxInstaller {
             Logger.logInfo(LOG_TAG, "The termux prefix directory \"" + TERMUX_PREFIX_DIR_PATH + "\" does not exist but another file exists at its destination.");
         }
 
-        final ProgressDialog progress = ProgressDialog.show(activity, null, activity.getString(R.string.bootstrap_installer_body), true, false);
+        final BottomSheetDialog progressSheet = new BottomSheetDialog(activity, com.termux.shared.R.style.TermuxBottomSheetStyle);
+        progressSheet.setContentView(R.layout.bottom_sheet_bootstrap_progress);
+        progressSheet.setCancelable(false);
+        progressSheet.setCanceledOnTouchOutside(false);
+        activity.runOnUiThread(progressSheet::show);
+
         new Thread() {
             @Override
             public void run() {
@@ -249,7 +254,7 @@ final class TermuxInstaller {
                 } finally {
                     activity.runOnUiThread(() -> {
                         try {
-                            progress.dismiss();
+                            progressSheet.dismiss();
                         } catch (RuntimeException e) {
                             // Activity already dismissed - ignore.
                         }
@@ -267,16 +272,28 @@ final class TermuxInstaller {
 
         activity.runOnUiThread(() -> {
             try {
-                new AlertDialog.Builder(activity).setTitle(R.string.bootstrap_error_title).setMessage(R.string.bootstrap_error_body)
-                    .setNegativeButton(R.string.bootstrap_error_abort, (dialog, which) -> {
-                        dialog.dismiss();
+                BottomSheetDialog errorSheet = new BottomSheetDialog(activity, com.termux.shared.R.style.TermuxBottomSheetStyle);
+                errorSheet.setContentView(R.layout.bottom_sheet_bootstrap_error);
+                errorSheet.setCanceledOnTouchOutside(false);
+
+                MaterialButton btnAbort = errorSheet.findViewById(R.id.btn_abort);
+                if (btnAbort != null) {
+                    btnAbort.setOnClickListener(v -> {
+                        errorSheet.dismiss();
                         activity.finish();
-                    })
-                    .setPositiveButton(R.string.bootstrap_error_try_again, (dialog, which) -> {
-                        dialog.dismiss();
+                    });
+                }
+
+                MaterialButton btnTryAgain = errorSheet.findViewById(R.id.btn_try_again);
+                if (btnTryAgain != null) {
+                    btnTryAgain.setOnClickListener(v -> {
+                        errorSheet.dismiss();
                         FileUtils.deleteFile("termux prefix directory", TERMUX_PREFIX_DIR_PATH, true);
                         TermuxInstaller.setupBootstrapIfNeeded(activity, whenDone);
-                    }).show();
+                    });
+                }
+
+                errorSheet.show();
             } catch (WindowManager.BadTokenException e1) {
                 // Activity already dismissed - ignore.
             }

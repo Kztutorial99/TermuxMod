@@ -1,25 +1,22 @@
 package com.termux.shared.interact;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.termux.shared.R;
 import com.termux.shared.logger.Logger;
 
 public class MessageDialogUtils {
 
     /**
-     * Show a message in a dialog
+     * Show a message in a BottomSheetDialog
      *
-     * @param context The {@link Context} to use to start the dialog. An {@link Activity} {@link Context}
-     *                must be passed, otherwise exceptions will be thrown.
+     * @param context The {@link Context} to use to start the dialog.
      * @param titleText The title text of the dialog.
      * @param messageText The message text of the dialog.
      * @param onDismiss The {@link DialogInterface.OnDismissListener} to run when dialog is dismissed.
@@ -29,19 +26,15 @@ public class MessageDialogUtils {
     }
 
     /**
-     * Show a message in a dialog
+     * Show a message in a BottomSheetDialog
      *
-     * @param context The {@link Context} to use to start the dialog. An {@link Activity} {@link Context}
-     *                must be passed, otherwise exceptions will be thrown.
+     * @param context The {@link Context} to use to start the dialog.
      * @param titleText The title text of the dialog.
      * @param messageText The message text of the dialog.
      * @param positiveText The positive button text of the dialog.
-     * @param onPositiveButton The {@link DialogInterface.OnClickListener} to run when positive button
-     *                         is pressed.
-     * @param negativeText The negative button text of the dialog. If this is {@code null}, then
-     *                         negative button will not be shown.
-     * @param onNegativeButton The {@link DialogInterface.OnClickListener} to run when negative button
-     *                         is pressed.
+     * @param onPositiveButton The listener to run when positive button is pressed.
+     * @param negativeText The negative button text. If {@code null}, negative button is hidden.
+     * @param onNegativeButton The listener to run when negative button is pressed.
      * @param onDismiss The {@link DialogInterface.OnDismissListener} to run when dialog is dismissed.
      */
     public static void showMessage(Context context, String titleText, String messageText,
@@ -51,45 +44,51 @@ public class MessageDialogUtils {
                                    final DialogInterface.OnClickListener onNegativeButton,
                                    final DialogInterface.OnDismissListener onDismiss) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.Theme_AppCompat_Light_Dialog);
+        BottomSheetDialog sheet = new BottomSheetDialog(context, R.style.TermuxBottomSheetStyle);
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        View view = inflater.inflate(R.layout.dialog_show_message, null);
-        if (view != null) {
-            builder.setView(view);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.bottom_sheet_message, null);
 
-            TextView titleView = view.findViewById(R.id.dialog_title);
-            if (titleView != null)
-                titleView.setText(titleText);
+        TextView titleView = view.findViewById(R.id.dialog_title);
+        if (titleView != null && titleText != null)
+            titleView.setText(titleText);
 
-            TextView messageView = view.findViewById(R.id.dialog_message);
-            if (messageView != null)
-                messageView.setText(messageText);
+        TextView messageView = view.findViewById(R.id.dialog_message);
+        if (messageView != null && messageText != null)
+            messageView.setText(messageText);
+
+        MaterialButton btnPositive = view.findViewById(R.id.btn_positive);
+        if (btnPositive != null) {
+            String posLabel = (positiveText != null) ? positiveText : context.getString(android.R.string.ok);
+            btnPositive.setText(posLabel);
+            btnPositive.setOnClickListener(v -> {
+                if (onPositiveButton != null)
+                    onPositiveButton.onClick(sheet, DialogInterface.BUTTON_POSITIVE);
+                sheet.dismiss();
+            });
         }
 
-        if (positiveText == null)
-            positiveText = context.getString(android.R.string.ok);
-        builder.setPositiveButton(positiveText, onPositiveButton);
-
-        if (negativeText != null)
-            builder.setNegativeButton(negativeText, onNegativeButton);
+        MaterialButton btnNegative = view.findViewById(R.id.btn_negative);
+        if (btnNegative != null) {
+            if (negativeText != null) {
+                btnNegative.setVisibility(View.VISIBLE);
+                btnNegative.setText(negativeText);
+                btnNegative.setOnClickListener(v -> {
+                    if (onNegativeButton != null)
+                        onNegativeButton.onClick(sheet, DialogInterface.BUTTON_NEGATIVE);
+                    sheet.dismiss();
+                });
+            } else {
+                btnNegative.setVisibility(View.GONE);
+            }
+        }
 
         if (onDismiss != null)
-            builder.setOnDismissListener(onDismiss);
+            sheet.setOnDismissListener(onDismiss::onDismiss);
 
-        AlertDialog dialog = builder.create();
-
-        dialog.setOnShowListener(dialogInterface -> {
-            Logger.logError("dialog");
-            Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            if (button != null)
-                button.setTextColor(Color.BLACK);
-            button = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            if (button != null)
-                button.setTextColor(Color.BLACK);
-        });
-
-        dialog.show();
+        sheet.setContentView(view);
+        sheet.setCanceledOnTouchOutside(false);
+        sheet.show();
     }
 
     public static void exitAppWithErrorMessage(Context context, String titleText, String messageText) {
