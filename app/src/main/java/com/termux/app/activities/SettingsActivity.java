@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.termux.R;
 import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.file.FileUtils;
@@ -31,23 +31,31 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_settings);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settings, new RootPreferencesFragment())
                 .commit();
         }
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     public static class RootPreferencesFragment extends PreferenceFragmentCompat {
@@ -70,7 +78,6 @@ public class SettingsActivity extends AppCompatActivity {
             Preference termuxAPIPreference = findPreference("termux_api");
             if (termuxAPIPreference != null) {
                 TermuxAPIAppSharedPreferences preferences = TermuxAPIAppSharedPreferences.build(context, false);
-                // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxAPIPreference.setVisible(preferences != null);
             }
         }
@@ -79,7 +86,6 @@ public class SettingsActivity extends AppCompatActivity {
             Preference termuxFloatPreference = findPreference("termux_float");
             if (termuxFloatPreference != null) {
                 TermuxFloatAppSharedPreferences preferences = TermuxFloatAppSharedPreferences.build(context, false);
-                // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxFloatPreference.setVisible(preferences != null);
             }
         }
@@ -88,7 +94,6 @@ public class SettingsActivity extends AppCompatActivity {
             Preference termuxTaskerPreference = findPreference("termux_tasker");
             if (termuxTaskerPreference != null) {
                 TermuxTaskerAppSharedPreferences preferences = TermuxTaskerAppSharedPreferences.build(context, false);
-                // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxTaskerPreference.setVisible(preferences != null);
             }
         }
@@ -97,7 +102,6 @@ public class SettingsActivity extends AppCompatActivity {
             Preference termuxWidgetPreference = findPreference("termux_widget");
             if (termuxWidgetPreference != null) {
                 TermuxWidgetAppSharedPreferences preferences = TermuxWidgetAppSharedPreferences.build(context, false);
-                // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxWidgetPreference.setVisible(preferences != null);
             }
         }
@@ -114,7 +118,7 @@ public class SettingsActivity extends AppCompatActivity {
                             StringBuilder aboutString = new StringBuilder();
                             aboutString.append(TermuxUtils.getAppInfoMarkdownString(context, false));
 
-                            String termuxPluginAppsInfo =  TermuxUtils.getTermuxPluginAppsInfoMarkdownString(context);
+                            String termuxPluginAppsInfo = TermuxUtils.getTermuxPluginAppsInfoMarkdownString(context);
                             if (termuxPluginAppsInfo != null)
                                 aboutString.append("\n\n").append(termuxPluginAppsInfo);
 
@@ -141,9 +145,6 @@ public class SettingsActivity extends AppCompatActivity {
             if (donatePreference != null) {
                 String signingCertificateSHA256Digest = PackageUtils.getSigningCertificateSHA256DigestForPackage(context);
                 if (signingCertificateSHA256Digest != null) {
-                    // If APK is a Google Playstore release, then do not show the donation link
-                    // since Termux isn't exempted from the playstore policy donation links restriction
-                    // Check Fund solicitations: https://pay.google.com/intl/en_in/about/policy/
                     String apkRelease = TermuxUtils.getAPKRelease(signingCertificateSHA256Digest);
                     if (apkRelease == null || apkRelease.equals(TermuxConstants.APK_RELEASE_GOOGLE_PLAYSTORE_SIGNING_CERTIFICATE_SHA256_DIGEST)) {
                         donatePreference.setVisible(false);

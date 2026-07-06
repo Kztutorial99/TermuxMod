@@ -38,6 +38,9 @@
 
 
 
+    <string name="settings_activity_title">Settings</string>
+    <string name="help_activity_title">Help</string>
+
     <!-- Terminal Sidebar and Shortcuts -->
     <string name="action_new_session">New session</string>
     <string name="action_new_session_failsafe">Failsafe</string>

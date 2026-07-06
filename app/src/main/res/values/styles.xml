@@ -35,6 +35,9 @@
         <!-- Bottom sheet -->
         <item name="bottomSheetDialogTheme">@style/Style.TermuxMod.BottomSheet</item>
 
+        <!-- Preference theme -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+
         <!-- Ripple -->
         <item name="rippleColor">@color/color_ripple</item>
     </style>
