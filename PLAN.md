@@ -164,34 +164,34 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 3.1 MessageDialogUtils → BottomSheet
 
-- [ ] **`termux-shared/src/main/java/com/termux/shared/interact/MessageDialogUtils.java`**
+- [x] **`termux-shared/src/main/java/com/termux/shared/interact/MessageDialogUtils.java`**
   - Ganti semua `AlertDialog.Builder` ke `BottomSheetDialog` kustom
   - Tambah drag handle di atas sheet
   - Tombol aksi: `MaterialButton` dengan outline/filled style
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ### 3.2 TextInputDialogUtils → BottomSheet
 
-- [ ] **`termux-shared/src/main/java/com/termux/shared/interact/TextInputDialogUtils.java`**
+- [x] **`termux-shared/src/main/java/com/termux/shared/interact/TextInputDialogUtils.java`**
   - Ganti `AlertDialog` dengan input ke `BottomSheetDialog` dengan `TextInputLayout`
   - Keyboard otomatis muncul saat sheet terbuka
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ### 3.3 Bootstrap Installer Dialog
 
-- [ ] **`app/src/main/java/com/termux/app/TermuxInstaller.java`** (hanya bagian UI)
+- [x] **`app/src/main/java/com/termux/app/TermuxInstaller.java`** (hanya bagian UI)
   - Ganti `ProgressDialog` ke custom `BottomSheetDialog` dengan `LinearProgressIndicator`
   - Tambah animasi progress smooth
   - Ganti `AlertDialog` error ke `BottomSheetDialog` dengan ikon error dan tombol retry
   - PERHATIAN: Jangan ubah logika instalasi, hanya komponen UI
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ### 3.4 CrashUtils Dialog
 
-- [ ] **`app/src/main/java/com/termux/app/utils/CrashUtils.java`** (hanya bagian UI)
-  - Ganti dialog crash ke `BottomSheetDialog` modern dengan detail crash yang terlipat
-  - Tombol: "Salin Log" dan "Tutup"
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/utils/CrashUtils.java`** (hanya bagian UI)
+  - CrashUtils tidak memiliki dialog UI langsung, hanya notification builder
+  - Notification color diupdate dari hardcoded ke semantic color
+  - Status: SELESAI (skip — tidak ada dialog UI) — 6 Jul 2026
 
 ---
 
