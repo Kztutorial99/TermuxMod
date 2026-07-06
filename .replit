@@ -1,2 +1,25 @@
 [agent]
 expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "safety-check"
+
+[[workflows.workflow]]
+name = "safety-check"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/safety-check.sh"
+
+[workflows.workflow.metadata]
+isValidation = true
