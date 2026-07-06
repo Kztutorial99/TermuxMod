@@ -376,6 +376,10 @@ public final class ExtraKeysView extends GridLayout {
         setRowCount(buttons.length);
         setColumnCount(maximumLength(buttons));
 
+        float density = getResources().getDisplayMetrics().density;
+        int marginPx = Math.max(1, (int) (2 * density));
+        int minBtnWidth = (int) (40 * density);
+
         for (int row = 0; row < buttons.length; row++) {
             for (int col = 0; col < buttons[row].length; col++) {
                 final ExtraKeyButton buttonInfo = buttons[row][col];
@@ -392,9 +396,9 @@ public final class ExtraKeysView extends GridLayout {
                 button.setTextColor(mButtonTextColor);
                 button.setAllCaps(mButtonTextAllCaps);
                 button.setPadding(0, 0, 0, 0);
+                button.setMinimumWidth(minBtnWidth);
 
                 button.setOnClickListener(view -> {
-                    performExtraKeyButtonHapticFeedback(view, buttonInfo, button);
                     onAnyExtraKeyButtonClick(view, buttonInfo, button);
                 });
 
@@ -402,6 +406,8 @@ public final class ExtraKeysView extends GridLayout {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             view.setBackgroundColor(mButtonActiveBackgroundColor);
+                            view.animate().scaleX(0.92f).scaleY(0.92f).setDuration(60).start();
+                            performExtraKeyButtonHapticFeedback(view, buttonInfo, button);
                             // Start long press scheduled executors which will be stopped in next MotionEvent
                             startScheduledExecutors(view, buttonInfo, button);
                             return true;
@@ -412,6 +418,7 @@ public final class ExtraKeysView extends GridLayout {
                                 if (mPopupWindow == null && event.getY() < 0) {
                                     stopScheduledExecutors();
                                     view.setBackgroundColor(mButtonBackgroundColor);
+                                    view.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
                                     showPopup(view, buttonInfo.getPopup());
                                 }
                                 if (mPopupWindow != null && event.getY() > 0) {
@@ -423,11 +430,13 @@ public final class ExtraKeysView extends GridLayout {
 
                         case MotionEvent.ACTION_CANCEL:
                             view.setBackgroundColor(mButtonBackgroundColor);
+                            view.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
                             stopScheduledExecutors();
                             return true;
 
                         case MotionEvent.ACTION_UP:
                             view.setBackgroundColor(mButtonBackgroundColor);
+                            view.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
                             stopScheduledExecutors();
                             // If ACTION_UP up was not from a repetitive key or was with a key with a popup button
                             if (mLongPressCount == 0 || mPopupWindow != null) {
@@ -449,10 +458,10 @@ public final class ExtraKeysView extends GridLayout {
                 });
 
                 LayoutParams param = new GridLayout.LayoutParams();
-                param.width = 0;
+                param.width = ViewGroup.LayoutParams.WRAP_CONTENT;
                 param.height = 0;
-                param.setMargins(0, 0, 0, 0);
-                param.columnSpec = GridLayout.spec(col, GridLayout.FILL, 1.f);
+                param.setMargins(marginPx, 0, marginPx, 0);
+                param.columnSpec = GridLayout.spec(col);
                 param.rowSpec = GridLayout.spec(row, GridLayout.FILL, 1.f);
                 button.setLayoutParams(param);
 

@@ -10,11 +10,20 @@
         android:layout_height="1dp"
         android:background="@color/color_border" />
 
-    <com.termux.shared.terminal.io.extrakeys.ExtraKeysView
-        android:id="@+id/terminal_toolbar_extra_keys"
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal" />
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:fillViewport="false">
+
+        <com.termux.shared.terminal.io.extrakeys.ExtraKeysView
+            android:id="@+id/terminal_toolbar_extra_keys"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
+
+    </HorizontalScrollView>
 
 </LinearLayout>
