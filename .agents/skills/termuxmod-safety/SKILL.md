@@ -66,6 +66,24 @@ Detail lengkap ada di `.agents/memory/termuxmod-crash-zones.md`.
 
 ---
 
+## PLAN MODERNISASI — CEK DULU SEBELUM KERJA
+
+Sebelum mulai modifikasi UI apapun, baca **`PLAN.md`** di root project.
+
+File ini berisi 42 item dalam 9 fase yang harus dikerjakan berurutan.
+Cari item pertama yang masih `[ ]` dan lanjutkan dari sana.
+Jangan kerjakan ulang item yang sudah `[x]`.
+
+Setelah selesai 1 item:
+```bash
+bash scripts/safety-check.sh   # wajib
+git add -A
+git commit -m "ui: selesai [nama item]"
+git push origin main
+```
+
+---
+
 ## STRUKTUR MODUL
 
 ```
