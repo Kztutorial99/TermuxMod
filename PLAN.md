@@ -58,8 +58,8 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 ## STATUS PROGRES KESELURUHAN
 
 - Total item: 62
-- Selesai: 30
-- Sisa: 32
+- Selesai: 33
+- Sisa: 29
 - Total fase: 20 (Fase 1-9 fondasi awal, Fase 10-20 perluasan rombak TermuxModern 2026)
 
 ---
@@ -350,21 +350,21 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 9.1 Context Menu
 
-- [ ] **`app/src/main/java/com/termux/app/TermuxActivity.java`** (bagian context menu & options menu)
-  - Ganti context menu klasik ke `MaterialAlertDialog` atau `BottomSheetDialog` dengan list pilihan
-  - Menu "New Session", "Rename", "Close" dalam sheet yang bersih
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/TermuxActivity.java`** (bagian context menu & options menu)
+  - Ganti context menu klasik (floating `ContextMenu`) ke `BottomSheetDialog` kustom dengan list pilihan (`bottom_sheet_context_menu.xml` + `item_context_menu_option.xml`)
+  - Semua 12 opsi menu lama (Select URL, Share Transcript, Share Selected Text, Autofill, Reset Terminal, Kill Process, Styling, Toggle Keep Screen On, Help, Settings, Report Issue) dipindah ke sheet, termasuk state disabled (Kill Process) dan checked (Toggle Keep Screen On, pakai `ic_check_accent`)
+  - Logika `onContextItemSelected` diekstrak ke `handleContextMenuAction()` agar dipakai bareng oleh sheet & fallback
+  - Status: SELESAI — 6 Jul 2026
 
 ### 9.2 Toast → Snackbar
 
-- [ ] **`app/src/main/java/com/termux/app/TermuxActivity.java`** (semua `Toast.makeText`)
-  - Ganti semua Toast ke `Snackbar`
-  - Snackbar dengan aksi jika relevan
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/TermuxActivity.java`** (semua `Toast.makeText`/`Logger.showToast`)
+  - `showToast()` di TermuxActivity sudah pakai Snackbar; satu pemanggilan tersisa (`toggleTerminalToolbar`) yang masih lewat `Logger.showToast` (Toast) diubah ke `showToast()` (Snackbar)
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`app/src/main/java/com/termux/app/terminal/TermuxTerminalViewClient.java`** (semua Toast)
-  - Ganti ke Snackbar
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/terminal/TermuxTerminalViewClient.java`** (semua Toast)
+  - `Logger.showToast(mActivity, ...)` di `reportIssueFromTranscript()` diganti ke `mActivity.showToast(...)` (Snackbar); import `android.widget.Toast` yang sudah tidak terpakai dihapus
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 
@@ -617,3 +617,4 @@ Fase 20 WAJIB dikerjakan paling akhir sebagai audit penutup setelah semua fase l
 | 6 Jul 2026 | agent | Fase 6 & 7 | Sinkronisasi PLAN.md — checkbox belum ter-update walau kode sudah selesai (commit sebelumnya: f534be4, 5d49d5c). Status keseluruhan diperbaiki jadi Selesai: 28, Sisa: 14 |
 | 6 Jul 2026 | agent | Fase 8.1 & 8.2 | Tambah overridePendingTransition enter/exit di TermuxActivity, drawer parallax listener (setDrawerParallaxEffect). File anim/ sudah ada sebelumnya, sekarang benar-benar dipakai. Status: Selesai 30, Sisa 12 |
 | 6 Jul 2026 | agent | Perluasan PLAN | Tambah Fase 10-20 (Keyboard/Extra Keys, File Picker, Styling Picker, Plugin Feedback, Splash/App Identity, Onboarding, Search Overlay, Multi-Window, Accessibility, Performance, QA Final) — 20 item baru, dependency graph & status total diperbarui. Total item: 62, Selesai: 30, Sisa: 32. Belum ada kode yang diubah, murni dokumentasi/planning |
+| 6 Jul 2026 | agent | Fase 9.1 & 9.2 | Context menu terminal diganti dari floating ContextMenu klasik ke BottomSheetDialog kustom (layout baru: bottom_sheet_context_menu.xml, item_context_menu_option.xml, ic_check_accent.xml). Toast tersisa (Logger.showToast) di TermuxActivity.java dan TermuxTerminalViewClient.java diganti ke showToast() berbasis Snackbar. Build Actions sukses (commit b2ec028). Status: Selesai 33, Sisa 29 |
