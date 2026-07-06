@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,9 +27,16 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
@@ -533,7 +541,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         if (terminalToolbarViewPager == null) return;
 
         final boolean showNow = mPreferences.toogleShowTerminalToolbar();
-        Logger.showToast(this, (showNow ? getString(R.string.msg_enabling_terminal_toolbar) : getString(R.string.msg_disabling_terminal_toolbar)), true);
+        showToast((showNow ? getString(R.string.msg_enabling_terminal_toolbar) : getString(R.string.msg_disabling_terminal_toolbar)), true);
         terminalToolbarViewPager.setVisibility(showNow ? View.VISIBLE : View.GONE);
         if (showNow && isTerminalToolbarTextInputViewSelected()) {
             // Focus the text input view if just revealed.
@@ -618,28 +626,27 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
 
 
+    /** Held while the modern context menu {@link BottomSheetDialog} is showing, since the
+     * legacy {@link ContextMenu} passed by the framework is left empty on purpose. */
+    private static final class ContextMenuOption {
+        final int id;
+        final String label;
+        final boolean enabled;
+        final boolean checked;
+
+        ContextMenuOption(int id, String label, boolean enabled, boolean checked) {
+            this.id = id;
+            this.label = label;
+            this.enabled = enabled;
+            this.checked = checked;
+        }
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        TerminalSession currentSession = getCurrentSession();
-        if (currentSession == null) return;
-
-        boolean autoFillEnabled = mTerminalView.isAutoFillEnabled();
-
-        menu.add(Menu.NONE, CONTEXT_MENU_SELECT_URL_ID, Menu.NONE, R.string.action_select_url);
-        menu.add(Menu.NONE, CONTEXT_MENU_SHARE_TRANSCRIPT_ID, Menu.NONE, R.string.action_share_transcript);
-        if (!DataUtils.isNullOrEmpty(mTerminalView.getStoredSelectedText()))
-            menu.add(Menu.NONE, CONTEXT_MENU_SHARE_SELECTED_TEXT, Menu.NONE, R.string.action_share_selected_text);
-        if (autoFillEnabled)
-            menu.add(Menu.NONE, CONTEXT_MENU_AUTOFILL_USERNAME, Menu.NONE, R.string.action_autofill_username);
-        if (autoFillEnabled)
-            menu.add(Menu.NONE, CONTEXT_MENU_AUTOFILL_PASSWORD, Menu.NONE, R.string.action_autofill_password);
-        menu.add(Menu.NONE, CONTEXT_MENU_RESET_TERMINAL_ID, Menu.NONE, R.string.action_reset_terminal);
-        menu.add(Menu.NONE, CONTEXT_MENU_KILL_PROCESS_ID, Menu.NONE, getResources().getString(R.string.action_kill_process, getCurrentSession().getPid())).setEnabled(currentSession.isRunning());
-        menu.add(Menu.NONE, CONTEXT_MENU_STYLING_ID, Menu.NONE, R.string.action_style_terminal);
-        menu.add(Menu.NONE, CONTEXT_MENU_TOGGLE_KEEP_SCREEN_ON, Menu.NONE, R.string.action_toggle_keep_screen_on).setCheckable(true).setChecked(mPreferences.shouldKeepScreenOn());
-        menu.add(Menu.NONE, CONTEXT_MENU_HELP_ID, Menu.NONE, R.string.action_open_help);
-        menu.add(Menu.NONE, CONTEXT_MENU_SETTINGS_ID, Menu.NONE, R.string.action_open_settings);
-        menu.add(Menu.NONE, CONTEXT_MENU_REPORT_ID, Menu.NONE, R.string.action_report_issue);
+        // The legacy floating ContextMenu is intentionally left empty (no items added below).
+        // The actual options are shown in a modern BottomSheetDialog instead.
+        showContextMenuBottomSheet();
     }
 
     /** Hook system menu to show context menu instead. */
@@ -649,50 +656,119 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         return false;
     }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    /** Build the list of context menu options for the current session state. */
+    private List<ContextMenuOption> buildContextMenuOptions(TerminalSession currentSession) {
+        List<ContextMenuOption> options = new ArrayList<>();
+        boolean autoFillEnabled = mTerminalView.isAutoFillEnabled();
+
+        options.add(new ContextMenuOption(CONTEXT_MENU_SELECT_URL_ID, getString(R.string.action_select_url), true, false));
+        options.add(new ContextMenuOption(CONTEXT_MENU_SHARE_TRANSCRIPT_ID, getString(R.string.action_share_transcript), true, false));
+        if (!DataUtils.isNullOrEmpty(mTerminalView.getStoredSelectedText()))
+            options.add(new ContextMenuOption(CONTEXT_MENU_SHARE_SELECTED_TEXT, getString(R.string.action_share_selected_text), true, false));
+        if (autoFillEnabled)
+            options.add(new ContextMenuOption(CONTEXT_MENU_AUTOFILL_USERNAME, getString(R.string.action_autofill_username), true, false));
+        if (autoFillEnabled)
+            options.add(new ContextMenuOption(CONTEXT_MENU_AUTOFILL_PASSWORD, getString(R.string.action_autofill_password), true, false));
+        options.add(new ContextMenuOption(CONTEXT_MENU_RESET_TERMINAL_ID, getString(R.string.action_reset_terminal), true, false));
+        options.add(new ContextMenuOption(CONTEXT_MENU_KILL_PROCESS_ID, getResources().getString(R.string.action_kill_process, currentSession.getPid()), currentSession.isRunning(), false));
+        options.add(new ContextMenuOption(CONTEXT_MENU_STYLING_ID, getString(R.string.action_style_terminal), true, false));
+        options.add(new ContextMenuOption(CONTEXT_MENU_TOGGLE_KEEP_SCREEN_ON, getString(R.string.action_toggle_keep_screen_on), true, mPreferences.shouldKeepScreenOn()));
+        options.add(new ContextMenuOption(CONTEXT_MENU_HELP_ID, getString(R.string.action_open_help), true, false));
+        options.add(new ContextMenuOption(CONTEXT_MENU_SETTINGS_ID, getString(R.string.action_open_settings), true, false));
+        options.add(new ContextMenuOption(CONTEXT_MENU_REPORT_ID, getString(R.string.action_report_issue), true, false));
+        return options;
+    }
+
+    /** Show the terminal context menu as a modern {@link BottomSheetDialog} instead of the
+     * classic floating {@link ContextMenu}. */
+    private void showContextMenuBottomSheet() {
+        TerminalSession currentSession = getCurrentSession();
+        if (currentSession == null) return;
+
+        List<ContextMenuOption> options = buildContextMenuOptions(currentSession);
+
+        BottomSheetDialog sheet = new BottomSheetDialog(this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View sheetView = inflater.inflate(R.layout.bottom_sheet_context_menu, null);
+        LinearLayout container = sheetView.findViewById(R.id.context_menu_items_container);
+
+        for (ContextMenuOption option : options) {
+            View row = inflater.inflate(R.layout.item_context_menu_option, container, false);
+            TextView label = row.findViewById(R.id.context_menu_item_label);
+            ImageView checkIcon = row.findViewById(R.id.context_menu_item_check);
+
+            label.setText(option.label);
+            checkIcon.setVisibility(option.checked ? View.VISIBLE : View.GONE);
+
+            if (option.enabled) {
+                row.setAlpha(1f);
+                row.setOnClickListener(rowView -> {
+                    sheet.dismiss();
+                    handleContextMenuAction(option.id);
+                });
+            } else {
+                row.setAlpha(0.4f);
+                row.setClickable(false);
+            }
+
+            container.addView(row);
+        }
+
+        sheet.setOnDismissListener(dialog -> mTerminalView.onContextMenuClosed(null));
+        sheet.setContentView(sheetView);
+        sheet.show();
+    }
+
+    /** Handle a context menu action selected from the {@link #showContextMenuBottomSheet()}. */
+    private void handleContextMenuAction(int id) {
         TerminalSession session = getCurrentSession();
 
-        switch (item.getItemId()) {
+        switch (id) {
             case CONTEXT_MENU_SELECT_URL_ID:
                 mTermuxTerminalViewClient.showUrlSelection();
-                return true;
+                break;
             case CONTEXT_MENU_SHARE_TRANSCRIPT_ID:
                 mTermuxTerminalViewClient.shareSessionTranscript();
-                return true;
+                break;
             case CONTEXT_MENU_SHARE_SELECTED_TEXT:
                 mTermuxTerminalViewClient.shareSelectedText();
-                return true;
+                break;
             case CONTEXT_MENU_AUTOFILL_USERNAME:
                 mTerminalView.requestAutoFillUsername();
-                return true;
+                break;
             case CONTEXT_MENU_AUTOFILL_PASSWORD:
                 mTerminalView.requestAutoFillPassword();
-                return true;
+                break;
             case CONTEXT_MENU_RESET_TERMINAL_ID:
                 onResetTerminalSession(session);
-                return true;
+                break;
             case CONTEXT_MENU_KILL_PROCESS_ID:
                 showKillSessionDialog(session);
-                return true;
+                break;
             case CONTEXT_MENU_STYLING_ID:
                 showStylingDialog();
-                return true;
+                break;
             case CONTEXT_MENU_TOGGLE_KEEP_SCREEN_ON:
                 toggleKeepScreenOn();
-                return true;
+                break;
             case CONTEXT_MENU_HELP_ID:
                 startActivity(new Intent(this, HelpActivity.class));
-                return true;
+                break;
             case CONTEXT_MENU_SETTINGS_ID:
                 startActivity(new Intent(this, SettingsActivity.class));
-                return true;
+                break;
             case CONTEXT_MENU_REPORT_ID:
                 mTermuxTerminalViewClient.reportIssueFromTranscript();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
+                break;
         }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        // Kept as a safety fallback; the legacy ContextMenu is left empty on purpose since
+        // options are presented via showContextMenuBottomSheet() instead.
+        handleContextMenuAction(item.getItemId());
+        return true;
     }
 
     @Override
