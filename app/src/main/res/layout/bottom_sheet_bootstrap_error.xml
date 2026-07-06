@@ -77,7 +77,7 @@
             android:text="@string/bootstrap_error_try_again"
             app:strokeColor="@color/color_accent_primary"
             android:textColor="@color/color_accent_primary"
-            android:cornerRadius="12dp" />
+            app:cornerRadius="12dp" />
     </LinearLayout>
 
 </LinearLayout>

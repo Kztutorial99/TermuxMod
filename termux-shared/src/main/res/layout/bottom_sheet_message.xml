@@ -79,7 +79,7 @@
             android:layout_height="48dp"
             app:strokeColor="@color/color_accent_primary"
             android:textColor="@color/color_accent_primary"
-            android:cornerRadius="12dp" />
+            app:cornerRadius="12dp" />
     </LinearLayout>
 
 </LinearLayout>
