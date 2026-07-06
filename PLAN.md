@@ -374,15 +374,18 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 10.1 Extra Keys Button Feedback
 
-- [ ] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`** (bagian pembuatan button/key)
-  - Tambah `performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)` saat key ditekan
-  - Tambah animasi scale kecil (0.95x) saat pressed, kembali ke 1x saat release
-  - Status: belum dikerjakan
+- [x] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`** (bagian pembuatan button/key)
+  - Haptic dipindah ke `ACTION_DOWN` (lebih responsif dari onClick)
+  - Animasi scale 0.92x saat pressed, kembali 1x saat release/cancel (durasi 60ms turun, 120ms naik)
+  - Scale juga reset saat popup swipe-up muncul
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`** (bagian layout row)
-  - Smooth horizontal scroll untuk baris extra keys yang overflow (nested scroll behavior)
-  - Spacing antar key konsisten dengan token `space_xs`/`space_sm` dari dimens.xml
-  - Status: belum dikerjakan
+- [x] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`** (bagian layout row)
+  - Horizontal scroll via `HorizontalScrollView` wrapper di `view_terminal_toolbar_extra_keys.xml`
+  - ExtraKeysView width `wrap_content`, column spec tanpa FILL agar scroll bisa aktif saat overflow
+  - Spacing 2dp kiri-kanan per key (~4dp antar key = `space_xs`)
+  - Minimum button width 40dp (touch target minimum)
+  - Status: SELESAI — 6 Jul 2026
 
 ### 10.2 Soft Keyboard Transition
 
