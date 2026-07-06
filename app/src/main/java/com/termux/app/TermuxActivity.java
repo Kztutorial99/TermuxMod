@@ -196,6 +196,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
         super.onCreate(savedInstanceState);
 
+        overridePendingTransition(R.anim.slide_in_up, R.anim.fade_out);
+
         setContentView(R.layout.activity_termux);
 
         // Load termux shared preferences
@@ -225,6 +227,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         }
 
         setDrawerTheme();
+
+        setDrawerParallaxEffect();
 
         setTermuxTerminalViewAndClients();
 
@@ -421,6 +425,35 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         }
     }
 
+    /** Applies a subtle parallax motion to the terminal content while the drawer slides,
+     * so opening/closing the drawer feels smooth instead of an abrupt overlay. */
+    private void setDrawerParallaxEffect() {
+        DrawerLayout drawer = getDrawer();
+        final View terminalContent = findViewById(R.id.terminal_view);
+        if (drawer == null || terminalContent == null) return;
+
+        final float parallaxFactor = 0.25f;
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                terminalContent.setTranslationX(drawerView.getWidth() * slideOffset * parallaxFactor);
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                terminalContent.setTranslationX(0f);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
+    }
+
     private void setMargins() {
         ConstraintLayout relativeLayout = findViewById(R.id.activity_termux_root_relative_layout);
         int marginHorizontal = mProperties.getTerminalMarginHorizontal();
@@ -569,6 +602,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         // prevent duplicate calls to finish() if called from multiple places
         if (!TermuxActivity.this.isFinishing()) {
             finish();
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_out_down);
         }
     }
 
