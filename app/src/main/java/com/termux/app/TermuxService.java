@@ -741,9 +741,10 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
 
         // Set notification icon
         builder.setSmallIcon(R.drawable.ic_service_notification);
+        builder.setStyle(new Notification.BigTextStyle().bigText(notificationText));
 
-        // Set background color for small notification icon
-        builder.setColor(0xFF607D8B);
+        // Set background color for small notification icon (accent cyan)
+        builder.setColor(0xFF00E5CC);
 
         // TermuxSessions are always ongoing
         builder.setOngoing(true);

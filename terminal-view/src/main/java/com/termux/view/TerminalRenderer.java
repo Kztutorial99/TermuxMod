@@ -39,6 +39,8 @@ public final class TerminalRenderer {
 
         mTextPaint.setTypeface(typeface);
         mTextPaint.setAntiAlias(true);
+        mTextPaint.setSubpixelText(true);
+        mTextPaint.setHinting(Paint.HINTING_ON);
         mTextPaint.setTextSize(textSize);
 
         mFontLineSpacing = (int) Math.ceil(mTextPaint.getFontSpacing());

@@ -28,7 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import android.widget.Toast;
+import com.google.android.material.snackbar.Snackbar;
 
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
@@ -134,9 +134,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     private final BroadcastReceiver mTermuxActivityBroadcastReceiver = new TermuxActivityBroadcastReceiver();
 
     /**
-     * The last toast shown, used cancel current toast before showing new in {@link #showToast(String, boolean)}.
+     * The last Snackbar shown, used to dismiss current before showing new.
      */
-    Toast mLastToast;
+    Snackbar mLastSnackbar;
 
     /**
      * If between onResume() and onStop(). Note that only one session is in the foreground of the terminal view at the
@@ -572,13 +572,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         }
     }
 
-    /** Show a toast and dismiss the last one if still visible. */
+    /** Show a Snackbar and dismiss the last one if still visible. */
     public void showToast(String text, boolean longDuration) {
         if (text == null || text.isEmpty()) return;
-        if (mLastToast != null) mLastToast.cancel();
-        mLastToast = Toast.makeText(TermuxActivity.this, text, longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
-        mLastToast.setGravity(Gravity.TOP, 0, 0);
-        mLastToast.show();
+        if (mLastSnackbar != null && mLastSnackbar.isShownOrQueued()) mLastSnackbar.dismiss();
+        View rootView = getWindow().getDecorView().getRootView();
+        int duration = longDuration ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT;
+        mLastSnackbar = Snackbar.make(rootView, text, duration);
+        mLastSnackbar.show();
     }
 
 

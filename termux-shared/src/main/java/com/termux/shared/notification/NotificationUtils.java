@@ -97,6 +97,8 @@ public class NotificationUtils {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
 
         NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+        channel.setShowBadge(false);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
         NotificationManager notificationManager = getNotificationManager(context);
         if (notificationManager != null)
