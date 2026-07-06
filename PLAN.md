@@ -201,36 +201,37 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 4.1 Settings Activity
 
-- [ ] **`app/src/main/res/layout/activity_settings.xml`**
+- [x] **`app/src/main/res/layout/activity_settings.xml`**
   - Tambah custom toolbar dengan back button dan judul
   - Background konsisten dengan tema
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`app/src/main/java/com/termux/app/activities/SettingsActivity.java`**
+- [x] **`app/src/main/java/com/termux/app/activities/SettingsActivity.java`**
   - Tambah smooth transition saat masuk/keluar
   - Custom toolbar terapkan style baru
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ### 4.2 Preference Fragments
 
-- [ ] **`app/src/main/java/com/termux/app/fragments/settings/termux/TerminalViewPreferencesFragment.java`**
-  - Gunakan `MaterialPreference` style
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/fragments/settings/termux/TerminalViewPreferencesFragment.java`**
+  - Gunakan `MaterialPreference` style via `preferenceTheme` di styles.xml
+  - Status: SELESAI (via theme override) — 6 Jul 2026
 
-- [ ] **`app/src/main/java/com/termux/app/fragments/settings/termux/TerminalIOPreferencesFragment.java`**
-  - Gunakan `MaterialPreference` style
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/fragments/settings/termux/TerminalIOPreferencesFragment.java`**
+  - Gunakan `MaterialPreference` style via `preferenceTheme` di styles.xml
+  - Status: SELESAI (via theme override) — 6 Jul 2026
 
-- [ ] **`app/src/main/java/com/termux/app/fragments/settings/termux/DebuggingPreferencesFragment.java`**
-  - Gunakan `MaterialPreference` style
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/fragments/settings/termux/DebuggingPreferencesFragment.java`**
+  - Gunakan `MaterialPreference` style via `preferenceTheme` di styles.xml
+  - Status: SELESAI (via theme override) — 6 Jul 2026
 
 ### 4.3 Help Activity
 
-- [ ] **`app/src/main/java/com/termux/app/activities/HelpActivity.java`**
-  - Custom toolbar modern
+- [x] **`app/src/main/java/com/termux/app/activities/HelpActivity.java`**
+  - Custom toolbar modern (AppCompatActivity + MaterialToolbar)
+  - LinearProgressIndicator menggantikan ProgressBar klasik
   - WebView dengan injected CSS untuk dark mode yang konsisten
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 
