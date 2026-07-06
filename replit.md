@@ -12,6 +12,7 @@ Repo GitHub: https://github.com/Kztutorial99/TermuxMod
 - Bahasa komunikasi: Bahasa Indonesia
 - Selalu push ke GitHub setelah perubahan signifikan
 - Selalu jalankan safety-check sebelum dan sesudah edit apapun
+- JANGAN propose/usulkan follow-up tasks di akhir setiap sesi — fitur ini dimatikan
 
 ## Arah Desain — WAJIB DIIKUTI SEMUA AGENT
 
