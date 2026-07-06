@@ -57,9 +57,10 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ## STATUS PROGRES KESELURUHAN
 
-- Total item: 42
+- Total item: 62
 - Selesai: 30
-- Sisa: 12
+- Sisa: 32
+- Total fase: 20 (Fase 1-9 fondasi awal, Fase 10-20 perluasan rombak TermuxModern 2026)
 
 ---
 
@@ -367,6 +368,196 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ---
 
+## FASE 10 — Keyboard & Extra Keys Modernization
+
+> Target: baris extra keys dan interaksi keyboard terasa premium, responsif, dengan feedback haptic dan visual modern.
+
+### 10.1 Extra Keys Button Feedback
+
+- [ ] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`** (bagian pembuatan button/key)
+  - Tambah `performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)` saat key ditekan
+  - Tambah animasi scale kecil (0.95x) saat pressed, kembali ke 1x saat release
+  - Status: belum dikerjakan
+
+- [ ] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`** (bagian layout row)
+  - Smooth horizontal scroll untuk baris extra keys yang overflow (nested scroll behavior)
+  - Spacing antar key konsisten dengan token `space_xs`/`space_sm` dari dimens.xml
+  - Status: belum dikerjakan
+
+### 10.2 Soft Keyboard Transition
+
+- [ ] **`app/src/main/java/com/termux/app/terminal/TermuxTerminalViewClient.java`** (bagian toggle soft keyboard)
+  - Animasi smooth saat keyboard show/hide menggunakan `WindowInsetsAnimation` (API 30+) dengan fallback aman di bawahnya
+  - Status: belum dikerjakan
+
+---
+
+## FASE 11 — File Picker & Document Provider UI
+
+> Target: pengalaman memilih dan membagikan file terasa modern, bukan dialog sistem polos tanpa konteks.
+
+### 11.1 Document Provider Metadata
+
+- [ ] **`app/src/main/java/com/termux/filepicker/TermuxDocumentsProvider.java`** (hanya bagian metadata tampilan/icon MIME, bukan logic path/akses file)
+  - Lengkapi mapping icon berdasarkan tipe file (kode, gambar, arsip, teks) agar file picker sistem menampilkan ikon yang relevan
+  - Status: belum dikerjakan
+
+### 11.2 Share/Open With Bottom Sheet
+
+- [ ] **File baru:** `app/src/main/java/com/termux/app/file/ShareOptionsBottomSheet.java` + layout `bottom_sheet_share_options.xml`
+  - BottomSheet kustom untuk aksi "Share output" / "Open with" dari hasil command, menggantikan chooser sistem polos jika relevan
+  - Tidak mengubah class `TermuxDocumentsProvider` yang sudah ada, hanya menambah pemanggil opsional
+  - Status: belum dikerjakan
+
+---
+
+## FASE 12 — Styling & Theme Picker
+
+> Target: alur pemilihan font/skema warna terminal terasa seperti theme gallery modern 2026, bukan sekadar redirect ke app lain.
+
+### 12.1 Termux:Styling Entry Point
+
+- [ ] **`app/src/main/java/com/termux/app/TermuxActivity.java`** (bagian pengecekan Termux:Styling terpasang/tidak)
+  - Tambah kartu preview modern (MaterialCardView) sebelum redirect ke Termux:Styling atau F-Droid
+  - Status: belum dikerjakan
+
+### 12.2 In-App Color Scheme Preview
+
+- [ ] **`app/src/main/java/com/termux/app/fragments/settings/termux/TerminalViewPreferencesFragment.java`**
+  - Tambah preview swatch warna (background/foreground/cursor aktif) di bagian atas fragment sebelum daftar preference
+  - Status: belum dikerjakan
+
+---
+
+## FASE 13 — Plugin & Background Task Feedback
+
+> Target: eksekusi command lewat plugin (RunCommandService, Termux:Tasker) memberi feedback visual yang konsisten dengan desain 2026, bukan Toast/notifikasi polos.
+
+### 13.1 RunCommandService Feedback
+
+- [ ] **`app/src/main/java/com/termux/app/RunCommandService.java`** (hanya bagian feedback error ke user, bukan logic eksekusi command)
+  - Ganti feedback error dari Toast/notifikasi default ke notifikasi bergaya sama seperti Fase 6 (BigTextStyle, warna aksen)
+  - Status: belum dikerjakan
+
+### 13.2 Plugin Error Notification Consistency
+
+- [ ] **`termux-shared/src/main/java/com/termux/shared/termux/plugins/PluginUtils.java`** (hanya bagian pembuatan notifikasi error, bukan logic pengiriman PendingIntent)
+  - Pastikan channel ID, warna, dan style notifikasi error plugin konsisten dengan `NotificationUtils` hasil Fase 6
+  - Status: belum dikerjakan
+
+---
+
+## FASE 14 — Splash Screen & App Identity
+
+> Target: kesan pertama membuka TermuxMod terasa modern sejak ikon dan splash, bukan layar putih polos bawaan Android lama.
+
+### 14.1 Adaptive Icon Modern
+
+- [ ] **`app/src/main/res/mipmap-anydpi-v26/`** dan drawable terkait (`ic_launcher_foreground.xml`, `ic_launcher_background.xml`)
+  - Adaptive icon dengan aksen palette TermuxMod 2026 (cyan-teal/violet di atas dasar gelap)
+  - Status: belum dikerjakan
+
+### 14.2 Splash Theme Tanpa Flicker Putih
+
+- [ ] **`app/src/main/res/values/styles.xml`** (tambah splash theme, gunakan `androidx.core.splashscreen` bila kompatibel dengan minSdk 21)
+  - Background splash gelap `#0A0A0F` dengan logo di tengah, tanpa flicker putih saat cold start
+  - Status: belum dikerjakan
+
+---
+
+## FASE 15 — Onboarding / First-Run Experience
+
+> Target: pengguna baru disambut walkthrough singkat modern, bukan langsung dilempar ke shell kosong tanpa konteks.
+
+### 15.1 First Run Bottom Sheet
+
+- [ ] **File baru:** `app/src/main/java/com/termux/app/onboarding/FirstRunBottomSheet.java` + layout terkait
+  - BottomSheet 2-3 halaman (ViewPager2 + dots indicator) menjelaskan sesi, extra keys, dan settings
+  - Trigger sekali via flag SharedPreferences baru (tidak mengubah flag/preference yang sudah ada)
+  - Status: belum dikerjakan
+
+---
+
+## FASE 16 — Terminal Search Overlay
+
+> Target: pencarian teks di scrollback terminal tersedia lewat overlay modern yang melayang di atas terminal.
+
+### 16.1 Search Overlay Component
+
+- [ ] **File baru:** `app/src/main/java/com/termux/app/terminal/TerminalSearchOverlay.java` + layout `view_terminal_search_overlay.xml`
+  - Floating search bar di atas terminal dengan highlight hasil pencarian memakai warna aksen
+  - Tombol next/prev/close dengan ripple halus, muncul/hilang dengan animasi fade dari Fase 8
+  - Status: belum dikerjakan
+
+---
+
+## FASE 17 — Multi-Window & Orientation Polish
+
+> Target: TermuxMod tetap terasa modern dan tidak pecah layout saat split-screen, foldable, atau rotasi.
+
+### 17.1 Responsive Drawer & Margin
+
+- [ ] **`app/src/main/res/layout/activity_termux.xml`** + qualifier baru (`layout-land/`, `layout-sw600dp/` dibuat bila belum ada)
+  - Lebar drawer adaptif (280dp portrait penuh, menyempit proporsional saat split-screen sempit)
+  - Status: belum dikerjakan
+
+---
+
+## FASE 18 — Accessibility Pass
+
+> Target: semua komponen yang sudah dimodernisasi (Fase 1-9) punya content description dan kontras yang layak (WCAG AA minimum).
+
+### 18.1 Content Description Audit
+
+- [ ] Audit seluruh `ImageButton`/`ImageView` interaktif hasil Fase 2, 3, 5, 6 (drawer, dialog, notifikasi, session list)
+  - Tambah `android:contentDescription` yang hilang, gunakan string resource baru bila perlu (jangan hapus key lama)
+  - Status: belum dikerjakan
+
+### 18.2 Contrast Verification
+
+- [ ] Verifikasi rasio kontras teks vs background sesuai palette TermuxMod 2026 (`color_text_secondary` vs `color_surface`, dll.)
+  - Dokumentasikan hasil pengukuran di `.agents/memory/termuxmod-design-direction.md`
+  - Status: belum dikerjakan
+
+---
+
+## FASE 19 — Performance & Rendering Polish
+
+> Target: seluruh animasi dan efek modern (Fase 7, 8) tidak menurunkan performa scroll/render terminal, terutama di device low-end.
+
+### 19.1 Terminal Render Guard
+
+- [ ] **`terminal-view/src/main/java/com/termux/view/TerminalView.java`** (bagian invalidate/redraw, bukan logic emulator)
+  - Pastikan parallax drawer dan animasi baru tidak memicu overdraw berlebih pada TerminalView (gunakan hardware layer sementara saat animasi berjalan bila perlu)
+  - Status: belum dikerjakan
+
+### 19.2 Reduce Motion Preference
+
+- [ ] **`app/src/main/java/com/termux/app/fragments/settings/termux/TerminalViewPreferencesFragment.java`**
+  - Tambah preference baru "Reduce animations" agar user device low-end bisa menonaktifkan animasi berat (parallax, transisi slide)
+  - Status: belum dikerjakan
+
+---
+
+## FASE 20 — Final QA & Consistency Audit
+
+> Target: seluruh 19 fase sebelumnya konsisten satu sama lain, tidak ada elemen UI klasik tersisa. Fase penutup rombak TermuxModern 2026.
+
+### 20.1 Full Visual Audit
+
+- [ ] Review manual seluruh layar (Main, Settings, Help, Session list, Dialog, Notifikasi, Search overlay, Onboarding)
+  - Pastikan tidak ada `AlertDialog`/`ProgressDialog`/`Toast`/warna Material klasik tersisa di mana pun
+  - Catat temuan dan perbaikan di LOG PROGRES
+  - Status: belum dikerjakan
+
+### 20.2 Safety & Regression Final Check
+
+- [ ] Jalankan `bash scripts/safety-check.sh` full pass setelah semua fase selesai
+  - Build APK debug via CI, lakukan smoke test dasar (buka shell, jalankan command, buka drawer, buka settings, buka search overlay)
+  - Status: belum dikerjakan
+
+---
+
 ## CATATAN PENTING UNTUK AGENT
 
 ### Setiap selesai 1 item:
@@ -398,11 +589,24 @@ Fase 1 (Tema & Warna)
     └── Fase 7 (Terminal)
     └── Fase 8 (Animasi) ← bergantung Fase 2, 3, 4
     └── Fase 9 (UI Logic) ← bergantung Fase 1, 3
+        └── Fase 10 (Keyboard & Extra Keys) ← bergantung Fase 2
+        └── Fase 11 (File Picker) ← bergantung Fase 3
+        └── Fase 12 (Styling & Theme Picker) ← bergantung Fase 4
+        └── Fase 13 (Plugin Feedback) ← bergantung Fase 6
+        └── Fase 14 (Splash & App Identity) ← bergantung Fase 1
+        └── Fase 15 (Onboarding) ← bergantung Fase 3, 8
+        └── Fase 16 (Search Overlay) ← bergantung Fase 7, 8
+        └── Fase 17 (Multi-Window) ← bergantung Fase 2
+        └── Fase 18 (Accessibility) ← bergantung Fase 2, 3, 5, 6
+        └── Fase 19 (Performance) ← bergantung Fase 7, 8
+        └── Fase 20 (QA Final) ← bergantung SEMUA fase 1-19
 ```
 
 **Fase 1 harus selesai sebelum fase lain dimulai.**
 Fase 2–7 bisa dikerjakan paralel setelah Fase 1 selesai.
-Fase 8 dan 9 dikerjakan terakhir.
+Fase 8 dan 9 menutup gelombang pertama modernisasi (fondasi).
+Fase 10–19 adalah gelombang kedua (perluasan rombak TermuxModern 2026) — bisa dikerjakan paralel sesuai dependency masing-masing di atas.
+Fase 20 WAJIB dikerjakan paling akhir sebagai audit penutup setelah semua fase lain selesai.
 
 ---
 
@@ -412,3 +616,4 @@ Fase 8 dan 9 dikerjakan terakhir.
 |---------|-------|------|---------|
 | 6 Jul 2026 | agent | Fase 6 & 7 | Sinkronisasi PLAN.md — checkbox belum ter-update walau kode sudah selesai (commit sebelumnya: f534be4, 5d49d5c). Status keseluruhan diperbaiki jadi Selesai: 28, Sisa: 14 |
 | 6 Jul 2026 | agent | Fase 8.1 & 8.2 | Tambah overridePendingTransition enter/exit di TermuxActivity, drawer parallax listener (setDrawerParallaxEffect). File anim/ sudah ada sebelumnya, sekarang benar-benar dipakai. Status: Selesai 30, Sisa 12 |
+| 6 Jul 2026 | agent | Perluasan PLAN | Tambah Fase 10-20 (Keyboard/Extra Keys, File Picker, Styling Picker, Plugin Feedback, Splash/App Identity, Onboarding, Search Overlay, Multi-Window, Accessibility, Performance, QA Final) — 20 item baru, dependency graph & status total diperbarui. Total item: 62, Selesai: 30, Sisa: 32. Belum ada kode yang diubah, murni dokumentasi/planning |
