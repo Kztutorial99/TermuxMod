@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.textfield.TextInputLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/terminal_toolbar_text_input"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:imeOptions="actionSend|flagNoFullscreen"
-    android:maxLines="1"
-    android:inputType="text"
-    android:importantForAutofill="no"
-    android:textColor="@android:color/white"
-    android:textColorHighlight="@android:color/darker_gray"
-    android:paddingTop="0dp"
-    android:textCursorDrawable="@null"
-    android:paddingBottom="0dp"
-    tools:ignore="LabelFor" />
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+    app:boxStrokeColor="@color/color_border"
+    app:boxBackgroundColor="@color/color_surface"
+    app:hintEnabled="false"
+    app:boxCornerRadiusTopStart="@dimen/radius_sm"
+    app:boxCornerRadiusTopEnd="@dimen/radius_sm"
+    app:boxCornerRadiusBottomStart="@dimen/radius_sm"
+    app:boxCornerRadiusBottomEnd="@dimen/radius_sm">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/terminal_toolbar_text_input"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:imeOptions="actionSend|flagNoFullscreen"
+        android:maxLines="1"
+        android:inputType="text"
+        android:importantForAutofill="no"
+        android:textColor="@color/color_text_primary"
+        android:textColorHighlight="@color/color_surface_variant"
+        android:textCursorDrawable="@null"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:background="@null"
+        tools:ignore="LabelFor" />
+
+</com.google.android.material.textfield.TextInputLayout>

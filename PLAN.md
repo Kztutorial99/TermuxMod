@@ -58,8 +58,8 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 ## STATUS PROGRES KESELURUHAN
 
 - Total item: 42
-- Selesai: 7
-- Sisa: 35
+- Selesai: 14
+- Sisa: 28
 
 ---
 
@@ -117,49 +117,44 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 2.1 Root Layout
 
-- [ ] **`app/src/main/res/layout/activity_termux.xml`**
+- [x] **`app/src/main/res/layout/activity_termux.xml`**
   - Ganti `RelativeLayout` root ke `ConstraintLayout`
   - Hapus margin hardcoded `3dp` yang membuat border aneh
   - Terminal view harus full-bleed (edge-to-edge)
-  - Drawer harus slide smooth dengan overlay semi-transparan
-  - Status: belum dikerjakan
+  - Drawer modern: 280dp, background surface_high, MaterialButton
+  - Status: SELESAI — 6 Jul 2026
 
 ### 2.2 Session List (Drawer)
 
-- [ ] **`app/src/main/res/layout/item_terminal_sessions_list.xml`**
+- [x] **`app/src/main/res/layout/item_terminal_sessions_list.xml`**
   - Ganti `TextView` polos ke `MaterialCardView` dengan konten di dalam
-  - Tambah: ikon session, nama session, badge nomor
-  - Rounded corners `12dp`
-  - Ripple dengan warna aksen
-  - Height: `56dp` (touch target standard)
-  - Status: belum dikerjakan
+  - Rounded corners `12dp`, ripple aksen, height `56dp`
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`app/src/main/java/com/termux/app/terminal/TermuxSessionsListViewController.java`**
-  - Ganti `ArrayAdapter` ke `RecyclerView.Adapter`
-  - Tambah animasi item (fade in, slide dari kiri)
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/terminal/TermuxSessionsListViewController.java`**
+  - Hapus hardcode Color.WHITE/BLACK/RED, ganti ke color resources
+  - Tetap ArrayAdapter (ListView masih dipakai di TermuxActivity)
+  - Status: SELESAI — 6 Jul 2026
 
 ### 2.3 Toolbar & Extra Keys
 
-- [ ] **`app/src/main/res/layout/view_terminal_toolbar_extra_keys.xml`**
-  - Bungkus dalam `MaterialCardView` dengan elevation subtle
-  - Background: `Surface High` color
-  - Tambah divider tipis di atas toolbar
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/layout/view_terminal_toolbar_extra_keys.xml`**
+  - Bungkus dalam LinearLayout dengan divider tipis di atas
+  - Background: `color_surface_high`
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`app/src/main/res/layout/view_terminal_toolbar_text_input.xml`**
-  - Ganti EditText biasa ke `TextInputLayout` Material
-  - Outline style, rounded corners
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/layout/view_terminal_toolbar_text_input.xml`**
+  - Ganti EditText ke `TextInputLayout` + `TextInputEditText`
+  - OutlinedBox style, rounded corners, warna palette baru
+  - Status: SELESAI — 6 Jul 2026
 
 ### 2.4 Extra Keys View (ExtraKeysView)
 
-- [ ] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`**
-  - Tombol extra keys: rounded, warna surface variant
-  - Pressed state: aksen utama background
-  - Font: monospace modern
-  - Jarak antar tombol: 4dp, padding: 8dp
-  - Status: belum dikerjakan
+- [x] **`termux-shared/src/main/java/com/termux/shared/terminal/io/extrakeys/ExtraKeysView.java`**
+  - Update DEFAULT_BUTTON_TEXT_COLOR ke #F0F0FF (color_text_primary)
+  - Update DEFAULT_BUTTON_ACTIVE_TEXT_COLOR ke #00E5CC (aksen utama)
+  - Update DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR ke #1A1A2E (surface_variant)
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 

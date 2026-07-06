@@ -1,7 +1,5 @@
 package com.termux.app.terminal;
 
-import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.SpannableString;
@@ -37,7 +35,6 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
         this.mActivity = activity;
     }
 
-    @SuppressLint("SetTextI18n")
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -53,14 +50,6 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
         if (sessionAtRow == null) {
             sessionTitleView.setText("null session");
             return sessionRowView;
-        }
-
-        boolean isUsingBlackUI = mActivity.getProperties().isUsingBlackUI();
-
-        if (isUsingBlackUI) {
-            sessionTitleView.setBackground(
-                ContextCompat.getDrawable(mActivity, R.drawable.session_background_black_selected)
-            );
         }
 
         String name = sessionAtRow.mSessionName;
@@ -84,9 +73,12 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
         } else {
             sessionTitleView.setPaintFlags(sessionTitleView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
-        int defaultColor = isUsingBlackUI ? Color.WHITE : Color.BLACK;
-        int color = sessionRunning || sessionAtRow.getExitStatus() == 0 ? defaultColor : Color.RED;
+
+        int color = (sessionRunning || sessionAtRow.getExitStatus() == 0)
+            ? ContextCompat.getColor(mActivity, R.color.color_text_primary)
+            : ContextCompat.getColor(mActivity, R.color.color_accent_error);
         sessionTitleView.setTextColor(color);
+
         return sessionRowView;
     }
 

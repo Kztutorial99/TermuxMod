@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.termux.shared.terminal.io.extrakeys.ExtraKeysView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/terminal_toolbar_extra_keys"
-    style="?android:attr/buttonBarStyle"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentBottom="true"
-    android:orientation="horizontal" />
+    android:orientation="vertical"
+    android:background="@color/color_surface_high">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_border" />
+
+    <com.termux.shared.terminal.io.extrakeys.ExtraKeysView
+        android:id="@+id/terminal_toolbar_extra_keys"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" />
+
+</LinearLayout>
