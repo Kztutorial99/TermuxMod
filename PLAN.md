@@ -58,8 +58,8 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 ## STATUS PROGRES KESELURUHAN
 
 - Total item: 42
-- Selesai: 28
-- Sisa: 14
+- Selesai: 30
+- Sisa: 12
 
 ---
 
@@ -326,20 +326,20 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 8.1 Activity Transitions
 
-- [ ] **`app/src/main/java/com/termux/app/TermuxActivity.java`** (bagian transisi)
-  - Enter: fade in + slide up (300ms ease-out)
-  - Exit: fade out + slide down (200ms ease-in)
-  - Drawer open/close: animasi paralaks
-  - Status: belum dikerjakan
+- [x] **`app/src/main/java/com/termux/app/TermuxActivity.java`** (bagian transisi)
+  - Enter: `overridePendingTransition(R.anim.slide_in_up, R.anim.fade_out)` di `onCreate()` (300ms ease-out)
+  - Exit: `overridePendingTransition(R.anim.fade_in, R.anim.slide_out_down)` di `finishActivityIfNotFinishing()` (200ms ease-in)
+  - Drawer open/close: `setDrawerParallaxEffect()` — terminal content bergeser translationX mengikuti slideOffset drawer (parallaxFactor 0.25)
+  - Status: SELESAI — 6 Jul 2026
 
 ### 8.2 Shared Element & Motion
 
-- [ ] **`app/src/main/res/anim/`** (buat folder jika belum ada)
-  - `slide_in_up.xml` — sheet masuk dari bawah
-  - `slide_out_down.xml` — sheet keluar ke bawah
-  - `fade_in.xml` — komponen muncul
-  - `fade_out.xml` — komponen hilang
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/anim/`** (sudah ada)
+  - `slide_in_up.xml` — translate Y 100%->0% 300ms decelerate_cubic + alpha fade in
+  - `slide_out_down.xml` — translate Y 0%->100% 250ms accelerate_cubic + alpha fade out
+  - `fade_in.xml` — alpha 0->1 300ms decelerate_quad
+  - `fade_out.xml` — alpha 1->0 200ms accelerate_quad
+  - Status: SELESAI — 6 Jul 2026 (sudah dibuat sebelumnya, sekarang digunakan di TermuxActivity)
 
 ---
 
@@ -411,3 +411,4 @@ Fase 8 dan 9 dikerjakan terakhir.
 | Tanggal | Agent | Item | Catatan |
 |---------|-------|------|---------|
 | 6 Jul 2026 | agent | Fase 6 & 7 | Sinkronisasi PLAN.md — checkbox belum ter-update walau kode sudah selesai (commit sebelumnya: f534be4, 5d49d5c). Status keseluruhan diperbaiki jadi Selesai: 28, Sisa: 14 |
+| 6 Jul 2026 | agent | Fase 8.1 & 8.2 | Tambah overridePendingTransition enter/exit di TermuxActivity, drawer parallax listener (setDrawerParallaxEffect). File anim/ sudah ada sebelumnya, sekarang benar-benar dipakai. Status: Selesai 30, Sisa 12 |
