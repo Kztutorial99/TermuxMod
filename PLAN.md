@@ -58,8 +58,8 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 ## STATUS PROGRES KESELURUHAN
 
 - Total item: 42
-- Selesai: 0
-- Sisa: 42
+- Selesai: 7
+- Sisa: 35
 
 ---
 
@@ -69,45 +69,45 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 1.1 Color Resources
 
-- [ ] **`app/src/main/res/values/colors.xml`**
+- [x] **`app/src/main/res/values/colors.xml`**
   - Ganti seluruh isi dengan palette TermuxMod 2026
   - Tambah semua token warna: background, surface, aksen, text, border, ripple
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`termux-shared/src/main/res/values/colors.xml`**
+- [x] **`termux-shared/src/main/res/values/colors.xml`**
   - Sinkronkan dengan palette yang sama
   - Hapus warna lama (red_400 #FF0000, grey_200, dll.)
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ### 1.2 Theme Resources
 
-- [ ] **`app/src/main/res/values/styles.xml`**
+- [x] **`app/src/main/res/values/styles.xml`**
   - Ganti parent dari `Theme.Material.Light.NoActionBar` ke `Theme.MaterialComponents.DayNight.NoActionBar`
   - Terapkan color tokens baru
   - Tambah ShapeAppearance rounded corners (12dp default, 16dp card)
   - Tambah transisi Activity (fade + slide)
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`termux-shared/src/main/res/values/themes.xml`**
+- [x] **`termux-shared/src/main/res/values/themes.xml`**
   - Ganti parent semua style ke MaterialComponents
   - Terapkan palette baru
   - Hapus penggunaan warna red_400 (#FF0000) sebagai colorPrimary
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`termux-shared/src/main/res/values-night/themes.xml`**
+- [x] **`termux-shared/src/main/res/values-night/themes.xml`**
   - Pastikan dark theme konsisten dengan palette TermuxMod 2026
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ### 1.3 Dimens & Typography
 
-- [ ] **`app/src/main/res/values/dimens.xml`** (buat baru jika belum ada)
+- [x] **`app/src/main/res/values/dimens.xml`** (buat baru jika belum ada)
   - Definisikan spacing: `space_xs=4dp`, `space_sm=8dp`, `space_md=16dp`, `space_lg=24dp`, `space_xl=32dp`
   - Definisikan radius: `radius_sm=8dp`, `radius_md=12dp`, `radius_lg=16dp`, `radius_pill=50dp`
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`termux-shared/src/main/res/values/dimens.xml`**
+- [x] **`termux-shared/src/main/res/values/dimens.xml`**
   - Sinkronkan dimens yang sama
-  - Status: belum dikerjakan
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 

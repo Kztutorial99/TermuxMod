@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_markdown_code_inline">#1F000000</color>
-    <color name="background_markdown_code_block">#0F000000</color>
 
+    <!-- TermuxMod 2026 — Background Layer -->
+    <color name="color_background">#0A0A0F</color>
+    <color name="color_surface">#12121A</color>
+    <color name="color_surface_variant">#1A1A2E</color>
+    <color name="color_surface_high">#222236</color>
+
+    <!-- TermuxMod 2026 — Accent -->
+    <color name="color_accent_primary">#00E5CC</color>
+    <color name="color_accent_secondary">#7B61FF</color>
+    <color name="color_accent_error">#FF4757</color>
+
+    <!-- TermuxMod 2026 — Text -->
+    <color name="color_text_primary">#F0F0FF</color>
+    <color name="color_text_secondary">#8888AA</color>
+    <color name="color_text_disabled">#444466</color>
+
+    <!-- TermuxMod 2026 — Border and Ripple -->
+    <color name="color_border">#2A2A3E</color>
+    <color name="color_ripple">#1A00E5CC</color>
+
+    <!-- Markdown code block backgrounds -->
+    <color name="background_markdown_code_inline">#1F00E5CC</color>
+    <color name="background_markdown_code_block">#0F00E5CC</color>
+
+    <!-- Utility -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
 
-    <color name="red_400">#FF0000</color>
-    <color name="red_800">#C4001D</color>
-
-    <color name="grey_200">#EEEEEE</color>
-    <color name="grey_800">#424242</color>
-    <color name="grey_900">#212121</color>
-
-    <color name="red_error">#DC143C</color>
-    <color name="red_error_link">#FC143C</color>
 </resources>
