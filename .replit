@@ -1,3 +1,4 @@
+modules = ["java-graalvm22.3", "bash"]
 [agent]
 expertMode = true
 
@@ -23,3 +24,6 @@ args = "bash scripts/safety-check.sh"
 
 [workflows.workflow.metadata]
 isValidation = true
+
+[nix]
+channel = "stable-25_05"
