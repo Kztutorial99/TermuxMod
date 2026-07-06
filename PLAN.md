@@ -241,42 +241,41 @@ Ripple            #00E5CC22 (aksen utama 13% opacity)
 
 ### 5.1 Session Drawables
 
-- [ ] **`app/src/main/res/drawable/session_background_selected.xml`**
-  - Ganti ke `MaterialShapeDrawable` rounded dengan warna aksen
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/session_background_selected.xml`**
+  - Selector tetap sama (referensi ke current_session + session_ripple yang sudah modern)
+  - Status: SELESAI (tidak perlu ubah) — 6 Jul 2026
 
-- [ ] **`app/src/main/res/drawable/session_background_black_selected.xml`**
-  - Sinkronkan dengan yang di atas
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/session_background_black_selected.xml`**
+  - Selector tetap sama (referensi ke current_session_black + session_ripple_black yang sudah modern)
+  - Status: SELESAI (tidak perlu ubah) — 6 Jul 2026
 
-- [ ] **`app/src/main/res/drawable/session_ripple.xml`**
-  - Ripple dengan warna aksen utama (13% opacity)
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/session_ripple.xml`**
+  - Ripple cyan #00E5CC 13% opacity + background dark #131320
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`app/src/main/res/drawable/current_session.xml`**
-  - Indikator session aktif: garis vertikal aksen kiri card
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/current_session.xml`**
+  - layer-list: background cyan 8% + garis vertikal aksen 3dp kiri
+  - Status: SELESAI — 6 Jul 2026
 
 ### 5.2 Icon Drawables
 
-- [ ] **`app/src/main/res/drawable/ic_new_session.xml`**
-  - Vector icon modern (plus dalam circle)
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/ic_new_session.xml`**
+  - Vector plus-in-square modern dua warna (outline #E8E8F0, plus #00E5CC)
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`app/src/main/res/drawable/ic_settings.xml`**
-  - Vector icon modern
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/ic_settings.xml`**
+  - Hapus android:tint hitam, fillColor text-primary #E8E8F0
+  - Status: SELESAI — 6 Jul 2026
 
-- [ ] **`app/src/main/res/drawable/ic_service_notification.xml`**
-  - Icon notifikasi modern, monochrome
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/ic_service_notification.xml`**
+  - Clean up whitespace, tetap monochrome putih
+  - Status: SELESAI — 6 Jul 2026
 
 ### 5.3 Scroll Bar
 
-- [ ] **`app/src/main/res/drawable/terminal_scroll_shape.xml`**
-  - Scrollbar tipis, rounded, warna muted
-  - Width: 3dp, corner radius: 2dp
-  - Status: belum dikerjakan
+- [x] **`app/src/main/res/drawable/terminal_scroll_shape.xml`**
+  - Width: 3dp, corner radius: 2dp, warna muted #4D7B8899
+  - Status: SELESAI — 6 Jul 2026
 
 ---
 
