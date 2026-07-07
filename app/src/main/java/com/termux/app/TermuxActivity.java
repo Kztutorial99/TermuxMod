@@ -1651,7 +1651,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             android.widget.ProgressBar progress = convertView.findViewById(R.id.pkg_progress);
 
             if (nameView != null) nameView.setText(name);
-            if (verView  != null) verView.setText(version);
+            if (verView  != null) {
+                if (installed) {
+                    verView.setText(version);
+                    verView.setVisibility(View.VISIBLE);
+                } else {
+                    verView.setVisibility(View.GONE);
+                }
+            }
             if (descView != null) descView.setText(desc);
 
             // Tampilkan progress bar dan sembunyikan button saat sedang proses
