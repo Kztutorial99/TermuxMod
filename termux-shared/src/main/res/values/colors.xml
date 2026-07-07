@@ -18,6 +18,7 @@
     <color name="color_text_disabled">#444466</color>
 
     <!-- TermuxMod 2026 — Border and Ripple -->
+    <color name="color_drag_handle">#508888AA</color>
     <color name="color_border">#2A2A3E</color>
     <color name="color_ripple">#1A00E5CC</color>
 
