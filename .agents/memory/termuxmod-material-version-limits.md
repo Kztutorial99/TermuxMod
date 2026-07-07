@@ -22,10 +22,19 @@ Ini pernah menyebabkan crash nyata di device produksi (vivo V2205, Android 14) p
 
 Ganti drag handle bottom sheet dengan `View` polos + drawable custom (`shape_drag_handle.xml`, sebuah `<shape>` rounded rectangle kecil `32dp x 4dp` dengan warna `@color/color_text_secondary`), bukan bump versi Material Components. Ini dipilih karena bump versi library berisiko efek samping lain yang lebih sulit diverifikasi tanpa test di device fisik.
 
+## Atribut XML yang TIDAK ADA di Material 1.4.0
+
+Selain widget class yang tidak ada, beberapa **atribut XML** MaterialButton juga tidak valid di 1.4.0 dan menyebabkan **AAPT build error** (bukan runtime crash):
+
+- `app:insetTop="0dp"` → `attribute insetTop (aka com.termux:insetTop) not found`
+- `app:insetBottom="0dp"` → `attribute insetBottom (aka com.termux:insetBottom) not found`
+
+Ini berbeda dari ClassNotFoundException — ini **gagal compile** di CI dengan pesan AAPT. Solusi: hapus kedua atribut itu; button height sudah bisa dikontrol lewat `android:layout_height` + `android:singleLine="true"`.
+
 ## Cara mencegah ke depan
 
-Sebelum memakai widget/class Material Components baru (terutama nama-nama yang terdengar "baru"/eksperimental) di layout XML manapun di TermuxMod:
-1. Cek versi `com.google.android.material:material` di `app/build.gradle`.
-2. Cari tahu widget itu ditambahkan di versi berapa (biasanya lewat changelog Material Components di web).
-3. Jika versi project lebih lama dari versi minimum widget tersebut → JANGAN pakai widget itu. Pakai alternatif manual (custom View + drawable, atau style lama yang sudah pasti ada), atau usulkan bump versi library ke user dengan penjelasan risikonya.
-4. Ingat: CI build hijau tidak menjamin tidak ada crash runtime akibat ClassNotFoundException pada resource XML — untuk widget UI baru, verifikasi ketersediaan class di versi library, bukan cuma menunggu build sukses.
+Sebelum memakai widget/class/atribut Material Components baru di layout XML manapun di TermuxMod:
+1. Cek versi `com.google.android.material:material` di `app/build.gradle` (saat ini 1.4.0).
+2. Cari tahu widget/atribut itu ditambahkan di versi berapa.
+3. Jika versi project lebih lama → JANGAN pakai. Pakai alternatif manual.
+4. Atribut yang fail saat AAPT → CI build error. Widget class yang tidak ada → CI build hijau tapi crash runtime.
