@@ -59,145 +59,6 @@
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
-            <!-- ════════════ SYSTEM INFO ════════════ -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sidebar_section_sysinfo"
-                android:textColor="@color/color_accent_primary"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.14"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="14dp"
-                android:paddingBottom="6dp" />
-
-            <!-- Android version -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/sidebar_android_version"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp" />
-                <TextView
-                    android:id="@+id/sidebar_info_android"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="13sp"
-                    android:fontFamily="monospace"
-                    android:text="..." />
-            </LinearLayout>
-
-            <!-- CPU Architecture -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/sidebar_arch"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp" />
-                <TextView
-                    android:id="@+id/sidebar_info_arch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="13sp"
-                    android:fontFamily="monospace"
-                    android:text="..." />
-            </LinearLayout>
-
-            <!-- Free Storage -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/sidebar_storage"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp" />
-                <TextView
-                    android:id="@+id/sidebar_info_storage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="13sp"
-                    android:fontFamily="monospace"
-                    android:text="..." />
-            </LinearLayout>
-
-            <!-- Prefix size -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/sidebar_prefix"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp" />
-                <TextView
-                    android:id="@+id/sidebar_info_prefix"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="13sp"
-                    android:fontFamily="monospace"
-                    android:text="..." />
-            </LinearLayout>
-
-            <!-- Active sessions -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/sidebar_sessions"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="13sp" />
-                <TextView
-                    android:id="@+id/sidebar_info_sessions"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_accent_primary"
-                    android:textSize="13sp"
-                    android:fontFamily="monospace"
-                    android:text="0" />
-            </LinearLayout>
-
             <!-- ════════════ PERANGKAT ════════════ -->
             <TextView
                 android:layout_width="match_parent"
@@ -355,6 +216,145 @@
                     android:textSize="13sp"
                     android:fontFamily="monospace"
                     android:text="..." />
+            </LinearLayout>
+
+            <!-- ════════════ SISTEM INFO ════════════ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sidebar_section_sysinfo"
+                android:textColor="@color/color_accent_primary"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.14"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="6dp" />
+
+            <!-- Android version -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_android_version"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_android"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- CPU Architecture -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_arch"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_arch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- Free Storage -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_storage"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_storage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- Prefix size -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_prefix"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_prefix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- Active sessions -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_sessions"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_sessions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_accent_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="0" />
             </LinearLayout>
 
         </LinearLayout>

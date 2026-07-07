@@ -52,8 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/color_accent_primary"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/pkg_description"
@@ -65,17 +64,36 @@
 
     </LinearLayout>
 
-    <!-- Install / Uninstall button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/pkg_action_btn"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="88dp"
-        android:layout_height="48dp"
+    <!-- Install/Uninstall button + progress indicator (menyatu di kanan) -->
+    <LinearLayout
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="@string/packages_install"
-        android:textSize="12sp"
-        android:textColor="@color/color_accent_primary"
-        app:strokeColor="@color/color_accent_primary"
-        app:cornerRadius="6dp" />
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pkg_action_btn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/packages_install"
+            android:textSize="11sp"
+            android:textColor="@color/color_accent_primary"
+            app:strokeColor="@color/color_accent_primary"
+            app:cornerRadius="8dp" />
+
+        <ProgressBar
+            android:id="@+id/pkg_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:indeterminate="true"
+            android:progressTint="@color/color_accent_primary"
+            android:indeterminateTint="@color/color_accent_primary"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </LinearLayout>

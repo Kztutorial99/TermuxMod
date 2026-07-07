@@ -499,9 +499,31 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
             @Override
             public void onDrawerOpened(@NonNull android.view.View drawerView) {
-                // Refresh device info setiap kali right drawer dibuka (termasuk via swipe)
+                // Sidebar terbuka → sembunyikan ExtraKeys + toggle agar tampilan lebih bersih
+                if (mCurrentTabId == R.id.nav_terminal) {
+                    android.widget.ImageView toggleBtn = findViewById(R.id.btn_toggle_extrakeys);
+                    ViewPager extraKeysPager = getTerminalToolbarViewPager();
+                    if (toggleBtn != null) toggleBtn.setVisibility(View.INVISIBLE);
+                    if (extraKeysPager != null) extraKeysPager.setVisibility(View.GONE);
+                }
+                // Refresh device info saat right drawer dibuka
                 if (drawerView.getId() == R.id.right_drawer) {
                     populateRightDrawerInfo();
+                }
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull android.view.View drawerView) {
+                // Sidebar tutup → pulihkan ExtraKeys + toggle sesuai preferensi
+                if (mCurrentTabId == R.id.nav_terminal) {
+                    android.widget.ImageView toggleBtn = findViewById(R.id.btn_toggle_extrakeys);
+                    if (toggleBtn != null) toggleBtn.setVisibility(View.VISIBLE);
+                    boolean shouldShow = mPreferences != null && mPreferences.shouldShowTerminalToolbar();
+                    ViewPager extraKeysPager = getTerminalToolbarViewPager();
+                    if (extraKeysPager != null) {
+                        extraKeysPager.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
+                    }
+                    updateExtraKeysToggleIcon(shouldShow);
                 }
             }
         });
@@ -584,12 +606,34 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
         final boolean showNow = mPreferences.toogleShowTerminalToolbar();
         terminalToolbarViewPager.setVisibility(showNow ? View.VISIBLE : View.GONE);
+        updateExtraKeysToggleIcon(showNow);
+    }
+
+    /** Update ikon & background toggle ExtraKeys agar menyatu dgn elemen di bawahnya. */
+    private void updateExtraKeysToggleIcon(boolean extraKeysVisible) {
+        View raw = findViewById(R.id.btn_toggle_extrakeys);
+        if (!(raw instanceof android.widget.ImageView)) return;
+        android.widget.ImageView btn = (android.widget.ImageView) raw;
+        // Ikon: panah atas = extrakeys tersembunyi (tap utk tampilkan), bawah = sedang tampil
+        btn.setImageResource(extraKeysVisible ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up);
+        // Background menyatu: saat ON = surface_high (warna bar extrakeys), saat OFF = background (warna bottom nav)
+        int colorRes = extraKeysVisible ? R.color.color_surface_high : R.color.color_background;
+        int color = getResources().getColor(colorRes);
+        android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+        gd.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+        float r = 10 * getResources().getDisplayMetrics().density;
+        gd.setCornerRadius(r);
+        gd.setColor(color);
+        btn.setBackground(gd);
     }
 
     private void setExtraKeysToggleButton() {
         View btn = findViewById(R.id.btn_toggle_extrakeys);
         if (btn == null) return;
         btn.setOnClickListener(v -> toggleTerminalToolbar());
+        // Set icon sesuai state awal
+        boolean showing = mPreferences != null && mPreferences.shouldShowTerminalToolbar();
+        updateExtraKeysToggleIcon(showing);
     }
 
 
@@ -1458,6 +1502,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         session.write(bytes, 0, bytes.length);
     }
 
+    /** Kirim command ke terminal session TANPA pindah tab — untuk background install/uninstall. */
+    private void sendToTerminalSession(String command) {
+        TerminalSession session = getCurrentSession();
+        if (session == null || command == null) return;
+        byte[] bytes = command.getBytes();
+        session.write(bytes, 0, bytes.length);
+    }
+
 
     // ══════════════════════════════════════════════════════════
     // SESSION COUNT BADGE
@@ -1556,6 +1608,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     /** Adapter for the package manager tab. */
     private class PackageAdapter extends BaseAdapter {
         private List<String[]> mPkgs;
+        // Set nama paket yang sedang proses install/uninstall
+        private final java.util.Set<String> mInstallingPackages = new java.util.HashSet<>();
 
         PackageAdapter(List<String[]> pkgs) {
             mPkgs = (pkgs != null) ? pkgs : new ArrayList<>();
@@ -1564,6 +1618,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         void setData(List<String[]> pkgs) {
             mPkgs = (pkgs != null) ? pkgs : new ArrayList<>();
             notifyDataSetChanged();
+        }
+
+        /** Hapus semua paket dari state "installing" — dipanggil saat auto-refresh. */
+        void clearInstallingState() {
+            mInstallingPackages.clear();
         }
 
         @Override public int getCount() { return mPkgs.size(); }
@@ -1582,34 +1641,52 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             String desc    = pkg[2];
             String binary  = pkg[3];
 
-            boolean installed = new File(PREFIX_BIN + binary).exists();
+            boolean installed    = new File(PREFIX_BIN + binary).exists();
+            boolean isProcessing = mInstallingPackages.contains(name);
 
-            TextView nameView = convertView.findViewById(R.id.pkg_name);
-            TextView verView  = convertView.findViewById(R.id.pkg_version);
-            TextView descView = convertView.findViewById(R.id.pkg_description);
+            TextView nameView  = convertView.findViewById(R.id.pkg_name);
+            TextView verView   = convertView.findViewById(R.id.pkg_version);
+            TextView descView  = convertView.findViewById(R.id.pkg_description);
             Button   actionBtn = convertView.findViewById(R.id.pkg_action_btn);
+            android.widget.ProgressBar progress = convertView.findViewById(R.id.pkg_progress);
 
             if (nameView != null) nameView.setText(name);
             if (verView  != null) verView.setText(version);
             if (descView != null) descView.setText(desc);
 
-            if (actionBtn != null) {
+            // Tampilkan progress bar dan sembunyikan button saat sedang proses
+            if (progress  != null) progress.setVisibility(isProcessing ? View.VISIBLE : View.GONE);
+            if (actionBtn != null) actionBtn.setVisibility(isProcessing ? View.GONE : View.VISIBLE);
+
+            if (!isProcessing && actionBtn != null) {
                 if (installed) {
                     actionBtn.setText(getString(R.string.packages_uninstall));
                     actionBtn.setBackgroundTintList(
                         android.content.res.ColorStateList.valueOf(
                             getResources().getColor(R.color.color_surface_high)));
                     actionBtn.setTextColor(getResources().getColor(R.color.color_text_secondary));
-                    actionBtn.setOnClickListener(v ->
-                        runCommandInTerminal("pkg uninstall -y " + name + "\n"));
+                    actionBtn.setOnClickListener(v -> {
+                        mInstallingPackages.add(name);
+                        notifyDataSetChanged();
+                        // Jalankan di background terminal tanpa pindah tab
+                        sendToTerminalSession("pkg uninstall -y " + name + "\n");
+                        // Auto-refresh setelah selesai (estimasi ~15 detik)
+                        schedulePackageRefresh(15000);
+                    });
                 } else {
                     actionBtn.setText(getString(R.string.packages_install));
                     actionBtn.setBackgroundTintList(
                         android.content.res.ColorStateList.valueOf(
                             getResources().getColor(R.color.color_accent_primary)));
                     actionBtn.setTextColor(getResources().getColor(R.color.color_background));
-                    actionBtn.setOnClickListener(v ->
-                        runCommandInTerminal("pkg install -y " + name + "\n"));
+                    actionBtn.setOnClickListener(v -> {
+                        mInstallingPackages.add(name);
+                        notifyDataSetChanged();
+                        // Jalankan di background terminal tanpa pindah tab
+                        sendToTerminalSession("pkg install -y " + name + "\n");
+                        // Auto-refresh setelah selesai (estimasi ~30 detik)
+                        schedulePackageRefresh(30000);
+                    });
                 }
             }
 
@@ -1857,6 +1934,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
      */
     private void refreshPackageStatus() {
         if (mPackageAdapter != null) {
+            // Clear state "installing" agar UI kembali normal setelah proses selesai
+            mPackageAdapter.clearInstallingState();
             mPackageAdapter.notifyDataSetChanged();
         }
     }
