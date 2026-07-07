@@ -273,6 +273,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         setDrawerTheme();
 
         setDrawerParallaxEffect();
+        setupDrawerMutualExclusion();
 
         setTermuxTerminalViewAndClients();
 
@@ -478,6 +479,33 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
     /** Applies a subtle parallax motion to the terminal content while the drawer slides,
      * so opening/closing the drawer feels smooth instead of an abrupt overlay. */
+    /**
+     * Ensures only one drawer (left sessions / right sidebar) is visible at a time.
+     * DrawerLayout allows both to open simultaneously by default — this listener
+     * closes whichever is open when the other starts sliding in, preventing overlap.
+     */
+    private void setupDrawerMutualExclusion() {
+        DrawerLayout drawer = getDrawer();
+        if (drawer == null) return;
+
+        drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull android.view.View drawerView, float slideOffset) {
+                if (slideOffset > 0.02f) {
+                    if (drawerView.getId() == R.id.left_drawer) {
+                        if (drawer.isDrawerVisible(android.view.Gravity.RIGHT)) {
+                            drawer.closeDrawer(android.view.Gravity.RIGHT);
+                        }
+                    } else if (drawerView.getId() == R.id.right_drawer) {
+                        if (drawer.isDrawerVisible(android.view.Gravity.LEFT)) {
+                            drawer.closeDrawer(android.view.Gravity.LEFT);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void setDrawerParallaxEffect() {
         DrawerLayout drawer = getDrawer();
         final View terminalContent = findViewById(R.id.terminal_view);
@@ -1095,22 +1123,24 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     // ══════════════════════════════════════════════════════════
 
     private void setupCustomToolbar() {
-        // Hamburger → open sessions drawer
+        // Hamburger → open sessions drawer (closes right drawer first)
         View hamburger = findViewById(R.id.btn_hamburger);
         if (hamburger != null) {
             hamburger.setOnClickListener(v -> {
                 DrawerLayout drawer = getDrawer();
-                if (drawer != null) {
-                    if (drawer.isDrawerOpen(android.view.Gravity.LEFT)) {
-                        drawer.closeDrawers();
-                    } else {
-                        drawer.openDrawer(android.view.Gravity.LEFT);
+                if (drawer == null) return;
+                if (drawer.isDrawerOpen(android.view.Gravity.LEFT)) {
+                    drawer.closeDrawer(android.view.Gravity.LEFT);
+                } else {
+                    if (drawer.isDrawerOpen(android.view.Gravity.RIGHT)) {
+                        drawer.closeDrawer(android.view.Gravity.RIGHT);
                     }
+                    drawer.openDrawer(android.view.Gravity.LEFT);
                 }
             });
         }
 
-        // Right panel button → open right sidebar
+        // Right panel button → open right sidebar (closes left drawer first)
         View rightPanelBtn = findViewById(R.id.btn_right_panel);
         if (rightPanelBtn != null) {
             rightPanelBtn.setOnClickListener(v -> {
@@ -1119,6 +1149,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
                 if (drawer.isDrawerOpen(android.view.Gravity.RIGHT)) {
                     drawer.closeDrawer(android.view.Gravity.RIGHT);
                 } else {
+                    if (drawer.isDrawerOpen(android.view.Gravity.LEFT)) {
+                        drawer.closeDrawer(android.view.Gravity.LEFT);
+                    }
                     // Tampilkan terminal dulu kalau sedang di tab lain
                     if (mCurrentTabId != R.id.nav_terminal) {
                         if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);
