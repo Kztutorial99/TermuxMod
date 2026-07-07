@@ -217,7 +217,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     private static final int CONTEXT_MENU_SETTINGS_ID = 8;
     private static final int CONTEXT_MENU_REPORT_ID = 9;
 
-    private static final String ARG_TERMINAL_TOOLBAR_TEXT_INPUT = "terminal_toolbar_text_input";
+
 
     private static final String LOG_TAG = "TermuxActivity";
 
@@ -394,7 +394,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        saveTerminalToolbarTextInput(savedInstanceState);
     }
 
 
@@ -604,11 +603,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
         setTerminalToolbarHeight();
 
-        String savedTextInput = null;
-        if (savedInstanceState != null)
-            savedTextInput = savedInstanceState.getString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT);
-
-        terminalToolbarViewPager.setAdapter(new TerminalToolbarViewPager.PageAdapter(this, savedTextInput));
+        terminalToolbarViewPager.setAdapter(new TerminalToolbarViewPager.PageAdapter(this));
         terminalToolbarViewPager.addOnPageChangeListener(new TerminalToolbarViewPager.OnPageChangeListener(this, terminalToolbarViewPager));
     }
 
@@ -630,21 +625,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         final boolean showNow = mPreferences.toogleShowTerminalToolbar();
         showToast((showNow ? getString(R.string.msg_enabling_terminal_toolbar) : getString(R.string.msg_disabling_terminal_toolbar)), true);
         terminalToolbarViewPager.setVisibility(showNow ? View.VISIBLE : View.GONE);
-        if (showNow && isTerminalToolbarTextInputViewSelected()) {
-            // Focus the text input view if just revealed.
-            findViewById(R.id.terminal_toolbar_text_input).requestFocus();
-        }
     }
 
-    private void saveTerminalToolbarTextInput(Bundle savedInstanceState) {
-        if (savedInstanceState == null) return;
-
-        final EditText textInputView =  findViewById(R.id.terminal_toolbar_text_input);
-        if (textInputView != null) {
-            String textInput = textInputView.getText().toString();
-            if (!textInput.isEmpty()) savedInstanceState.putString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT, textInput);
-        }
-    }
 
 
 
@@ -978,9 +960,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         return getTerminalToolbarViewPager().getCurrentItem() == 0;
     }
 
-    public boolean isTerminalToolbarTextInputViewSelected() {
-        return getTerminalToolbarViewPager().getCurrentItem() == 1;
-    }
 
 
     public void termuxSessionListNotifyUpdated() {

@@ -3,8 +3,6 @@ package com.termux.app.terminal.io;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -12,23 +10,20 @@ import androidx.viewpager.widget.ViewPager;
 import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.shared.terminal.io.extrakeys.ExtraKeysView;
-import com.termux.terminal.TerminalSession;
 
 public class TerminalToolbarViewPager {
 
     public static class PageAdapter extends PagerAdapter {
 
         final TermuxActivity mActivity;
-        String mSavedTextInput;
 
-        public PageAdapter(TermuxActivity activity, String savedTextInput) {
+        public PageAdapter(TermuxActivity activity) {
             this.mActivity = activity;
-            this.mSavedTextInput = savedTextInput;
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 1;
         }
 
         @Override
@@ -40,45 +35,18 @@ public class TerminalToolbarViewPager {
         @Override
         public Object instantiateItem(@NonNull ViewGroup collection, int position) {
             LayoutInflater inflater = LayoutInflater.from(mActivity);
-            View layout;
-            if (position == 0) {
-                layout = inflater.inflate(R.layout.view_terminal_toolbar_extra_keys, collection, false);
-                ExtraKeysView extraKeysView = layout.findViewById(R.id.terminal_toolbar_extra_keys);
-                extraKeysView.setExtraKeysViewClient(new TermuxTerminalExtraKeys(mActivity.getTerminalView(),
-                    mActivity.getTermuxTerminalViewClient(), mActivity.getTermuxTerminalSessionClient()));
-                extraKeysView.setButtonTextAllCaps(mActivity.getProperties().shouldExtraKeysTextBeAllCaps());
-                mActivity.setExtraKeysView(extraKeysView);
-                extraKeysView.reload(mActivity.getProperties().getExtraKeysInfo());
+            View layout = inflater.inflate(R.layout.view_terminal_toolbar_extra_keys, collection, false);
+            ExtraKeysView extraKeysView = layout.findViewById(R.id.terminal_toolbar_extra_keys);
+            extraKeysView.setExtraKeysViewClient(new TermuxTerminalExtraKeys(mActivity.getTerminalView(),
+                mActivity.getTermuxTerminalViewClient(), mActivity.getTermuxTerminalSessionClient()));
+            extraKeysView.setButtonTextAllCaps(mActivity.getProperties().shouldExtraKeysTextBeAllCaps());
+            mActivity.setExtraKeysView(extraKeysView);
+            extraKeysView.reload(mActivity.getProperties().getExtraKeysInfo());
 
-                // apply extra keys fix if enabled in prefs
-                if (mActivity.getProperties().isUsingFullScreen() && mActivity.getProperties().isUsingFullScreenWorkAround()) {
-                    FullScreenWorkAround.apply(mActivity);
-                }
-
-            } else {
-                layout = inflater.inflate(R.layout.view_terminal_toolbar_text_input, collection, false);
-                final EditText editText = layout.findViewById(R.id.terminal_toolbar_text_input);
-
-                if (mSavedTextInput != null) {
-                    editText.setText(mSavedTextInput);
-                    mSavedTextInput = null;
-                }
-
-                editText.setOnEditorActionListener((v, actionId, event) -> {
-                    TerminalSession session = mActivity.getCurrentSession();
-                    if (session != null) {
-                        if (session.isRunning()) {
-                            String textToSend = editText.getText().toString();
-                            if (textToSend.length() == 0) textToSend = "\r";
-                            session.write(textToSend);
-                        } else {
-                            mActivity.getTermuxTerminalSessionClient().removeFinishedSession(session);
-                        }
-                        editText.setText("");
-                    }
-                    return true;
-                });
+            if (mActivity.getProperties().isUsingFullScreen() && mActivity.getProperties().isUsingFullScreenWorkAround()) {
+                FullScreenWorkAround.apply(mActivity);
             }
+
             collection.addView(layout);
             return layout;
         }
@@ -104,12 +72,7 @@ public class TerminalToolbarViewPager {
 
         @Override
         public void onPageSelected(int position) {
-            if (position == 0) {
-                mActivity.getTerminalView().requestFocus();
-            } else {
-                final EditText editText = mTerminalToolbarViewPager.findViewById(R.id.terminal_toolbar_text_input);
-                if (editText != null) editText.requestFocus();
-            }
+            mActivity.getTerminalView().requestFocus();
         }
 
     }
