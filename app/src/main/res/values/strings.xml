@@ -56,6 +56,7 @@
 
     <string name="msg_enabling_terminal_toolbar">Enabling Terminal Toolbar</string>
     <string name="msg_disabling_terminal_toolbar">Disabling Terminal Toolbar</string>
+    <string name="action_toggle_extrakeys">Toggle ExtraKeys</string>
 
 
 

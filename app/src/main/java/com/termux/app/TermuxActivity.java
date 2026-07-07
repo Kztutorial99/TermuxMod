@@ -286,6 +286,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
         setToggleKeyboardView();
 
+        setExtraKeysToggleButton();
+
         setupCustomToolbar();
         setupBottomNavigation();
         setupFilesTab();
@@ -623,8 +625,21 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         if (terminalToolbarViewPager == null) return;
 
         final boolean showNow = mPreferences.toogleShowTerminalToolbar();
-        showToast((showNow ? getString(R.string.msg_enabling_terminal_toolbar) : getString(R.string.msg_disabling_terminal_toolbar)), true);
         terminalToolbarViewPager.setVisibility(showNow ? View.VISIBLE : View.GONE);
+
+        // update toggle button tint to reflect state
+        ImageButton btn = findViewById(R.id.btn_toggle_extrakeys);
+        if (btn != null) {
+            btn.setAlpha(showNow ? 1.0f : 0.55f);
+        }
+    }
+
+    private void setExtraKeysToggleButton() {
+        ImageButton btn = findViewById(R.id.btn_toggle_extrakeys);
+        if (btn == null) return;
+        // initial alpha: extrakeys hidden by default
+        btn.setAlpha(mPreferences.shouldShowTerminalToolbar() ? 1.0f : 0.55f);
+        btn.setOnClickListener(v -> toggleTerminalToolbar());
     }
 
 

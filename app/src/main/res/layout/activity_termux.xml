@@ -305,7 +305,7 @@
 
         </FrameLayout>
 
-        <!-- Extra keys ViewPager (keep existing, constraint unchanged) -->
+        <!-- Extra keys ViewPager -->
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/terminal_toolbar_view_pager"
             android:visibility="gone"
@@ -315,6 +315,20 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- ExtraKeys toggle button — floats bottom-left above extrakeys bar -->
+        <ImageButton
+            android:id="@+id/btn_toggle_extrakeys"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="6dp"
+            android:src="@drawable/ic_keyboard_toggle"
+            android:background="@drawable/bg_extrakeys_toggle_btn"
+            android:padding="8dp"
+            android:contentDescription="@string/action_toggle_extrakeys"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/terminal_toolbar_view_pager" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

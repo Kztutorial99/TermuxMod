@@ -295,6 +295,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- ExtraKeys toggle button — floats bottom-left above extrakeys bar -->
+        <ImageButton
+            android:id="@+id/btn_toggle_extrakeys"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/ic_keyboard_toggle"
+            android:background="@drawable/bg_extrakeys_toggle_btn"
+            android:padding="7dp"
+            android:contentDescription="@string/action_toggle_extrakeys"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/terminal_toolbar_view_pager" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Bottom nav (landscape — shorter) -->
