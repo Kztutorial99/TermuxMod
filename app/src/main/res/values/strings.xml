@@ -38,7 +38,7 @@
 
 
 
-    <string name="settings_activity_title">Settings</string>
+    <string name="settings_activity_title">Terminal Settings</string>
     <string name="help_activity_title">Help</string>
 
     <!-- Terminal Sidebar and Shortcuts -->
@@ -283,7 +283,7 @@
     <string name="app_brand_termux">TERMUX</string>
     <string name="app_brand_mod"> MOD</string>
     <string name="app_brand_mod_super">MOD</string>
-    <string name="toolbar_version">v0.118.3 MOD</string>
+    <string name="toolbar_version">v0.118.3</string>
     <string name="toolbar_author">by Kz.tutorial</string>
 
     <!-- Bottom navigation labels -->

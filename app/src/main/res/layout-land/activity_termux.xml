@@ -59,6 +59,7 @@
         <!-- Right sidebar panel button -->
         <ImageButton
             android:id="@+id/btn_right_panel"
+            android:visibility="gone"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/ic_right_panel"

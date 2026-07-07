@@ -41,7 +41,7 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.termux.app.activities.DeveloperInfoActivity;
-import com.termux.app.activities.TerminalAppearanceActivity;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -502,6 +502,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
                             drawer.closeDrawer(GravityCompat.START);
                         }
                     }
+                }
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull android.view.View drawerView) {
+                // Refresh device info setiap kali right drawer dibuka (termasuk via swipe)
+                if (drawerView.getId() == R.id.right_drawer) {
+                    populateRightDrawerInfo();
                 }
             }
         });
@@ -1726,71 +1734,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             closeBtn.setOnClickListener(v -> drawer.closeDrawer(GravityCompat.END));
         }
 
-        // ── Quick Actions ──
-        View actionNewSession = drawer.findViewById(R.id.sidebar_action_new_session);
-        if (actionNewSession != null) {
-            actionNewSession.setOnClickListener(v -> {
-                drawer.closeDrawer(GravityCompat.END);
-                View newSessionBtn = findViewById(R.id.new_session_button);
-                if (newSessionBtn != null) newSessionBtn.performClick();
-            });
-        }
-
-                  View actionKillSession = drawer.findViewById(R.id.sidebar_action_kill_session);
-        if (actionKillSession != null) {
-            actionKillSession.setOnClickListener(v -> {
-                drawer.closeDrawer(GravityCompat.END);
-                TerminalSession current = getCurrentSession();
-                if (current != null) current.finishIfRunning();
-            });
-        }
-
-        View actionKeyboard = drawer.findViewById(R.id.sidebar_action_keyboard);
-        if (actionKeyboard != null) {
-            actionKeyboard.setOnClickListener(v -> {
-                drawer.closeDrawer(GravityCompat.END);
-                if (mTermuxTerminalViewClient != null) {
-                    mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
-                }
-            });
-        }
-
-        View actionReset = drawer.findViewById(R.id.sidebar_action_reset);
-        if (actionReset != null) {
-            actionReset.setOnClickListener(v -> {
-                drawer.closeDrawer(GravityCompat.END);
-                TerminalSession current = getCurrentSession();
-                if (current != null) {
-                    current.reset();
-                    showToast(getString(R.string.msg_terminal_reset), true);
-                }
-            });
-        }
-
-        // ── App Settings ──
-        View actionAppearance = drawer.findViewById(R.id.sidebar_action_appearance);
-        if (actionAppearance != null) {
-            actionAppearance.setOnClickListener(v -> {
-                drawer.closeDrawer(GravityCompat.END);
-                startActivity(new Intent(this, TerminalAppearanceActivity.class));
-            });
-        }
-
-        View actionSettings = drawer.findViewById(R.id.sidebar_action_settings);
-        if (actionSettings != null) {
-            actionSettings.setOnClickListener(v -> {
-                drawer.closeDrawer(GravityCompat.END);
-                startActivity(new Intent(this, SettingsActivity.class));
-            });
-        }
-
-        View actionDevInfo = drawer.findViewById(R.id.sidebar_action_devinfo);
-        if (actionDevInfo != null) {
-            actionDevInfo.setOnClickListener(v -> {
-                drawer.closeDrawer(GravityCompat.END);
-                startActivity(new Intent(this, DeveloperInfoActivity.class));
-            });
-        }
+        // Pre-populate info saat activity dibuat agar tidak kosong saat pertama dibuka
+        populateRightDrawerInfo();
     }
 
     /** Isi data sistem di right sidebar setiap kali dibuka. */

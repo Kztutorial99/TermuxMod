@@ -37,27 +37,6 @@ public class DeveloperInfoActivity extends Activity {
             facebook.setOnClickListener(v -> openUrl(FACEBOOK_URL));
         }
 
-        // Quick links (navigate to tabs in TermuxActivity)
-        View quickFiles = findViewById(R.id.dev_quick_files);
-        if (quickFiles != null) {
-            quickFiles.setOnClickListener(v -> {
-                setResult(RESULT_OK, new Intent().putExtra("tab", "files"));
-                finish();
-            });
-        }
-
-        View quickTools = findViewById(R.id.dev_quick_tools);
-        if (quickTools != null) {
-            quickTools.setOnClickListener(v -> {
-                setResult(RESULT_OK, new Intent().putExtra("tab", "tools"));
-                finish();
-            });
-        }
-
-        View quickMod = findViewById(R.id.dev_quick_mod);
-        if (quickMod != null) {
-            quickMod.setOnClickListener(v -> finish());
-        }
     }
 
     private void openUrl(String url) {
