@@ -421,7 +421,7 @@ public final class ExtraKeysView extends GridLayout {
 
                 // Single-line text with auto-size so labels like CTRL/HOME never wrap
                 button.setSingleLine(true);
-                TextViewCompat.setAutoSizeTextTypeUniformWithRange(
+                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                     button, 8, 13, 1, TypedValue.COMPLEX_UNIT_SP);
 
                 // Solid GradientDrawable background — color updated directly in touch listener
