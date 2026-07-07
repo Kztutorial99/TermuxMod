@@ -377,8 +377,9 @@ public final class ExtraKeysView extends GridLayout {
         setColumnCount(maximumLength(buttons));
 
         float density = getResources().getDisplayMetrics().density;
-        int marginPx = Math.max(1, (int) (2 * density));
-        int minBtnWidth = (int) (40 * density);
+        int numCols = maximumLength(buttons);
+        // Reduce margin when many columns share the row so keys don't overflow
+        int marginPx = numCols > 8 ? Math.max(1, (int) (1 * density)) : Math.max(1, (int) (2 * density));
 
         for (int row = 0; row < buttons.length; row++) {
             for (int col = 0; col < buttons[row].length; col++) {
@@ -396,7 +397,9 @@ public final class ExtraKeysView extends GridLayout {
                 button.setTextColor(mButtonTextColor);
                 button.setAllCaps(mButtonTextAllCaps);
                 button.setPadding(0, 0, 0, 0);
-                button.setMinimumWidth(minBtnWidth);
+                // Allow fill weight to shrink button freely — no minimum width floor
+                button.setMinWidth(0);
+                button.setMinimumWidth(0);
 
                 button.setOnClickListener(view -> {
                     onAnyExtraKeyButtonClick(view, buttonInfo, button);
@@ -459,10 +462,10 @@ public final class ExtraKeysView extends GridLayout {
                 });
 
                 LayoutParams param = new GridLayout.LayoutParams();
-                param.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                param.width = 0;
                 param.height = 0;
                 param.setMargins(marginPx, 0, marginPx, 0);
-                param.columnSpec = GridLayout.spec(col);
+                param.columnSpec = GridLayout.spec(col, GridLayout.FILL, 1.f);
                 param.rowSpec = GridLayout.spec(row, GridLayout.FILL, 1.f);
                 button.setLayoutParams(param);
 
