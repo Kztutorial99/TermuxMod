@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -80,7 +79,6 @@ import com.termux.view.TerminalViewClient;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
@@ -464,19 +462,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
 
     private void setActivityTheme() {
-        if (mProperties.isUsingBlackUI()) {
-            this.setTheme(R.style.Theme_Termux_Black);
-        } else {
-            this.setTheme(R.style.Theme_Termux);
-        }
+        // Dark mode only — light mode removed
+        this.setTheme(R.style.Theme_Termux);
     }
 
     private void setDrawerTheme() {
-        if (mProperties.isUsingBlackUI()) {
-            findViewById(R.id.left_drawer).setBackgroundColor(ContextCompat.getColor(this,
-                android.R.color.background_dark));
-            ((ImageButton) findViewById(R.id.settings_button)).setColorFilter(Color.WHITE);
-        }
+        // No-op: drawer always uses dark theme colors from layout
     }
 
     /** Applies a subtle parallax motion to the terminal content while the drawer slides,

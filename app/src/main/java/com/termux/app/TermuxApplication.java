@@ -2,6 +2,8 @@ package com.termux.app;
 
 import android.app.Application;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.termux.shared.crash.TermuxCrashUtils;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.logger.Logger;
@@ -10,6 +12,9 @@ import com.termux.shared.logger.Logger;
 public class TermuxApplication extends Application {
     public void onCreate() {
         super.onCreate();
+
+        // Lock dark mode permanently — light mode removed
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         // Set crash handler for the app
         TermuxCrashUtils.setCrashHandler(this);

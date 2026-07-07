@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Termux" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Termux" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Colors -->
         <item name="colorPrimary">@color/color_accent_primary</item>
         <item name="colorPrimaryVariant">@color/color_surface_high</item>
@@ -66,7 +66,7 @@
     </style>
 
     <!-- Bottom Sheet Style -->
-    <style name="Style.TermuxMod.BottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="Style.TermuxMod.BottomSheet" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/Style.TermuxMod.BottomSheetModal</item>
     </style>
 
