@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Right sidebar / panel icon — three lines aligned right -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Top line (short, right-aligned) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,5 L20,5 C20.55,5 21,5.45 21,6 C21,6.55 20.55,7 20,7 L9,7 C8.45,7 8,6.55 8,6 C8,5.45 8.45,5 9,5 Z" />
+
+    <!-- Middle line (full) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M4,11 L20,11 C20.55,11 21,11.45 21,12 C21,12.55 20.55,13 20,13 L4,13 C3.45,13 3,12.55 3,12 C3,11.45 3.45,11 4,11 Z" />
+
+    <!-- Bottom line (short, right-aligned) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,17 L20,17 C20.55,17 21,17.45 21,18 C21,18.55 20.55,19 20,19 L9,19 C8.45,19 8,18.55 8,18 C8,17.45 8.45,17 9,17 Z" />
+
+</vector>
