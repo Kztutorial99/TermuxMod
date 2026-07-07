@@ -56,7 +56,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
         <!-- Right sidebar panel button -->
         <ImageButton
             android:id="@+id/btn_right_panel"
@@ -68,6 +67,7 @@
             android:contentDescription="@string/sidebar_title"
             android:layout_marginEnd="4dp" />
 
+        <LinearLayout
             android:id="@+id/toolbar_version_box"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
@@ -243,7 +243,7 @@
 
             </LinearLayout>
 
-            <!-- ─── INFO & ACTIONS SIDEBAR (right) ─── -->
+            <!-- INFO and ACTIONS SIDEBAR (right) -->
             <include
                 layout="@layout/right_drawer"
                 android:layout_width="260dp"
