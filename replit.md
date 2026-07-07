@@ -11,6 +11,7 @@ Repo GitHub: https://github.com/Kztutorial99/TermuxMod
 ## User Preferences
 - Bahasa komunikasi: Bahasa Indonesia
 - Selalu push ke GitHub setelah perubahan signifikan
+- Push via `gitPush({})` (Replit git-remote skill) atau curl GitHub API dengan `$GITHUB_TOKEN` (secret sudah tersimpan)
 - Selalu jalankan safety-check sebelum dan sesudah edit apapun
 - JANGAN propose/usulkan follow-up tasks di akhir setiap sesi — fitur ini dimatikan
 - **WAJIB setelah setiap push:** pantau GitHub Actions sampai semua workflow selesai (status bukan `in_progress`). Jika ada `failure` → analisis log, fix segera, push ulang. Jangan lanjut ke item PLAN berikutnya sebelum build hijau semua.
