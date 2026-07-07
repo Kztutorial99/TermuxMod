@@ -89,16 +89,38 @@
             android:paddingStart="6dp"
             android:paddingEnd="6dp" />
 
-        <ProgressBar
-            android:id="@+id/pkg_progress"
-            style="@android:style/Widget.ProgressBar.Horizontal"
+        <!-- Progress container: tampil saat install/uninstall berjalan -->
+        <LinearLayout
+            android:id="@+id/pkg_progress_container"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_marginTop="4dp"
-            android:indeterminate="true"
-            android:progressTint="@color/color_accent_primary"
-            android:indeterminateTint="@color/color_accent_primary"
-            android:visibility="gone" />
+            android:layout_height="40dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/pkg_progress_pct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_accent_primary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="0%" />
+
+            <ProgressBar
+                android:id="@+id/pkg_progress"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginTop="4dp"
+                android:max="100"
+                android:progress="0"
+                android:indeterminate="false"
+                android:progressTint="@color/color_accent_primary"
+                android:progressBackgroundTint="@color/color_surface_high" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

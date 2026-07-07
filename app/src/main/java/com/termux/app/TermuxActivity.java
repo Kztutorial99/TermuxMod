@@ -1608,8 +1608,16 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     /** Adapter for the package manager tab. */
     private class PackageAdapter extends BaseAdapter {
         private List<String[]> mPkgs;
-        // Set nama paket yang sedang proses install/uninstall
+
+        // Paket yang sedang diproses
         private final java.util.Set<String> mInstallingPackages = new java.util.HashSet<>();
+        // Progress saat ini per paket (0-100)
+        private final java.util.Map<String, Integer> mProgressMap = new java.util.HashMap<>();
+        // Runnable ticker per paket
+        private final java.util.Map<String, Runnable> mProgressTickers = new java.util.HashMap<>();
+        // Handler khusus animasi progress (main thread)
+        private final android.os.Handler mProgressHandler =
+            new android.os.Handler(android.os.Looper.getMainLooper());
 
         PackageAdapter(List<String[]> pkgs) {
             mPkgs = (pkgs != null) ? pkgs : new ArrayList<>();
@@ -1620,9 +1628,61 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             notifyDataSetChanged();
         }
 
-        /** Hapus semua paket dari state "installing" — dipanggil saat auto-refresh. */
+        /**
+         * Mulai animasi progress 0→90% selama totalMs milidetik.
+         * Berhenti di 90 dan menunggu konfirmasi selesai.
+         */
+        void startProgressAnimation(String pkgName, long totalMs) {
+            // Hentikan ticker lama jika ada
+            Runnable old = mProgressTickers.get(pkgName);
+            if (old != null) mProgressHandler.removeCallbacks(old);
+
+            mProgressMap.put(pkgName, 0);
+
+            // Tick setiap 500ms; capai 90% di 85% dari totalMs
+            final long tickMs = 500L;
+            final int totalTicks = (int) Math.max(1, totalMs * 85L / 100L / tickMs);
+            final int[] tick = {0};
+
+            Runnable ticker = new Runnable() {
+                @Override public void run() {
+                    if (!mInstallingPackages.contains(pkgName)) {
+                        mProgressTickers.remove(pkgName);
+                        return;
+                    }
+                    tick[0]++;
+                    // Progress linear 0→90 selama totalTicks, lalu berhenti di 90
+                    int pct = Math.min(90, (int)(90.0 * tick[0] / totalTicks));
+                    mProgressMap.put(pkgName, pct);
+                    notifyDataSetChanged();
+                    if (pct < 90) mProgressHandler.postDelayed(this, tickMs);
+                    else mProgressTickers.remove(pkgName);
+                }
+            };
+            mProgressTickers.put(pkgName, ticker);
+            mProgressHandler.postDelayed(ticker, tickMs);
+        }
+
+        /** Dipanggil saat auto-refresh: selesaikan animasi ke 100%, lalu hapus setelah sebentar. */
         void clearInstallingState() {
+            // Hentikan semua ticker
+            for (java.util.Map.Entry<String, Runnable> e : mProgressTickers.entrySet()) {
+                mProgressHandler.removeCallbacks(e.getValue());
+            }
+            mProgressTickers.clear();
+
+            // Set semua progress ke 100 sebelum hide
+            for (String name : mInstallingPackages) {
+                mProgressMap.put(name, 100);
+            }
             mInstallingPackages.clear();
+            notifyDataSetChanged();
+
+            // Setelah 700ms tampilkan 100% lalu hilang
+            mProgressHandler.postDelayed(() -> {
+                mProgressMap.clear();
+                notifyDataSetChanged();
+            }, 700);
         }
 
         @Override public int getCount() { return mPkgs.size(); }
@@ -1642,17 +1702,20 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             String binary  = pkg[3];
 
             boolean installed    = new File(PREFIX_BIN + binary).exists();
-            boolean isProcessing = mInstallingPackages.contains(name);
+            boolean isProcessing = mInstallingPackages.contains(name)
+                                || mProgressMap.containsKey(name);
 
             TextView nameView  = convertView.findViewById(R.id.pkg_name);
             TextView verView   = convertView.findViewById(R.id.pkg_version);
             TextView descView  = convertView.findViewById(R.id.pkg_description);
             Button   actionBtn = convertView.findViewById(R.id.pkg_action_btn);
-            android.widget.ProgressBar progress = convertView.findViewById(R.id.pkg_progress);
+            View     prgContainer = convertView.findViewById(R.id.pkg_progress_container);
+            android.widget.ProgressBar progressBar = convertView.findViewById(R.id.pkg_progress);
+            TextView pctText   = convertView.findViewById(R.id.pkg_progress_pct);
 
             if (nameView != null) nameView.setText(name);
             if (verView  != null) {
-                if (installed) {
+                if (installed && !mInstallingPackages.contains(name)) {
                     verView.setText(version);
                     verView.setVisibility(View.VISIBLE);
                 } else {
@@ -1661,9 +1724,18 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             }
             if (descView != null) descView.setText(desc);
 
-            // Tampilkan progress bar dan sembunyikan button saat sedang proses
-            if (progress  != null) progress.setVisibility(isProcessing ? View.VISIBLE : View.GONE);
-            if (actionBtn != null) actionBtn.setVisibility(isProcessing ? View.GONE : View.VISIBLE);
+            // Tampilkan container progress atau button
+            if (prgContainer != null)
+                prgContainer.setVisibility(isProcessing ? View.VISIBLE : View.GONE);
+            if (actionBtn != null)
+                actionBtn.setVisibility(isProcessing ? View.GONE : View.VISIBLE);
+
+            // Update progress bar & persentase
+            if (isProcessing && progressBar != null && pctText != null) {
+                int pct = mProgressMap.containsKey(name) ? mProgressMap.get(name) : 0;
+                progressBar.setProgress(pct);
+                pctText.setText(pct + "%");
+            }
 
             if (!isProcessing && actionBtn != null) {
                 if (installed) {
@@ -1674,7 +1746,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
                     actionBtn.setTextColor(getResources().getColor(R.color.color_text_secondary));
                     actionBtn.setOnClickListener(v -> {
                         mInstallingPackages.add(name);
-                        notifyDataSetChanged();
+                        startProgressAnimation(name, 15000);
                         // Jalankan di background terminal tanpa pindah tab
                         sendToTerminalSession("pkg uninstall -y " + name + "\n");
                         // Auto-refresh setelah selesai (estimasi ~15 detik)
@@ -1688,7 +1760,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
                     actionBtn.setTextColor(getResources().getColor(R.color.color_background));
                     actionBtn.setOnClickListener(v -> {
                         mInstallingPackages.add(name);
-                        notifyDataSetChanged();
+                        startProgressAnimation(name, 30000);
                         // Jalankan di background terminal tanpa pindah tab
                         sendToTerminalSession("pkg install -y " + name + "\n");
                         // Auto-refresh setelah selesai (estimasi ~30 detik)
