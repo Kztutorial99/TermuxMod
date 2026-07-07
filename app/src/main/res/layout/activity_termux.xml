@@ -194,15 +194,6 @@
                     android:layout_height="1dp"
                     android:background="@color/color_border" />
 
-                <!-- "Long press for rename / delete" hint -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:gravity="center"
-                    android:text="@string/sessions_long_press_hint"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="11sp" />
-
                 <!-- Sessions list -->
                 <ListView
                     android:id="@+id/terminal_sessions_list"
