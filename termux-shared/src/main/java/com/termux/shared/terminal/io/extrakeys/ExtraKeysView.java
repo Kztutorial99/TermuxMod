@@ -2,11 +2,16 @@ package com.termux.shared.terminal.io.extrakeys;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+
+import androidx.core.widget.TextViewCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +36,7 @@ import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 
 /**
  * A {@link View} showing extra keys (such as Escape, Ctrl, Alt) not normally available on an Android soft
@@ -378,28 +384,51 @@ public final class ExtraKeysView extends GridLayout {
 
         float density = getResources().getDisplayMetrics().density;
         int numCols = maximumLength(buttons);
-        // Reduce margin when many columns share the row so keys don't overflow
-        int marginPx = numCols > 8 ? Math.max(1, (int) (1 * density)) : Math.max(1, (int) (2 * density));
+
+        // GridLayout background = divider color — 1dp gaps between buttons will show this color
+        // as natural separator lines between keys
+        setBackgroundColor(0xFF2A2A3E); // color_border
+
+        // Divider gap width: 1dp between buttons (right side of each button)
+        int dividerPx = Math.max(1, (int) (1 * density));
+
+        // If default transparent bg, use a solid surface color so buttons are visible
+        final int effectiveBtnBg = (Color.alpha(mButtonBackgroundColor) == 0)
+            ? 0xFF222236  // color_surface_high
+            : mButtonBackgroundColor;
 
         for (int row = 0; row < buttons.length; row++) {
             for (int col = 0; col < buttons[row].length; col++) {
                 final ExtraKeyButton buttonInfo = buttons[row][col];
+                // Use per-row last-column check (not global numCols) for ragged rows
+                boolean isLastCol = (col == buttons[row].length - 1);
 
                 Button button;
                 if (isSpecialButton(buttonInfo)) {
                     button = createSpecialButton(buttonInfo.getKey(), true);
                     if (button == null) return;
                 } else {
-                    button = new Button(getContext(), null, android.R.attr.buttonBarButtonStyle);
+                    // AppCompatButton required for TextViewCompat auto-size on API 21–25
+                    button = new AppCompatButton(getContext(), null, android.R.attr.buttonBarButtonStyle);
                 }
 
                 button.setText(buttonInfo.getDisplay());
                 button.setTextColor(mButtonTextColor);
                 button.setAllCaps(mButtonTextAllCaps);
                 button.setPadding(0, 0, 0, 0);
-                // Allow fill weight to shrink button freely — no minimum width floor
                 button.setMinWidth(0);
                 button.setMinimumWidth(0);
+
+                // Single-line text with auto-size so labels like CTRL/HOME never wrap
+                button.setSingleLine(true);
+                TextViewCompat.setAutoSizeTextTypeUniformWithRange(
+                    button, 8, 13, 1, TypedValue.COMPLEX_UNIT_SP);
+
+                // Solid GradientDrawable background — color updated directly in touch listener
+                // without replacing the drawable (preserves auto-size + single-line state)
+                GradientDrawable btnBg = new GradientDrawable();
+                btnBg.setColor(effectiveBtnBg);
+                button.setBackground(btnBg);
 
                 button.setOnClickListener(view -> {
                     onAnyExtraKeyButtonClick(view, buttonInfo, button);
@@ -408,24 +437,22 @@ public final class ExtraKeysView extends GridLayout {
                 button.setOnTouchListener((view, event) -> {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                            view.setBackgroundColor(mButtonActiveBackgroundColor);
+                            setDrawableColor(view, mButtonActiveBackgroundColor);
                             view.animate().scaleX(0.92f).scaleY(0.92f).setDuration(60).start();
                             performExtraKeyButtonHapticFeedback(view, buttonInfo, button);
-                            // Start long press scheduled executors which will be stopped in next MotionEvent
                             startScheduledExecutors(view, buttonInfo, button);
                             return true;
 
                         case MotionEvent.ACTION_MOVE:
                             if (buttonInfo.getPopup() != null) {
-                                // Show popup on swipe up
                                 if (mPopupWindow == null && event.getY() < 0) {
                                     stopScheduledExecutors();
-                                    view.setBackgroundColor(mButtonBackgroundColor);
+                                    setDrawableColor(view, effectiveBtnBg);
                                     view.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
                                     showPopup(view, buttonInfo.getPopup());
                                 }
                                 if (mPopupWindow != null && event.getY() > 0) {
-                                    view.setBackgroundColor(mButtonActiveBackgroundColor);
+                                    setDrawableColor(view, mButtonActiveBackgroundColor);
                                     view.animate().scaleX(0.92f).scaleY(0.92f).setDuration(60).start();
                                     dismissPopup();
                                 }
@@ -433,18 +460,16 @@ public final class ExtraKeysView extends GridLayout {
                             return true;
 
                         case MotionEvent.ACTION_CANCEL:
-                            view.setBackgroundColor(mButtonBackgroundColor);
+                            setDrawableColor(view, effectiveBtnBg);
                             view.animate().scaleX(1f).scaleY(1f).setDuration(80).start();
                             stopScheduledExecutors();
                             return true;
 
                         case MotionEvent.ACTION_UP:
-                            view.setBackgroundColor(mButtonBackgroundColor);
+                            setDrawableColor(view, effectiveBtnBg);
                             view.animate().scaleX(1f).scaleY(1f).setDuration(120).start();
                             stopScheduledExecutors();
-                            // If ACTION_UP up was not from a repetitive key or was with a key with a popup button
                             if (mLongPressCount == 0 || mPopupWindow != null) {
-                                // Trigger popup button click if swipe up complete
                                 if (mPopupWindow != null) {
                                     dismissPopup();
                                     if (buttonInfo.getPopup() != null) {
@@ -464,7 +489,8 @@ public final class ExtraKeysView extends GridLayout {
                 LayoutParams param = new GridLayout.LayoutParams();
                 param.width = 0;
                 param.height = 0;
-                param.setMargins(marginPx, 0, marginPx, 0);
+                // No left margin; right margin = 1dp divider gap (except last column)
+                param.setMargins(0, 0, isLastCol ? 0 : dividerPx, 0);
                 param.columnSpec = GridLayout.spec(col, GridLayout.FILL, 1.f);
                 param.rowSpec = GridLayout.spec(row, GridLayout.FILL, 1.f);
                 button.setLayoutParams(param);
@@ -475,6 +501,15 @@ public final class ExtraKeysView extends GridLayout {
     }
 
 
+
+    /** Update button background color without replacing the drawable (preserves GradientDrawable). */
+    private void setDrawableColor(View view, int color) {
+        if (view.getBackground() instanceof GradientDrawable) {
+            ((GradientDrawable) view.getBackground()).setColor(color);
+        } else {
+            view.setBackgroundColor(color);
+        }
+    }
 
     private void onExtraKeyButtonClick(View view, ExtraKeyButton buttonInfo, Button button) {
         if (mExtraKeysViewClient != null)
@@ -646,7 +681,7 @@ public final class ExtraKeysView extends GridLayout {
         SpecialButtonState state = mSpecialButtons.get(SpecialButton.valueOf(buttonKey));
         if (state == null) return null;
         state.setIsCreated(true);
-        Button button = new Button(getContext(), null, android.R.attr.buttonBarButtonStyle);
+        Button button = new AppCompatButton(getContext(), null, android.R.attr.buttonBarButtonStyle);
         button.setTextColor(state.isActive ? mButtonActiveTextColor : mButtonTextColor);
         if (needUpdate) {
             state.buttons.add(button);
