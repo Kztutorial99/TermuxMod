@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/space_lg">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_sm"
+        android:layout_marginBottom="@dimen/space_md"
+        android:background="@drawable/shape_drag_handle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md"
+        android:paddingBottom="@dimen/space_sm"
+        android:text="@string/title_select_url_dialog"
+        android:textColor="@color/color_text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md"
+        android:paddingBottom="@dimen/space_sm"
+        android:text="@string/url_tap_copy_long_press_open"
+        android:textColor="@color/color_text_secondary"
+        android:textSize="12sp" />
+
+    <ListView
+        android:id="@+id/url_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="320dp"
+        android:divider="@color/color_border"
+        android:dividerHeight="1dp"
+        android:scrollbarStyle="outsideOverlay" />
+
+</LinearLayout>

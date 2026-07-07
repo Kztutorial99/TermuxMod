@@ -1,8 +1,9 @@
 package com.termux.app.terminal;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.ClipData;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import com.termux.shared.termux.TermuxConstants;
 import com.termux.app.TermuxService;
 import com.termux.shared.settings.properties.TermuxPropertyConstants;
 import com.termux.shared.terminal.io.BellHandler;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.termux.shared.logger.Logger;
 import com.termux.terminal.TerminalColors;
 import com.termux.terminal.TerminalSession;
@@ -333,8 +335,11 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
         if (service == null) return;
 
         if (service.getTermuxSessionsSize() >= MAX_SESSIONS) {
-            new AlertDialog.Builder(mActivity).setTitle(R.string.title_max_terminals_reached).setMessage(R.string.msg_max_terminals_reached)
-                .setPositiveButton(android.R.string.ok, null).show();
+            BottomSheetDialog sheet = new BottomSheetDialog(mActivity);
+            View sheetView = LayoutInflater.from(mActivity).inflate(R.layout.bottom_sheet_max_sessions, null);
+            sheet.setContentView(sheetView);
+            sheetView.findViewById(R.id.btn_max_sessions_ok).setOnClickListener(v -> sheet.dismiss());
+            sheet.show();
         } else {
             TerminalSession currentSession = mActivity.getCurrentSession();
 

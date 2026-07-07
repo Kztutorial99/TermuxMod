@@ -19,8 +19,8 @@
 
         <ImageButton
             android:id="@+id/files_btn_back"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:src="@drawable/ic_nav_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:tint="@color/color_text_primary"
@@ -28,8 +28,8 @@
 
         <ImageButton
             android:id="@+id/files_btn_home"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:src="@drawable/ic_home_dir"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:tint="@color/color_accent_primary"
@@ -49,8 +49,8 @@
 
         <ImageButton
             android:id="@+id/files_btn_search"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:src="@drawable/ic_search"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:tint="@color/color_text_secondary"
@@ -61,7 +61,7 @@
     <!-- Action buttons: + File, + Folder -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
@@ -73,7 +73,7 @@
             android:id="@+id/files_btn_new_file"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="40dp"
             android:text="@string/files_new_file"
             android:textColor="@color/color_text_primary"
             android:textSize="12sp"
@@ -88,12 +88,12 @@
             android:id="@+id/files_btn_new_folder"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="40dp"
             android:text="@string/files_new_folder"
-            android:textColor="#FFD600"
+            android:textColor="@color/color_folder_accent"
             android:textSize="12sp"
             app:icon="@drawable/ic_add_folder"
-            app:iconTint="#FFD600"
+            app:iconTint="@color/color_folder_accent"
             app:iconSize="16dp"
             app:iconPadding="4dp"
             app:rippleColor="@color/color_ripple" />

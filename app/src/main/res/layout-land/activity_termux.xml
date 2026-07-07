@@ -21,8 +21,8 @@
 
         <ImageButton
             android:id="@+id/btn_hamburger"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_hamburger"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:tint="@color/color_text_primary"
@@ -59,8 +59,8 @@
         <!-- Right sidebar panel button -->
         <ImageButton
             android:id="@+id/btn_right_panel"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_right_panel"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:tint="@color/color_text_primary"
@@ -217,7 +217,7 @@
                         android:id="@+id/toggle_keyboard_button"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
-                        android:layout_height="36dp"
+                        android:layout_height="48dp"
                         android:layout_weight="1"
                         android:layout_marginEnd="@dimen/space_xs"
                         android:textSize="10sp"
@@ -230,7 +230,7 @@
                         android:id="@+id/new_session_button"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="0dp"
-                        android:layout_height="36dp"
+                        android:layout_height="48dp"
                         android:layout_weight="1"
                         android:layout_marginStart="@dimen/space_xs"
                         android:textSize="10sp"
@@ -296,7 +296,7 @@
             android:id="@+id/terminal_toolbar_view_pager"
             android:visibility="gone"
             android:layout_width="0dp"
-            android:layout_height="37.5dp"
+            android:layout_height="48dp"
             android:background="@color/color_surface_high"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -71,7 +71,7 @@
         android:id="@+id/tool_install_btn"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="80dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:text="@string/packages_install"
         android:textSize="12sp"

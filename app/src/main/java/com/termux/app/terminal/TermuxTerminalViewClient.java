@@ -1,8 +1,9 @@
 package com.termux.app.terminal;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.view.LayoutInflater;
+import android.widget.ArrayAdapter;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -22,6 +23,8 @@ import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.shared.data.UrlUtils;
 import com.termux.shared.file.FileUtils;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.interact.ShareUtils;
 import com.termux.shared.shell.ShellUtils;
@@ -709,31 +712,33 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
         LinkedHashSet<CharSequence> urlSet = UrlUtils.extractUrls(text);
         if (urlSet.isEmpty()) {
-            new AlertDialog.Builder(mActivity).setMessage(R.string.title_select_url_none_found).show();
+            Snackbar.make(mActivity.findViewById(android.R.id.content),
+                R.string.title_select_url_none_found, Snackbar.LENGTH_SHORT).show();
             return;
         }
 
         final CharSequence[] urls = urlSet.toArray(new CharSequence[0]);
         Collections.reverse(Arrays.asList(urls)); // Latest first.
 
-        // Click to copy url to clipboard:
-        final AlertDialog dialog = new AlertDialog.Builder(mActivity).setItems(urls, (di, which) -> {
-            String url = (String) urls[which];
+        BottomSheetDialog sheet = new BottomSheetDialog(mActivity);
+        View sheetView = LayoutInflater.from(mActivity).inflate(R.layout.bottom_sheet_url_selection, null);
+        sheet.setContentView(sheetView);
+        ListView urlListView = sheetView.findViewById(R.id.url_list);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
+            mActivity, android.R.layout.simple_list_item_1, urls);
+        urlListView.setAdapter(adapter);
+        urlListView.setOnItemClickListener((parent, view, position, id) -> {
+            sheet.dismiss();
+            String url = (String) urls[position];
             ShareUtils.copyTextToClipboard(mActivity, url, mActivity.getString(R.string.msg_select_url_copied_to_clipboard));
-        }).setTitle(R.string.title_select_url_dialog).create();
-
-        // Long press to open URL:
-        dialog.setOnShowListener(di -> {
-            ListView lv = dialog.getListView(); // this is a ListView with your "buds" in it
-            lv.setOnItemLongClickListener((parent, view, position, id) -> {
-                dialog.dismiss();
-                String url = (String) urls[position];
-                ShareUtils.openURL(mActivity, url);
-                return true;
-            });
         });
-
-        dialog.show();
+        urlListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            sheet.dismiss();
+            String url = (String) urls[position];
+            ShareUtils.openURL(mActivity, url);
+            return true;
+        });
+        sheet.show();
     }
 
     public void reportIssueFromTranscript() {

@@ -44,8 +44,8 @@
 
     <ImageButton
         android:id="@+id/file_menu_btn"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/ic_more_vert"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:tint="@color/color_text_secondary"

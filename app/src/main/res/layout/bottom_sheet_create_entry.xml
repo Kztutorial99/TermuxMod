@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/space_lg">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_sm"
+        android:layout_marginBottom="@dimen/space_md"
+        android:background="@drawable/shape_drag_handle" />
+
+    <TextView
+        android:id="@+id/create_entry_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md"
+        android:paddingBottom="@dimen/space_md"
+        android:textColor="@color/color_text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/create_entry_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_md"
+        android:layout_marginEnd="@dimen/space_md"
+        android:layout_marginBottom="@dimen/space_lg"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/color_accent_primary"
+        app:hintTextColor="@color/color_accent_primary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/create_entry_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textColor="@color/color_text_primary"
+            android:textSize="14sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_md"
+        android:paddingEnd="@dimen/space_md">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_create_cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:text="@android:string/cancel"
+            android:textColor="@color/color_text_secondary"
+            app:rippleColor="@color/color_ripple" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_create_confirm"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@android:string/ok"
+            app:backgroundTint="@color/color_accent_primary"
+            android:textColor="@color/color_background"
+            app:cornerRadius="@dimen/radius_sm"
+            app:rippleColor="@color/color_background" />
+
+    </LinearLayout>
+
+</LinearLayout>

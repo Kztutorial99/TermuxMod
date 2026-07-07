@@ -3,7 +3,6 @@ package com.termux.app;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -831,16 +830,15 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
     private void showKillSessionDialog(TerminalSession session) {
         if (session == null) return;
-
-        final AlertDialog.Builder b = new AlertDialog.Builder(this);
-        b.setIcon(android.R.drawable.ic_dialog_alert);
-        b.setMessage(R.string.title_confirm_kill_process);
-        b.setPositiveButton(android.R.string.yes, (dialog, id) -> {
-            dialog.dismiss();
+        BottomSheetDialog sheet = new BottomSheetDialog(this);
+        View sheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_kill_session, null);
+        sheet.setContentView(sheetView);
+        sheetView.findViewById(R.id.btn_kill_cancel).setOnClickListener(v -> sheet.dismiss());
+        sheetView.findViewById(R.id.btn_kill_confirm).setOnClickListener(v -> {
+            sheet.dismiss();
             session.finishIfRunning();
         });
-        b.setNegativeButton(android.R.string.no, null);
-        b.show();
+        sheet.show();
     }
 
     private void onResetTerminalSession(TerminalSession session) {
@@ -1273,26 +1271,26 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     }
 
     private void promptCreateEntry(boolean isFolder) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle(isFolder ? R.string.files_new_folder_hint : R.string.files_new_file_hint);
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
-            String name = input.getText().toString().trim();
+        BottomSheetDialog sheet = new BottomSheetDialog(this);
+        View sheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_create_entry, null);
+        sheet.setContentView(sheetView);
+        TextView titleView = sheetView.findViewById(R.id.create_entry_title);
+        if (titleView != null) titleView.setText(isFolder ? R.string.files_new_folder_hint : R.string.files_new_file_hint);
+        com.google.android.material.textfield.TextInputEditText input = sheetView.findViewById(R.id.create_entry_input);
+        sheetView.findViewById(R.id.btn_create_cancel).setOnClickListener(v -> sheet.dismiss());
+        sheetView.findViewById(R.id.btn_create_confirm).setOnClickListener(v -> {
+            if (input == null) { sheet.dismiss(); return; }
+            String name = input.getText() != null ? input.getText().toString().trim() : "";
             if (name.isEmpty()) return;
             File target = new File(mCurrentDirectory, name);
             try {
-                if (isFolder) {
-                    target.mkdir();
-                } else {
-                    target.createNewFile();
-                }
+                if (isFolder) { target.mkdir(); } else { target.createNewFile(); }
             } catch (Exception ignored) {}
+            sheet.dismiss();
             loadDirectory(mCurrentDirectory);
         });
-        builder.setNegativeButton(android.R.string.cancel, null);
-        builder.show();
+        sheet.show();
+        if (input != null) input.requestFocus();
     }
 
 
@@ -1525,13 +1523,18 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             View kebab = convertView.findViewById(R.id.file_menu_btn);
             if (kebab != null) {
                 kebab.setOnClickListener(v -> {
-                    android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(TermuxActivity.this);
-                    b.setTitle(f.getName());
-                    b.setItems(new CharSequence[]{"Delete"}, (dialog, which) -> {
+                    BottomSheetDialog sheet = new BottomSheetDialog(TermuxActivity.this);
+                    View sv = LayoutInflater.from(TermuxActivity.this).inflate(R.layout.bottom_sheet_file_delete, null);
+                    sheet.setContentView(sv);
+                    TextView titleView = sv.findViewById(R.id.file_delete_title);
+                    if (titleView != null) titleView.setText(f.getName());
+                    sv.findViewById(R.id.btn_file_delete_cancel).setOnClickListener(dv -> sheet.dismiss());
+                    sv.findViewById(R.id.btn_file_delete_confirm).setOnClickListener(dv -> {
+                        sheet.dismiss();
                         deleteRecursive(f);
                         loadDirectory(mCurrentDirectory);
                     });
-                    b.show();
+                    sheet.show();
                 });
             }
 

@@ -81,6 +81,9 @@
 
     <string name="action_kill_process">Kill process (%d)</string>
     <string name="title_confirm_kill_process">Really kill this session?</string>
+    <string name="file_delete_confirm_msg">This action cannot be undone.</string>
+    <string name="action_delete">Delete</string>
+    <string name="url_tap_copy_long_press_open">Tap to copy, long press to open</string>
 
     <string name="action_style_terminal">Style</string>
     <string name="action_toggle_keep_screen_on">Keep screen on</string>

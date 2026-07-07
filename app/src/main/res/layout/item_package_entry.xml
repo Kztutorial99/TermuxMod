@@ -15,7 +15,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="44dp"
         android:layout_height="44dp"
-        app:cardBackgroundColor="#1A00E5CC"
+        app:cardBackgroundColor="@color/color_ripple"
         app:cardElevation="0dp"
         app:cardCornerRadius="10dp"
         app:strokeColor="@color/color_accent_primary"
@@ -70,7 +70,7 @@
         android:id="@+id/pkg_action_btn"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="88dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:text="@string/packages_install"
         android:textSize="12sp"

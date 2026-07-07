@@ -48,8 +48,8 @@
 
         <ImageButton
             android:id="@+id/btn_search_prev"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/search_overlay_prev"
             android:src="@drawable/ic_arrow_up"
@@ -58,8 +58,8 @@
 
         <ImageButton
             android:id="@+id/btn_search_next"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/search_overlay_next"
             android:src="@drawable/ic_arrow_down"
@@ -68,8 +68,8 @@
 
         <ImageButton
             android:id="@+id/btn_search_close"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/search_overlay_close"
             android:src="@drawable/ic_close"
