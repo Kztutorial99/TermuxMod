@@ -3,6 +3,7 @@ package com.termux.app;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -271,7 +272,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
         setDrawerTheme();
 
-        setDrawerParallaxEffect();
         setupDrawerMutualExclusion();
 
         setTermuxTerminalViewAndClients();
@@ -507,39 +507,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         });
     }
 
-    private void setDrawerParallaxEffect() {
-        DrawerLayout drawer = getDrawer();
-        final View terminalContent = findViewById(R.id.terminal_view);
-        if (drawer == null || terminalContent == null) return;
-
-        final float parallaxFactor = 0.25f;
-        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-                terminalContent.setTranslationX(drawerView.getWidth() * slideOffset * parallaxFactor);
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) {
-                // Lepas hardware layer setelah animasi selesai
-                terminalContent.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-                terminalContent.setTranslationX(0f);
-                terminalContent.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                if (newState == DrawerLayout.STATE_SETTLING || newState == DrawerLayout.STATE_DRAGGING) {
-                    // Aktifkan hardware layer saat animasi drawer berjalan agar parallax smooth
-                    terminalContent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                }
-            }
-        });
-    }
 
     private void setMargins() {
         ConstraintLayout relativeLayout = findViewById(R.id.activity_termux_root_relative_layout);
@@ -1202,6 +1169,23 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         View hamburger = findViewById(R.id.btn_hamburger);
         if (hamburger != null) hamburger.setVisibility(isTerminal ? View.VISIBLE : View.GONE);
 
+        // ExtraKeys bar: auto-hide on non-terminal tabs, restore preference on terminal
+        ViewPager extraKeysPager = getTerminalToolbarViewPager();
+        ImageButton toggleBtn = findViewById(R.id.btn_toggle_extrakeys);
+        if (extraKeysPager != null) {
+            if (isTerminal) {
+                boolean shouldShow = mPreferences != null && mPreferences.shouldShowTerminalToolbar();
+                extraKeysPager.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
+                if (toggleBtn != null) {
+                    toggleBtn.setVisibility(View.VISIBLE);
+                    toggleBtn.setAlpha(shouldShow ? 1.0f : 0.55f);
+                }
+            } else {
+                extraKeysPager.setVisibility(View.GONE);
+                if (toggleBtn != null) toggleBtn.setVisibility(View.GONE);
+            }
+        }
+
         // File / Package / Tools containers
         if (mFilesContainer    != null) mFilesContainer.setVisibility(tabId == R.id.nav_files    ? View.VISIBLE : View.GONE);
         if (mPackagesContainer != null) mPackagesContainer.setVisibility(tabId == R.id.nav_packages ? View.VISIBLE : View.GONE);
@@ -1220,11 +1204,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         // Refresh files list when switching to Files tab
         if (tabId == R.id.nav_files && mHomeDirectory != null) {
             loadDirectory(mCurrentDirectory != null ? mCurrentDirectory : mHomeDirectory);
+        }
 
         // Auto-refresh status install/uninstall saat buka tab Packages
         if (tabId == R.id.nav_packages) {
             refreshPackageStatus();
-        }
         }
     }
 
@@ -1724,26 +1708,27 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     }
 
     /** Isi data sistem di right sidebar setiap kali dibuka. */
+    @SuppressLint("DefaultLocale")
     private void populateRightDrawerInfo() {
         DrawerLayout drawer = getDrawer();
         if (drawer == null) return;
 
         // Android API level
-        android.widget.TextView androidView = drawer.findViewById(R.id.sidebar_info_android);
+        TextView androidView = drawer.findViewById(R.id.sidebar_info_android);
         if (androidView != null) {
             androidView.setText("API " + android.os.Build.VERSION.SDK_INT
                 + " (Android " + android.os.Build.VERSION.RELEASE + ")");
         }
 
         // CPU architecture
-        android.widget.TextView archView = drawer.findViewById(R.id.sidebar_info_arch);
+        TextView archView = drawer.findViewById(R.id.sidebar_info_arch);
         if (archView != null) {
             String[] abis = android.os.Build.SUPPORTED_ABIS;
             archView.setText(abis != null && abis.length > 0 ? abis[0] : "unknown");
         }
 
         // Free internal storage
-        android.widget.TextView storageView = drawer.findViewById(R.id.sidebar_info_storage);
+        TextView storageView = drawer.findViewById(R.id.sidebar_info_storage);
         if (storageView != null) {
             android.os.StatFs stat = new android.os.StatFs(getFilesDir().getPath());
             long freeBytes = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
@@ -1751,25 +1736,104 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         }
 
         // Termux prefix directory size (background thread agar tidak freeze)
-        android.widget.TextView prefixView = drawer.findViewById(R.id.sidebar_info_prefix);
+        TextView prefixView = drawer.findViewById(R.id.sidebar_info_prefix);
         if (prefixView != null) {
             prefixView.setText("...");
             new Thread(() -> {
                 File prefix = new File(com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR_PATH);
                 final String size = prefix.exists() ? formatBytes(getDirSize(prefix)) : "N/A";
                 runOnUiThread(() -> {
-                    android.widget.TextView v = drawer.findViewById(R.id.sidebar_info_prefix);
+                    TextView v = drawer.findViewById(R.id.sidebar_info_prefix);
                     if (v != null) v.setText(size);
                 });
             }).start();
         }
 
         // Active sessions count
-        android.widget.TextView sessView = drawer.findViewById(R.id.sidebar_info_sessions);
+        TextView sessView = drawer.findViewById(R.id.sidebar_info_sessions);
         if (sessView != null) {
             int count = (mTermuxService != null)
                 ? mTermuxService.getTermuxSessions().size() : 0;
             sessView.setText(String.valueOf(count));
+        }
+
+        // Device model
+        TextView modelView = drawer.findViewById(R.id.sidebar_info_model);
+        if (modelView != null) {
+            String manufacturer = android.os.Build.MANUFACTURER;
+            String model = android.os.Build.MODEL;
+            String display = model.toLowerCase().startsWith(manufacturer.toLowerCase())
+                ? model : manufacturer + " " + model;
+            modelView.setText(display);
+        }
+
+        // Kernel version
+        TextView kernelView = drawer.findViewById(R.id.sidebar_info_kernel);
+        if (kernelView != null) {
+            String kernel = System.getProperty("os.version");
+            kernelView.setText(kernel != null ? kernel : "unknown");
+        }
+
+        // RAM bebas
+        TextView ramView = drawer.findViewById(R.id.sidebar_info_ram);
+        if (ramView != null) {
+            ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+            if (am != null) {
+                ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+                am.getMemoryInfo(mi);
+                ramView.setText(formatBytes(mi.availMem) + " / " + formatBytes(mi.totalMem));
+            } else {
+                ramView.setText("N/A");
+            }
+        }
+
+        // Baterai (sync via sticky broadcast — no receiver registration needed)
+        TextView battView = drawer.findViewById(R.id.sidebar_info_battery);
+        if (battView != null) {
+            Intent batt = registerReceiver(null,
+                new android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            if (batt != null) {
+                int level = batt.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, -1);
+                int scale = batt.getIntExtra(android.os.BatteryManager.EXTRA_SCALE, -1);
+                int pct = (level >= 0 && scale > 0) ? (int) (level * 100f / scale) : -1;
+                int status = batt.getIntExtra(android.os.BatteryManager.EXTRA_STATUS, -1);
+                boolean charging = status == android.os.BatteryManager.BATTERY_STATUS_CHARGING
+                    || status == android.os.BatteryManager.BATTERY_STATUS_FULL;
+                battView.setText(pct >= 0 ? pct + "%" + (charging ? " ⚡" : "") : "N/A");
+            } else {
+                battView.setText("N/A");
+            }
+        }
+
+        // IP Address (background thread)
+        TextView ipView = drawer.findViewById(R.id.sidebar_info_ip);
+        if (ipView != null) {
+            ipView.setText("...");
+            new Thread(() -> {
+                String ip = "N/A";
+                try {
+                    java.util.Enumeration<java.net.NetworkInterface> ifaces =
+                        java.net.NetworkInterface.getNetworkInterfaces();
+                    outer:
+                    while (ifaces != null && ifaces.hasMoreElements()) {
+                        java.net.NetworkInterface iface = ifaces.nextElement();
+                        if (!iface.isUp() || iface.isLoopback()) continue;
+                        java.util.Enumeration<java.net.InetAddress> addrs = iface.getInetAddresses();
+                        while (addrs.hasMoreElements()) {
+                            java.net.InetAddress addr = addrs.nextElement();
+                            if (!addr.isLoopbackAddress() && addr instanceof java.net.Inet4Address) {
+                                ip = addr.getHostAddress();
+                                break outer;
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {}
+                final String finalIp = ip;
+                runOnUiThread(() -> {
+                    TextView v = drawer.findViewById(R.id.sidebar_info_ip);
+                    if (v != null) v.setText(finalIp);
+                });
+            }).start();
         }
     }
 

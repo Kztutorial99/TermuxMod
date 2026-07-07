@@ -198,6 +198,165 @@
                     android:text="0" />
             </LinearLayout>
 
+            <!-- ════════════ PERANGKAT ════════════ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sidebar_section_device"
+                android:textColor="@color/color_accent_primary"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.14"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="6dp" />
+
+            <!-- Model perangkat -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_model"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_model"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:maxWidth="150dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- Kernel version -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_kernel"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_kernel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:maxWidth="150dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- ════════════ MEMORI & JARINGAN ════════════ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sidebar_section_memory"
+                android:textColor="@color/color_accent_primary"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.14"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="6dp" />
+
+            <!-- RAM bebas -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_ram"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_ram"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- Baterai -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_battery"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_battery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="..." />
+            </LinearLayout>
+
+            <!-- IP Address -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sidebar_ip"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sidebar_info_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:text="..." />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

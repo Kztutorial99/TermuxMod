@@ -377,13 +377,20 @@
     <string name="appearance_cursor_blink_desc">Enable cursor blinking animation</string>
 
     <!-- Right Sidebar -->
-    <string name="sidebar_title">INFO &amp; AKSI</string>
+    <string name="sidebar_title">INFO</string>
     <string name="sidebar_section_sysinfo">SISTEM INFO</string>
     <string name="sidebar_android_version">Android</string>
     <string name="sidebar_arch">Arsitektur</string>
     <string name="sidebar_storage">Storage Bebas</string>
     <string name="sidebar_prefix">Ukuran Prefix</string>
     <string name="sidebar_sessions">Sesi Aktif</string>
+    <string name="sidebar_section_device">PERANGKAT</string>
+    <string name="sidebar_model">Model</string>
+    <string name="sidebar_kernel">Kernel</string>
+    <string name="sidebar_section_memory">MEMORI &amp; JARINGAN</string>
+    <string name="sidebar_ram">RAM Bebas</string>
+    <string name="sidebar_battery">Baterai</string>
+    <string name="sidebar_ip">IP Address</string>
     <string name="sidebar_section_actions">AKSI CEPAT</string>
     <string name="sidebar_kill_session">Kill Session</string>
     <string name="sidebar_section_app">APLIKASI</string>
