@@ -25,13 +25,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.termux.app.activities.DeveloperInfoActivity;
+import com.termux.app.activities.TerminalAppearanceActivity;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -166,6 +183,24 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
     private int mTerminalToolbarDefaultHeight;
 
+    // Bottom navigation
+    private BottomNavigationView mBottomNav;
+    private FrameLayout mFilesContainer;
+    private FrameLayout mPackagesContainer;
+    private FrameLayout mToolsContainer;
+    private int mCurrentTabId = R.id.nav_terminal;
+
+    // Files tab state
+    private File mCurrentDirectory;
+    private File mHomeDirectory;
+    private FileAdapter mFileAdapter;
+
+    // Packages tab state
+    private PackageAdapter mPackageAdapter;
+
+    // Tools tab state
+    private ToolAdapter mToolAdapter;
+
 
     private static final int CONTEXT_MENU_SELECT_URL_ID = 0;
     private static final int CONTEXT_MENU_SHARE_TRANSCRIPT_ID = 1;
@@ -247,6 +282,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         setNewSessionButtonView();
 
         setToggleKeyboardView();
+
+        setupCustomToolbar();
+        setupBottomNavigation();
+        setupFilesTab();
+        setupPackagesTab();
+        setupToolsTab();
 
         registerForContextMenu(mTerminalView);
 
@@ -904,6 +945,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
     public void termuxSessionListNotifyUpdated() {
         mTermuxSessionListViewController.notifyDataSetChanged();
+        updateSessionCountBadge();
     }
 
     public boolean isVisible() {
@@ -1044,6 +1086,564 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         Intent intent = new Intent(context, TermuxActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // CUSTOM TOOLBAR
+    // ══════════════════════════════════════════════════════════
+
+    private void setupCustomToolbar() {
+        // Hamburger → open sessions drawer
+        View hamburger = findViewById(R.id.btn_hamburger);
+        if (hamburger != null) {
+            hamburger.setOnClickListener(v -> {
+                DrawerLayout drawer = getDrawer();
+                if (drawer != null) {
+                    if (drawer.isDrawerOpen(android.view.Gravity.LEFT)) {
+                        drawer.closeDrawers();
+                    } else {
+                        drawer.openDrawer(android.view.Gravity.LEFT);
+                    }
+                }
+            });
+        }
+
+        // Version box → open Developer Info
+        View versionBox = findViewById(R.id.toolbar_version_box);
+        if (versionBox != null) {
+            versionBox.setOnClickListener(v ->
+                startActivity(new Intent(this, DeveloperInfoActivity.class)));
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // BOTTOM NAVIGATION
+    // ══════════════════════════════════════════════════════════
+
+    private void setupBottomNavigation() {
+        mFilesContainer    = findViewById(R.id.files_container);
+        mPackagesContainer = findViewById(R.id.packages_container);
+        mToolsContainer    = findViewById(R.id.tools_container);
+
+        mBottomNav = findViewById(R.id.bottom_nav);
+        if (mBottomNav == null) return;
+
+        mBottomNav.setOnNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == mCurrentTabId) return true;
+            showTab(id);
+            return true;
+        });
+    }
+
+    private void showTab(int tabId) {
+        mCurrentTabId = tabId;
+        DrawerLayout drawerLayout  = getDrawer();
+        boolean isTerminal = (tabId == R.id.nav_terminal);
+
+        // Terminal DrawerLayout visibility
+        if (drawerLayout != null) {
+            drawerLayout.setVisibility(isTerminal ? View.VISIBLE : View.GONE);
+        }
+
+        // Hamburger button — only meaningful on terminal tab
+        View hamburger = findViewById(R.id.btn_hamburger);
+        if (hamburger != null) hamburger.setVisibility(isTerminal ? View.VISIBLE : View.GONE);
+
+        // File / Package / Tools containers
+        if (mFilesContainer    != null) mFilesContainer.setVisibility(tabId == R.id.nav_files    ? View.VISIBLE : View.GONE);
+        if (mPackagesContainer != null) mPackagesContainer.setVisibility(tabId == R.id.nav_packages ? View.VISIBLE : View.GONE);
+        if (mToolsContainer    != null) mToolsContainer.setVisibility(tabId == R.id.nav_tools    ? View.VISIBLE : View.GONE);
+
+        // Settings tab → open SettingsActivity
+        if (tabId == R.id.nav_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            // Revert selection back to terminal
+            mCurrentTabId = R.id.nav_terminal;
+            if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);
+            showTab(R.id.nav_terminal);
+            return;
+        }
+
+        // Refresh files list when switching to Files tab
+        if (tabId == R.id.nav_files && mHomeDirectory != null) {
+            loadDirectory(mCurrentDirectory != null ? mCurrentDirectory : mHomeDirectory);
+        }
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // TAB: FILES
+    // ══════════════════════════════════════════════════════════
+
+    private void setupFilesTab() {
+        if (mFilesContainer == null) return;
+
+        mHomeDirectory = new File(TermuxConstants.TERMUX_HOME_DIR_PATH);
+        mCurrentDirectory = mHomeDirectory;
+
+        ListView listView = mFilesContainer.findViewById(R.id.files_list);
+        if (listView == null) return;
+
+        mFileAdapter = new FileAdapter(new ArrayList<>());
+        listView.setAdapter(mFileAdapter);
+
+        // Directory navigation on item click
+        listView.setOnItemClickListener((parent, view, pos, id) -> {
+            File f = mFileAdapter.getItem(pos);
+            if (f != null && f.isDirectory()) loadDirectory(f);
+        });
+
+        // Breadcrumb back/home buttons
+        View backBtn = mFilesContainer.findViewById(R.id.files_nav_back);
+        if (backBtn != null) backBtn.setOnClickListener(v -> {
+            if (mCurrentDirectory != null && mCurrentDirectory.getParentFile() != null
+                    && !mCurrentDirectory.equals(mHomeDirectory)) {
+                loadDirectory(mCurrentDirectory.getParentFile());
+            }
+        });
+
+        View homeBtn = mFilesContainer.findViewById(R.id.files_nav_home);
+        if (homeBtn != null) homeBtn.setOnClickListener(v -> loadDirectory(mHomeDirectory));
+
+        View refreshBtn = mFilesContainer.findViewById(R.id.files_nav_refresh);
+        if (refreshBtn != null) refreshBtn.setOnClickListener(v -> loadDirectory(mCurrentDirectory));
+
+        // + File button
+        View addFile = mFilesContainer.findViewById(R.id.files_add_file);
+        if (addFile != null) addFile.setOnClickListener(v -> promptCreateEntry(false));
+
+        // + Folder button
+        View addFolder = mFilesContainer.findViewById(R.id.files_add_folder);
+        if (addFolder != null) addFolder.setOnClickListener(v -> promptCreateEntry(true));
+
+        loadDirectory(mHomeDirectory);
+    }
+
+    private void loadDirectory(File dir) {
+        if (dir == null || !dir.exists() || !dir.isDirectory()) return;
+        mCurrentDirectory = dir;
+
+        // Update breadcrumb text
+        TextView breadcrumb = (mFilesContainer != null) ? mFilesContainer.findViewById(R.id.files_breadcrumb) : null;
+        if (breadcrumb != null) {
+            String path = dir.getAbsolutePath()
+                .replace(TermuxConstants.TERMUX_HOME_DIR_PATH, "~");
+            breadcrumb.setText(path);
+        }
+
+        File[] children = dir.listFiles();
+        List<File> files = (children != null) ? Arrays.asList(children) : new ArrayList<>();
+        Collections.sort(files, (a, b) -> {
+            if (a.isDirectory() != b.isDirectory()) return a.isDirectory() ? -1 : 1;
+            return a.getName().compareToIgnoreCase(b.getName());
+        });
+
+        if (mFileAdapter != null) {
+            mFileAdapter.setData(files);
+        }
+    }
+
+    private void promptCreateEntry(boolean isFolder) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle(isFolder ? R.string.files_new_folder_hint : R.string.files_new_file_hint);
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+            String name = input.getText().toString().trim();
+            if (name.isEmpty()) return;
+            File target = new File(mCurrentDirectory, name);
+            try {
+                if (isFolder) {
+                    target.mkdir();
+                } else {
+                    target.createNewFile();
+                }
+            } catch (Exception ignored) {}
+            loadDirectory(mCurrentDirectory);
+        });
+        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.show();
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // TAB: PACKAGES
+    // ══════════════════════════════════════════════════════════
+
+    private static final String PREFIX_BIN = TermuxConstants.TERMUX_PREFIX_DIR_PATH + "/bin/";
+
+    private static final String[][] PACKAGE_LIST = {
+        // { name, version, description, binary-name }
+        {"git",        "2.x",    "Distributed version control system",        "git"},
+        {"curl",       "8.x",    "Command line tool for transferring data",    "curl"},
+        {"wget",       "1.x",    "Non-interactive network downloader",         "wget"},
+        {"vim",        "9.x",    "Highly configurable text editor",            "vim"},
+        {"nano",       "7.x",    "Easy-to-use command line text editor",       "nano"},
+        {"python",     "3.x",    "Interpreted high-level programming language","python3"},
+        {"nodejs",     "20.x",   "JavaScript runtime built on V8",             "node"},
+        {"ruby",       "3.x",    "Dynamic, interpreted scripting language",    "ruby"},
+        {"golang",     "1.21",   "Open source programming language by Google", "go"},
+        {"rust",       "1.x",    "Systems programming language",               "rustc"},
+        {"php",        "8.x",    "Server-side scripting language",             "php"},
+        {"ffmpeg",     "6.x",    "Multimedia framework for audio/video",       "ffmpeg"},
+        {"imagemagick","7.x",    "Image manipulation tools",                   "convert"},
+        {"openssh",    "9.x",    "Connectivity tool for remote login",         "ssh"},
+        {"nmap",       "7.x",    "Network exploration and security scanner",   "nmap"},
+        {"htop",       "3.x",    "Interactive process viewer",                 "htop"},
+        {"tree",       "2.x",    "Recursive directory listing command",        "tree"},
+        {"jq",         "1.x",    "Lightweight JSON processor",                 "jq"},
+        {"zip",        "3.x",    "Package and compress files",                 "zip"},
+        {"unzip",      "6.x",    "Extraction utility for .zip files",          "unzip"},
+        {"tar",        "1.x",    "Archive utility",                            "tar"},
+        {"tmate",      "2.x",    "Instant terminal sharing",                   "tmate"},
+        {"tmux",       "3.x",    "Terminal multiplexer",                       "tmux"},
+        {"zsh",        "5.x",    "Extended Bourne shell with improvements",    "zsh"},
+        {"fish",       "3.x",    "Friendly interactive shell",                 "fish"},
+    };
+
+    private void setupPackagesTab() {
+        if (mPackagesContainer == null) return;
+
+        List<String[]> packages = new ArrayList<>(Arrays.asList(PACKAGE_LIST));
+        mPackageAdapter = new PackageAdapter(packages);
+
+        ListView listView = mPackagesContainer.findViewById(R.id.packages_list);
+        if (listView != null) listView.setAdapter(mPackageAdapter);
+
+        // Search filter
+        EditText search = mPackagesContainer.findViewById(R.id.packages_search);
+        if (search != null) {
+            search.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+                @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
+                    filterPackages(s.toString());
+                }
+                @Override public void afterTextChanged(Editable s) {}
+            });
+        }
+
+        // Update All
+        View updateAll = mPackagesContainer.findViewById(R.id.packages_update_all);
+        if (updateAll != null) updateAll.setOnClickListener(v ->
+            runCommandInTerminal("pkg update -y\n"));
+
+        // Upgrade All
+        View upgradeAll = mPackagesContainer.findViewById(R.id.packages_upgrade_all);
+        if (upgradeAll != null) upgradeAll.setOnClickListener(v ->
+            runCommandInTerminal("pkg upgrade -y\n"));
+    }
+
+    private void filterPackages(String query) {
+        if (mPackageAdapter == null) return;
+        List<String[]> filtered = new ArrayList<>();
+        for (String[] pkg : PACKAGE_LIST) {
+            if (pkg[0].contains(query.toLowerCase()) || pkg[2].toLowerCase().contains(query.toLowerCase())) {
+                filtered.add(pkg);
+            }
+        }
+        mPackageAdapter.setData(filtered);
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // TAB: TOOLS
+    // ══════════════════════════════════════════════════════════
+
+    private static final String[][] TOOL_LIST = {
+        // { name, description, command-tag, install-command, binary-name }
+        {"Oh My Zsh",            "Framework for managing Zsh configuration",
+            "sh install.sh",  "sh -c \"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"\n", "zsh"},
+        {"zsh-autosuggestions",  "Fish-like autosuggestions for Zsh",
+            "git clone",      "git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions\n", "zsh"},
+        {"zsh-syntax-highlighting", "Fish-like syntax highlighting for Zsh",
+            "git clone",      "git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting\n", "zsh"},
+        {"fzf",                  "Command-line fuzzy finder",
+            "pkg install fzf","pkg install -y fzf\n", "fzf"},
+        {"tmux",                 "Terminal multiplexer — split panes, sessions",
+            "pkg install tmux","pkg install -y tmux\n", "tmux"},
+        {"thefuck",              "Corrects previous console commands",
+            "pip install thefuck","pip install thefuck\n", "thefuck"},
+        {"zoxide",               "Smarter cd command with jump support",
+            "pkg install zoxide","pkg install -y zoxide\n", "zoxide"},
+        {"bat",                  "cat clone with syntax highlighting and Git",
+            "pkg install bat", "pkg install -y bat\n", "bat"},
+        {"exa",                  "Modern replacement for ls",
+            "pkg install exa", "pkg install -y exa\n", "exa"},
+        {"ripgrep",              "Recursive regex search (fast grep alternative)",
+            "pkg install ripgrep","pkg install -y ripgrep\n", "rg"},
+        {"neovim",               "Hyperextensible Vim-based text editor",
+            "pkg install neovim","pkg install -y neovim\n", "nvim"},
+        {"lazygit",              "Simple terminal UI for git commands",
+            "pkg install lazygit","pkg install -y lazygit\n", "lazygit"},
+    };
+
+    private void setupToolsTab() {
+        if (mToolsContainer == null) return;
+
+        List<String[]> tools = new ArrayList<>(Arrays.asList(TOOL_LIST));
+        mToolAdapter = new ToolAdapter(tools);
+
+        ListView listView = mToolsContainer.findViewById(R.id.tools_list);
+        if (listView != null) listView.setAdapter(mToolAdapter);
+
+        // Search filter
+        EditText search = mToolsContainer.findViewById(R.id.tools_search);
+        if (search != null) {
+            search.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+                @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
+                    filterTools(s.toString());
+                }
+                @Override public void afterTextChanged(Editable s) {}
+            });
+        }
+    }
+
+    private void filterTools(String query) {
+        if (mToolAdapter == null) return;
+        List<String[]> filtered = new ArrayList<>();
+        for (String[] t : TOOL_LIST) {
+            if (t[0].toLowerCase().contains(query.toLowerCase())
+                    || t[1].toLowerCase().contains(query.toLowerCase())) {
+                filtered.add(t);
+            }
+        }
+        mToolAdapter.setData(filtered);
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // TERMINAL COMMAND INJECTION
+    // ══════════════════════════════════════════════════════════
+
+    /** Injects a shell command into the current terminal session. */
+    public void runCommandInTerminal(String command) {
+        TerminalSession session = getCurrentSession();
+        if (session == null || command == null) return;
+        // Switch back to terminal tab first
+        showTab(R.id.nav_terminal);
+        if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);
+        // Feed the command bytes
+        byte[] bytes = command.getBytes();
+        session.write(bytes, 0, bytes.length);
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // SESSION COUNT BADGE
+    // ══════════════════════════════════════════════════════════
+
+    private void updateSessionCountBadge() {
+        TextView badge = findViewById(R.id.sessions_count_badge);
+        if (badge == null || mTermuxService == null) return;
+        int count = mTermuxService.getTermuxSessions().size();
+        badge.setText(String.valueOf(count));
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // ADAPTERS
+    // ══════════════════════════════════════════════════════════
+
+    /** Adapter for the built-in file browser. */
+    private class FileAdapter extends BaseAdapter {
+        private List<File> mFiles;
+
+        FileAdapter(List<File> files) {
+            mFiles = (files != null) ? files : new ArrayList<>();
+        }
+
+        void setData(List<File> files) {
+            mFiles = (files != null) ? files : new ArrayList<>();
+            notifyDataSetChanged();
+        }
+
+        @Override public int getCount() { return mFiles.size(); }
+        @Override public File getItem(int pos) { return mFiles.get(pos); }
+        @Override public long getItemId(int pos) { return pos; }
+
+        @Override
+        public View getView(int pos, View convertView, android.view.ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(TermuxActivity.this)
+                    .inflate(R.layout.item_file_entry, parent, false);
+            }
+            File f = mFiles.get(pos);
+
+            ImageView icon = convertView.findViewById(R.id.file_entry_icon);
+            TextView name  = convertView.findViewById(R.id.file_entry_name);
+            TextView meta  = convertView.findViewById(R.id.file_entry_meta);
+
+            if (icon != null) {
+                icon.setImageResource(f.isDirectory()
+                    ? R.drawable.ic_nav_files
+                    : R.drawable.ic_add_file);
+            }
+            if (name != null) name.setText(f.getName());
+            if (meta != null) {
+                if (f.isDirectory()) {
+                    File[] ch = f.listFiles();
+                    int cnt = (ch != null) ? ch.length : 0;
+                    meta.setText(cnt + " items");
+                } else {
+                    long kb = f.length() / 1024;
+                    meta.setText(kb > 0 ? kb + " KB" : f.length() + " B");
+                }
+            }
+
+            // Kebab menu (delete only for now)
+            View kebab = convertView.findViewById(R.id.file_entry_more);
+            if (kebab != null) {
+                kebab.setOnClickListener(v -> {
+                    android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(TermuxActivity.this);
+                    b.setTitle(f.getName());
+                    b.setItems(new CharSequence[]{"Delete"}, (dialog, which) -> {
+                        deleteRecursive(f);
+                        loadDirectory(mCurrentDirectory);
+                    });
+                    b.show();
+                });
+            }
+
+            return convertView;
+        }
+
+        private void deleteRecursive(File f) {
+            if (f.isDirectory()) {
+                File[] children = f.listFiles();
+                if (children != null) for (File c : children) deleteRecursive(c);
+            }
+            f.delete();
+        }
+    }
+
+
+    /** Adapter for the package manager tab. */
+    private class PackageAdapter extends BaseAdapter {
+        private List<String[]> mPkgs;
+
+        PackageAdapter(List<String[]> pkgs) {
+            mPkgs = (pkgs != null) ? pkgs : new ArrayList<>();
+        }
+
+        void setData(List<String[]> pkgs) {
+            mPkgs = (pkgs != null) ? pkgs : new ArrayList<>();
+            notifyDataSetChanged();
+        }
+
+        @Override public int getCount() { return mPkgs.size(); }
+        @Override public String[] getItem(int pos) { return mPkgs.get(pos); }
+        @Override public long getItemId(int pos) { return pos; }
+
+        @Override
+        public View getView(int pos, View convertView, android.view.ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(TermuxActivity.this)
+                    .inflate(R.layout.item_package_entry, parent, false);
+            }
+            String[] pkg = mPkgs.get(pos); // {name, version, desc, binary}
+            String name    = pkg[0];
+            String version = pkg[1];
+            String desc    = pkg[2];
+            String binary  = pkg[3];
+
+            boolean installed = new File(PREFIX_BIN + binary).exists();
+
+            TextView nameView = convertView.findViewById(R.id.pkg_name);
+            TextView verView  = convertView.findViewById(R.id.pkg_version);
+            TextView descView = convertView.findViewById(R.id.pkg_description);
+            Button   actionBtn = convertView.findViewById(R.id.pkg_action_btn);
+
+            if (nameView != null) nameView.setText(name);
+            if (verView  != null) verView.setText(version);
+            if (descView != null) descView.setText(desc);
+
+            if (actionBtn != null) {
+                if (installed) {
+                    actionBtn.setText(getString(R.string.packages_uninstall));
+                    actionBtn.setBackgroundTintList(
+                        android.content.res.ColorStateList.valueOf(
+                            getResources().getColor(R.color.color_surface_high)));
+                    actionBtn.setTextColor(getResources().getColor(R.color.color_text_secondary));
+                    actionBtn.setOnClickListener(v ->
+                        runCommandInTerminal("pkg uninstall -y " + name + "\n"));
+                } else {
+                    actionBtn.setText(getString(R.string.packages_install));
+                    actionBtn.setBackgroundTintList(
+                        android.content.res.ColorStateList.valueOf(
+                            getResources().getColor(R.color.color_accent_primary)));
+                    actionBtn.setTextColor(getResources().getColor(R.color.color_background));
+                    actionBtn.setOnClickListener(v ->
+                        runCommandInTerminal("pkg install -y " + name + "\n"));
+                }
+            }
+
+            return convertView;
+        }
+    }
+
+
+    /** Adapter for the tools hub tab. */
+    private class ToolAdapter extends BaseAdapter {
+        private List<String[]> mTools;
+
+        ToolAdapter(List<String[]> tools) {
+            mTools = (tools != null) ? tools : new ArrayList<>();
+        }
+
+        void setData(List<String[]> tools) {
+            mTools = (tools != null) ? tools : new ArrayList<>();
+            notifyDataSetChanged();
+        }
+
+        @Override public int getCount()            { return mTools.size(); }
+        @Override public String[] getItem(int pos) { return mTools.get(pos); }
+        @Override public long getItemId(int pos)   { return pos; }
+
+        @Override
+        public View getView(int pos, View convertView, android.view.ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(TermuxActivity.this)
+                    .inflate(R.layout.item_tool_entry, parent, false);
+            }
+            String[] t = mTools.get(pos); // {name, desc, cmd-tag, install-cmd, binary}
+            String name     = t[0];
+            String desc     = t[1];
+            String cmdTag   = t[2];
+            String installCmd = t[3];
+            String binary   = t[4];
+
+            boolean installed = new File(PREFIX_BIN + binary).exists();
+
+            TextView nameView = convertView.findViewById(R.id.tool_name);
+            TextView descView = convertView.findViewById(R.id.tool_description);
+            TextView cmdView  = convertView.findViewById(R.id.tool_command_tag);
+            Button actionBtn  = convertView.findViewById(R.id.tool_action_btn);
+
+            if (nameView != null) nameView.setText(name);
+            if (descView != null) descView.setText(desc);
+            if (cmdView  != null) cmdView.setText(cmdTag);
+
+            if (actionBtn != null) {
+                if (installed) {
+                    actionBtn.setText("Installed");
+                    actionBtn.setEnabled(false);
+                    actionBtn.setAlpha(0.5f);
+                    actionBtn.setOnClickListener(null);
+                } else {
+                    actionBtn.setText(getString(R.string.packages_install));
+                    actionBtn.setEnabled(true);
+                    actionBtn.setAlpha(1f);
+                    actionBtn.setOnClickListener(v -> runCommandInTerminal(installCmd));
+                }
+            }
+
+            return convertView;
+        }
     }
 
 }

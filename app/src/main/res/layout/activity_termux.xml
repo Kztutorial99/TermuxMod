@@ -7,12 +7,101 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
+    <!-- ═══════════════════════════════════════
+         CUSTOM TOOLBAR — TermuxMod branding
+         ═══════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/custom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
+        android:background="@color/color_background"
+        android:elevation="2dp">
+
+        <!-- Hamburger button — opens sessions drawer -->
+        <ImageButton
+            android:id="@+id/btn_hamburger"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_hamburger"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/color_text_primary"
+            android:contentDescription="@string/action_open_sessions" />
+
+        <!-- TERMUX MOD brand text -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_brand_termux"
+                android:textColor="@color/color_accent_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_brand_mod_super"
+                android:textColor="@color/color_accent_primary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:paddingStart="2dp"
+                android:paddingBottom="8dp" />
+
+        </LinearLayout>
+
+        <!-- Version info box (right side) -->
+        <LinearLayout
+            android:id="@+id/toolbar_version_box"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@drawable/shape_version_box">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/toolbar_version"
+                android:textColor="@color/color_accent_primary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/toolbar_author"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="9sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ═══════════════════════════════════════
+         MAIN CONTENT AREA
+         ═══════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_termux_root_relative_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <!-- ─── TAB: TERMINAL (DrawerLayout) ─── -->
         <androidx.drawerlayout.widget.DrawerLayout
             android:id="@+id/drawer_layout"
             android:layout_width="0dp"
@@ -22,6 +111,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
+            <!-- Terminal view (main content of drawer) -->
             <com.termux.view.TerminalView
                 android:id="@+id/terminal_view"
                 android:layout_width="match_parent"
@@ -32,6 +122,7 @@
                 android:scrollbars="vertical"
                 tools:ignore="UnusedAttribute" />
 
+            <!-- ─── SESSIONS DRAWER PANEL (left) ─── -->
             <LinearLayout
                 android:id="@+id/left_drawer"
                 android:layout_width="280dp"
@@ -41,28 +132,48 @@
                 android:orientation="vertical"
                 android:descendantFocusability="blocksDescendants">
 
+                <!-- Sessions header row: SESSIONS label + count badge -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingStart="@dimen/space_sm"
-                    android:paddingEnd="@dimen/space_sm"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="12dp"
                     android:background="@color/color_surface_high">
 
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sessions_label"
+                        android:textColor="@color/color_accent_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1" />
+
+                    <!-- Session count badge (circle outline) -->
+                    <TextView
+                        android:id="@+id/sessions_count_badge"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/color_accent_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/shape_sessions_count" />
+
+                    <!-- Keep settings_button hidden (used internally for Black UI theme) -->
                     <ImageButton
                         android:id="@+id/settings_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_settings"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:tint="@color/color_text_primary"
-                        android:contentDescription="@string/action_open_settings" />
-
-                    <View
                         android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
+                        android:layout_height="0dp"
+                        android:src="@drawable/ic_settings"
+                        android:background="@android:color/transparent"
+                        android:tint="@color/color_text_primary"
+                        android:visibility="gone"
+                        android:contentDescription="@string/action_open_settings" />
 
                 </LinearLayout>
 
@@ -71,6 +182,16 @@
                     android:layout_height="1dp"
                     android:background="@color/color_border" />
 
+                <!-- "Long press for rename / delete" hint -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:text="@string/sessions_long_press_hint"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="11sp" />
+
+                <!-- Sessions list -->
                 <ListView
                     android:id="@+id/terminal_sessions_list"
                     android:layout_width="match_parent"
@@ -90,6 +211,7 @@
                     android:layout_height="1dp"
                     android:background="@color/color_border" />
 
+                <!-- Drawer footer: Keyboard | New session -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -128,6 +250,52 @@
 
         </androidx.drawerlayout.widget.DrawerLayout>
 
+        <!-- ─── TAB: FILES ─── -->
+        <FrameLayout
+            android:id="@+id/files_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/terminal_toolbar_view_pager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <include layout="@layout/view_files_tab" />
+
+        </FrameLayout>
+
+        <!-- ─── TAB: PACKAGES ─── -->
+        <FrameLayout
+            android:id="@+id/packages_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/terminal_toolbar_view_pager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <include layout="@layout/view_packages_tab" />
+
+        </FrameLayout>
+
+        <!-- ─── TAB: TOOLS ─── -->
+        <FrameLayout
+            android:id="@+id/tools_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/terminal_toolbar_view_pager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <include layout="@layout/view_tools_tab" />
+
+        </FrameLayout>
+
+        <!-- Extra keys ViewPager (keep existing, constraint unchanged) -->
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/terminal_toolbar_view_pager"
             android:visibility="gone"
@@ -140,6 +308,22 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- ═══════════════════════════════════════
+         BOTTOM NAVIGATION
+         ═══════════════════════════════════════ -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/color_background"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@drawable/bottom_nav_item_color"
+        app:itemTextColor="@drawable/bottom_nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:itemRippleColor="@color/color_ripple"
+        app:elevation="8dp" />
+
+    <!-- Bottom space (kept for keyboard insets) -->
     <View
         android:id="@+id/activity_termux_bottom_space_view"
         android:layout_width="match_parent"

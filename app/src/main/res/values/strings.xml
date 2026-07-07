@@ -270,4 +270,106 @@
     <string name="reduce_animations_summary_on">Heavy animations disabled (parallax, slide transitions)</string>
     <string name="reduce_animations_summary_off">All animations enabled</string>
 
+
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- ROMBAK FULL — Bottom Nav + Tabs + Branding -->
+    <!-- ══════════════════════════════════════════ -->
+
+    <!-- Toolbar branding -->
+    <string name="app_brand_termux">TERMUX</string>
+    <string name="app_brand_mod"> MOD</string>
+    <string name="app_brand_mod_super">MOD</string>
+    <string name="toolbar_version">v0.118.3 MOD</string>
+    <string name="toolbar_author">by Kz.tutorial</string>
+
+    <!-- Bottom navigation labels -->
+    <string name="nav_terminal">Terminal</string>
+    <string name="nav_files">Files</string>
+    <string name="nav_packages">Packages</string>
+    <string name="nav_tools">Tools</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Sessions drawer -->
+    <string name="sessions_label">SESSIONS</string>
+    <string name="sessions_long_press_hint">Long press for rename / delete</string>
+    <string name="action_open_sessions">Open sessions drawer</string>
+
+    <!-- Files tab -->
+    <string name="files_new_file">+ File</string>
+    <string name="files_new_folder">+ Folder</string>
+    <string name="files_empty">This folder is empty</string>
+    <string name="files_new_file_hint">File name</string>
+    <string name="files_new_folder_hint">Folder name</string>
+
+    <!-- Packages tab -->
+    <string name="packages_search_hint">Search packages…</string>
+    <string name="packages_update_all">Update All</string>
+    <string name="packages_upgrade_all">Upgrade All</string>
+    <string name="packages_install">Install</string>
+    <string name="packages_uninstall">Uninstall</string>
+    <string name="packages_running">Running…</string>
+
+    <!-- Tools tab -->
+    <string name="tools_search_hint">Search tools…</string>
+    <string name="tools_disclaimer_label">DISCLAIMER</string>
+    <string name="tools_disclaimer_body">All tools are provided for educational and development purposes only. By using these tools, you accept full responsibility for your actions. The developer assumes no liability for misuse or any damages incurred.</string>
+    <string name="tools_no_root_section">NO ROOT REQUIRED</string>
+
+    <!-- Developer Info activity -->
+    <string name="dev_info_title">Developer Info</string>
+    <string name="dev_info_version">v0.118.3 MOD</string>
+    <string name="dev_info_subtitle">Custom Terminal Build • Hacker Edition</string>
+    <string name="dev_info_section_developer">DEVELOPER</string>
+    <string name="dev_info_developer_name">Kz.tutorial</string>
+    <string name="dev_info_developer_role">Android Developer &amp; Termux Modder</string>
+    <string name="dev_quick_files">File Manager</string>
+    <string name="dev_quick_tools">Tools Hub</string>
+    <string name="dev_quick_mod">Mod Edition</string>
+    <string name="dev_link_youtube_name">YouTube</string>
+    <string name="dev_link_youtube_handle">@Kz.tutorial</string>
+    <string name="dev_link_facebook_name">Facebook</string>
+    <string name="dev_link_facebook_handle">pangkey.jul</string>
+    <string name="dev_info_features_section">MOD FEATURES</string>
+    <string name="dev_feature_pkg_manager">Package Manager</string>
+    <string name="dev_feature_pkg_manager_desc">GUI package manager — install/uninstall with one tap</string>
+    <string name="dev_feature_file_manager">File Manager</string>
+    <string name="dev_feature_file_manager_desc">Built-in file browser for Termux home directory</string>
+    <string name="dev_feature_tools_hub">Tools Hub</string>
+    <string name="dev_feature_tools_hub_desc">Curated collection of terminal tools and utilities</string>
+
+    <!-- Terminal Appearance activity -->
+    <string name="appearance_title">Terminal Appearance</string>
+    <string name="appearance_apply">APPLY</string>
+    <string name="appearance_section_background">BACKGROUND</string>
+    <string name="appearance_bg_image">Background Image</string>
+    <string name="appearance_bg_image_none">No image selected</string>
+    <string name="appearance_bg_image_choose">PILIH</string>
+    <string name="appearance_image_opacity">Image Opacity</string>
+    <string name="appearance_bg_color">Background Color</string>
+    <string name="appearance_bg_color_desc">Used when no image is selected</string>
+    <string name="appearance_section_bg_animation">BG ANIMATION</string>
+    <string name="appearance_animated_bg">Animated background overlay</string>
+    <string name="appearance_anim_off">OFF</string>
+    <string name="appearance_anim_matrix">MATRIX</string>
+    <string name="appearance_anim_cyber_rain">CYBER RAIN</string>
+    <string name="appearance_anim_neon_pulse">NEON PULSE</string>
+    <string name="appearance_anim_opacity">Opacity</string>
+    <string name="appearance_anim_note">Animation runs as overlay on the terminal. May affect battery life.</string>
+    <string name="appearance_section_font">FONT</string>
+    <string name="appearance_font_size">Font Size</string>
+    <string name="appearance_font_size_range">Range: 6 sp — 36 sp</string>
+    <string name="appearance_font_color">Font Color</string>
+    <string name="appearance_font_color_desc">Terminal foreground text color</string>
+    <string name="appearance_section_cursor">CURSOR</string>
+    <string name="appearance_cursor_style">Cursor Style</string>
+    <string name="appearance_cursor_block">Block</string>
+    <string name="appearance_cursor_underline">Underline</string>
+    <string name="appearance_cursor_bar">Bar</string>
+    <string name="appearance_section_display">DISPLAY</string>
+    <string name="appearance_keep_screen_on">Keep Screen On</string>
+    <string name="appearance_keep_screen_on_desc">Prevent display from sleeping</string>
+    <string name="appearance_cursor_blink">Cursor Blink</string>
+    <string name="appearance_cursor_blink_desc">Enable cursor blinking animation</string>
+
 </resources>

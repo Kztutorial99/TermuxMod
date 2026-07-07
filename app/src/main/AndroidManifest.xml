@@ -97,6 +97,18 @@
             android:theme="@style/Theme.Termux" />
 
         <activity
+            android:name=".app.activities.DeveloperInfoActivity"
+            android:exported="false"
+            android:label="@string/dev_info_title"
+            android:theme="@style/Theme.Termux" />
+
+        <activity
+            android:name=".app.activities.TerminalAppearanceActivity"
+            android:exported="false"
+            android:label="@string/appearance_title"
+            android:theme="@style/Theme.Termux" />
+
+        <activity
             android:name=".shared.activities.ReportActivity"
             android:theme="@style/Theme.AppCompat.TermuxReportActivity"
             android:documentLaunchMode="intoExisting"

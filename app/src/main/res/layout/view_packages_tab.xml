@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_background">
+
+    <!-- Search bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp"
+        android:gravity="center_vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/color_surface"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="8dp"
+            app:strokeColor="@color/color_border"
+            app:strokeWidth="1dp"
+            android:layout_marginEnd="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_search"
+                    android:tint="@color/color_text_secondary" />
+
+                <EditText
+                    android:id="@+id/packages_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/packages_search_hint"
+                    android:textColorHint="@color/color_text_secondary"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="14sp"
+                    android:background="@android:color/transparent"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageButton
+            android:id="@+id/packages_refresh"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_refresh"
+            android:tint="@color/color_accent_primary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Refresh" />
+
+    </LinearLayout>
+
+    <!-- Update All / Upgrade All buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/packages_update_all"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:text="@string/packages_update_all"
+            android:textColor="@color/color_accent_primary"
+            android:textSize="13sp"
+            app:strokeColor="@color/color_accent_primary"
+            app:cornerRadius="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/packages_upgrade_all"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:text="@string/packages_upgrade_all"
+            android:textColor="@color/color_accent_secondary"
+            android:textSize="13sp"
+            app:strokeColor="@color/color_accent_secondary"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_border" />
+
+    <!-- Package list -->
+    <ListView
+        android:id="@+id/packages_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/color_border"
+        android:dividerHeight="1dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:clipToPadding="false" />
+
+</LinearLayout>
