@@ -81,6 +81,7 @@ import com.termux.view.TerminalViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
@@ -493,12 +494,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             public void onDrawerSlide(@NonNull android.view.View drawerView, float slideOffset) {
                 if (slideOffset > 0.02f) {
                     if (drawerView.getId() == R.id.left_drawer) {
-                        if (drawer.isDrawerVisible(android.view.Gravity.RIGHT)) {
-                            drawer.closeDrawer(android.view.Gravity.RIGHT);
+                        if (drawer.isDrawerVisible(GravityCompat.END)) {
+                            drawer.closeDrawer(GravityCompat.END);
                         }
                     } else if (drawerView.getId() == R.id.right_drawer) {
-                        if (drawer.isDrawerVisible(android.view.Gravity.LEFT)) {
-                            drawer.closeDrawer(android.view.Gravity.LEFT);
+                        if (drawer.isDrawerVisible(GravityCompat.START)) {
+                            drawer.closeDrawer(GravityCompat.START);
                         }
                     }
                 }
@@ -674,11 +675,13 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
 
 
-    @SuppressLint("RtlHardcoded")
     @Override
     public void onBackPressed() {
-        if (getDrawer().isDrawerOpen(Gravity.LEFT)) {
-            getDrawer().closeDrawers();
+        DrawerLayout d = getDrawer();
+        if (d != null && d.isDrawerOpen(GravityCompat.START)) {
+            d.closeDrawer(GravityCompat.START);
+        } else if (d != null && d.isDrawerOpen(GravityCompat.END)) {
+            d.closeDrawer(GravityCompat.END);
         } else {
             finishActivityIfNotFinishing();
         }
@@ -1129,13 +1132,13 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             hamburger.setOnClickListener(v -> {
                 DrawerLayout drawer = getDrawer();
                 if (drawer == null) return;
-                if (drawer.isDrawerOpen(android.view.Gravity.LEFT)) {
-                    drawer.closeDrawer(android.view.Gravity.LEFT);
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
                 } else {
-                    if (drawer.isDrawerOpen(android.view.Gravity.RIGHT)) {
-                        drawer.closeDrawer(android.view.Gravity.RIGHT);
+                    if (drawer.isDrawerOpen(GravityCompat.END)) {
+                        drawer.closeDrawer(GravityCompat.END);
                     }
-                    drawer.openDrawer(android.view.Gravity.LEFT);
+                    drawer.openDrawer(GravityCompat.START);
                 }
             });
         }
@@ -1146,11 +1149,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             rightPanelBtn.setOnClickListener(v -> {
                 DrawerLayout drawer = getDrawer();
                 if (drawer == null) return;
-                if (drawer.isDrawerOpen(android.view.Gravity.RIGHT)) {
-                    drawer.closeDrawer(android.view.Gravity.RIGHT);
+                if (drawer.isDrawerOpen(GravityCompat.END)) {
+                    drawer.closeDrawer(GravityCompat.END);
                 } else {
-                    if (drawer.isDrawerOpen(android.view.Gravity.LEFT)) {
-                        drawer.closeDrawer(android.view.Gravity.LEFT);
+                    if (drawer.isDrawerOpen(GravityCompat.START)) {
+                        drawer.closeDrawer(GravityCompat.START);
                     }
                     // Tampilkan terminal dulu kalau sedang di tab lain
                     if (mCurrentTabId != R.id.nav_terminal) {
@@ -1158,7 +1161,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
                         showTab(R.id.nav_terminal);
                     }
                     populateRightDrawerInfo();
-                    drawer.openDrawer(android.view.Gravity.RIGHT);
+                    drawer.openDrawer(GravityCompat.END);
                 }
             });
         }
@@ -1720,14 +1723,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         // Tombol close di dalam sidebar
         View closeBtn = drawer.findViewById(R.id.btn_close_right_drawer);
         if (closeBtn != null) {
-            closeBtn.setOnClickListener(v -> drawer.closeDrawer(android.view.Gravity.RIGHT));
+            closeBtn.setOnClickListener(v -> drawer.closeDrawer(GravityCompat.END));
         }
 
         // ── Quick Actions ──
         View actionNewSession = drawer.findViewById(R.id.sidebar_action_new_session);
         if (actionNewSession != null) {
             actionNewSession.setOnClickListener(v -> {
-                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                drawer.closeDrawer(GravityCompat.END);
                 View newSessionBtn = findViewById(R.id.new_session_button);
                 if (newSessionBtn != null) newSessionBtn.performClick();
             });
@@ -1736,7 +1739,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
                   View actionKillSession = drawer.findViewById(R.id.sidebar_action_kill_session);
         if (actionKillSession != null) {
             actionKillSession.setOnClickListener(v -> {
-                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                drawer.closeDrawer(GravityCompat.END);
                 TerminalSession current = getCurrentSession();
                 if (current != null) current.finishIfRunning();
             });
@@ -1745,7 +1748,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         View actionKeyboard = drawer.findViewById(R.id.sidebar_action_keyboard);
         if (actionKeyboard != null) {
             actionKeyboard.setOnClickListener(v -> {
-                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                drawer.closeDrawer(GravityCompat.END);
                 if (mTermuxTerminalViewClient != null) {
                     mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
                 }
@@ -1755,7 +1758,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         View actionReset = drawer.findViewById(R.id.sidebar_action_reset);
         if (actionReset != null) {
             actionReset.setOnClickListener(v -> {
-                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                drawer.closeDrawer(GravityCompat.END);
                 TerminalSession current = getCurrentSession();
                 if (current != null) {
                     current.reset();
@@ -1768,7 +1771,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         View actionAppearance = drawer.findViewById(R.id.sidebar_action_appearance);
         if (actionAppearance != null) {
             actionAppearance.setOnClickListener(v -> {
-                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                drawer.closeDrawer(GravityCompat.END);
                 startActivity(new Intent(this, TerminalAppearanceActivity.class));
             });
         }
@@ -1776,7 +1779,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         View actionSettings = drawer.findViewById(R.id.sidebar_action_settings);
         if (actionSettings != null) {
             actionSettings.setOnClickListener(v -> {
-                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                drawer.closeDrawer(GravityCompat.END);
                 startActivity(new Intent(this, SettingsActivity.class));
             });
         }
@@ -1784,7 +1787,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         View actionDevInfo = drawer.findViewById(R.id.sidebar_action_devinfo);
         if (actionDevInfo != null) {
             actionDevInfo.setOnClickListener(v -> {
-                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                drawer.closeDrawer(GravityCompat.END);
                 startActivity(new Intent(this, DeveloperInfoActivity.class));
             });
         }
