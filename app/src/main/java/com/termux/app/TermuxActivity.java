@@ -584,19 +584,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
         final boolean showNow = mPreferences.toogleShowTerminalToolbar();
         terminalToolbarViewPager.setVisibility(showNow ? View.VISIBLE : View.GONE);
-
-        // update toggle button tint to reflect state
-        ImageButton btn = findViewById(R.id.btn_toggle_extrakeys);
-        if (btn != null) {
-            btn.setAlpha(showNow ? 1.0f : 0.55f);
-        }
     }
 
     private void setExtraKeysToggleButton() {
-        ImageButton btn = findViewById(R.id.btn_toggle_extrakeys);
+        View btn = findViewById(R.id.btn_toggle_extrakeys);
         if (btn == null) return;
-        // initial alpha: extrakeys hidden by default
-        btn.setAlpha(mPreferences.shouldShowTerminalToolbar() ? 1.0f : 0.55f);
         btn.setOnClickListener(v -> toggleTerminalToolbar());
     }
 
@@ -1171,15 +1163,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
         // ExtraKeys bar: auto-hide on non-terminal tabs, restore preference on terminal
         ViewPager extraKeysPager = getTerminalToolbarViewPager();
-        ImageButton toggleBtn = findViewById(R.id.btn_toggle_extrakeys);
+        View toggleBtn = findViewById(R.id.btn_toggle_extrakeys);
         if (extraKeysPager != null) {
             if (isTerminal) {
                 boolean shouldShow = mPreferences != null && mPreferences.shouldShowTerminalToolbar();
                 extraKeysPager.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-                if (toggleBtn != null) {
-                    toggleBtn.setVisibility(View.VISIBLE);
-                    toggleBtn.setAlpha(shouldShow ? 1.0f : 0.55f);
-                }
+                if (toggleBtn != null) toggleBtn.setVisibility(View.VISIBLE);
             } else {
                 extraKeysPager.setVisibility(View.GONE);
                 if (toggleBtn != null) toggleBtn.setVisibility(View.GONE);
