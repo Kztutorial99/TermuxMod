@@ -52,8 +52,6 @@ import java.util.List;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
@@ -1197,7 +1195,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         });
 
         // Breadcrumb back/home buttons
-        View backBtn = mFilesContainer.findViewById(R.id.files_nav_back);
+        View backBtn = mFilesContainer.findViewById(R.id.files_btn_back);
         if (backBtn != null) backBtn.setOnClickListener(v -> {
             if (mCurrentDirectory != null && mCurrentDirectory.getParentFile() != null
                     && !mCurrentDirectory.equals(mHomeDirectory)) {
@@ -1205,18 +1203,16 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             }
         });
 
-        View homeBtn = mFilesContainer.findViewById(R.id.files_nav_home);
+        View homeBtn = mFilesContainer.findViewById(R.id.files_btn_home);
         if (homeBtn != null) homeBtn.setOnClickListener(v -> loadDirectory(mHomeDirectory));
 
-        View refreshBtn = mFilesContainer.findViewById(R.id.files_nav_refresh);
-        if (refreshBtn != null) refreshBtn.setOnClickListener(v -> loadDirectory(mCurrentDirectory));
 
         // + File button
-        View addFile = mFilesContainer.findViewById(R.id.files_add_file);
+        View addFile = mFilesContainer.findViewById(R.id.files_btn_new_file);
         if (addFile != null) addFile.setOnClickListener(v -> promptCreateEntry(false));
 
         // + Folder button
-        View addFolder = mFilesContainer.findViewById(R.id.files_add_folder);
+        View addFolder = mFilesContainer.findViewById(R.id.files_btn_new_folder);
         if (addFolder != null) addFolder.setOnClickListener(v -> promptCreateEntry(true));
 
         loadDirectory(mHomeDirectory);
@@ -1227,7 +1223,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         mCurrentDirectory = dir;
 
         // Update breadcrumb text
-        TextView breadcrumb = (mFilesContainer != null) ? mFilesContainer.findViewById(R.id.files_breadcrumb) : null;
+        TextView breadcrumb = (mFilesContainer != null) ? mFilesContainer.findViewById(R.id.files_breadcrumb_path) : null;
         if (breadcrumb != null) {
             String path = dir.getAbsolutePath()
                 .replace(TermuxConstants.TERMUX_HOME_DIR_PATH, "~");
@@ -1474,9 +1470,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             }
             File f = mFiles.get(pos);
 
-            ImageView icon = convertView.findViewById(R.id.file_entry_icon);
-            TextView name  = convertView.findViewById(R.id.file_entry_name);
-            TextView meta  = convertView.findViewById(R.id.file_entry_meta);
+            ImageView icon = convertView.findViewById(R.id.file_icon);
+            TextView name  = convertView.findViewById(R.id.file_name);
+            TextView meta  = convertView.findViewById(R.id.file_meta);
 
             if (icon != null) {
                 icon.setImageResource(f.isDirectory()
@@ -1496,7 +1492,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             }
 
             // Kebab menu (delete only for now)
-            View kebab = convertView.findViewById(R.id.file_entry_more);
+            View kebab = convertView.findViewById(R.id.file_menu_btn);
             if (kebab != null) {
                 kebab.setOnClickListener(v -> {
                     android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(TermuxActivity.this);
@@ -1622,7 +1618,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             TextView nameView = convertView.findViewById(R.id.tool_name);
             TextView descView = convertView.findViewById(R.id.tool_description);
             TextView cmdView  = convertView.findViewById(R.id.tool_command_tag);
-            Button actionBtn  = convertView.findViewById(R.id.tool_action_btn);
+            Button actionBtn  = convertView.findViewById(R.id.tool_install_btn);
 
             if (nameView != null) nameView.setText(name);
             if (descView != null) descView.setText(desc);
