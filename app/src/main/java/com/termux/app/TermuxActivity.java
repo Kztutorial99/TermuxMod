@@ -199,6 +199,10 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     // Tools tab state
     private ToolAdapter mToolAdapter;
 
+    // Handler untuk auto-refresh status paket
+    private android.os.Handler mPkgRefreshHandler;
+    private Runnable mPkgRefreshRunnable;
+
 
     private static final int CONTEXT_MENU_SELECT_URL_ID = 0;
     private static final int CONTEXT_MENU_SHARE_TRANSCRIPT_ID = 1;
@@ -286,6 +290,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         setupFilesTab();
         setupPackagesTab();
         setupToolsTab();
+        setupRightDrawer();
 
         registerForContextMenu(mTerminalView);
 
@@ -1107,6 +1112,26 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             });
         }
 
+        // Right panel button → open right sidebar
+        View rightPanelBtn = findViewById(R.id.btn_right_panel);
+        if (rightPanelBtn != null) {
+            rightPanelBtn.setOnClickListener(v -> {
+                DrawerLayout drawer = getDrawer();
+                if (drawer == null) return;
+                if (drawer.isDrawerOpen(android.view.Gravity.RIGHT)) {
+                    drawer.closeDrawer(android.view.Gravity.RIGHT);
+                } else {
+                    // Tampilkan terminal dulu kalau sedang di tab lain
+                    if (mCurrentTabId != R.id.nav_terminal) {
+                        if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);
+                        showTab(R.id.nav_terminal);
+                    }
+                    populateRightDrawerInfo();
+                    drawer.openDrawer(android.view.Gravity.RIGHT);
+                }
+            });
+        }
+
         // Version box → open Developer Info
         View versionBox = findViewById(R.id.toolbar_version_box);
         if (versionBox != null) {
@@ -1168,6 +1193,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         // Refresh files list when switching to Files tab
         if (tabId == R.id.nav_files && mHomeDirectory != null) {
             loadDirectory(mCurrentDirectory != null ? mCurrentDirectory : mHomeDirectory);
+
+        // Auto-refresh status install/uninstall saat buka tab Packages
+        if (tabId == R.id.nav_packages) {
+            refreshPackageStatus();
+        }
         }
     }
 
@@ -1640,6 +1670,188 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
             return convertView;
         }
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // RIGHT SIDEBAR — Setup & Logic
+    // ══════════════════════════════════════════════════════════
+
+    private void setupRightDrawer() {
+        DrawerLayout drawer = getDrawer();
+        if (drawer == null) return;
+
+        // Tombol close di dalam sidebar
+        View closeBtn = drawer.findViewById(R.id.btn_close_right_drawer);
+        if (closeBtn != null) {
+            closeBtn.setOnClickListener(v -> drawer.closeDrawer(android.view.Gravity.RIGHT));
+        }
+
+        // ── Quick Actions ──
+        View actionNewSession = drawer.findViewById(R.id.sidebar_action_new_session);
+        if (actionNewSession != null) {
+            actionNewSession.setOnClickListener(v -> {
+                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                View newSessionBtn = findViewById(R.id.new_session_button);
+                if (newSessionBtn != null) newSessionBtn.performClick();
+            });
+        }
+
+                  View actionKillSession = drawer.findViewById(R.id.sidebar_action_kill_session);
+        if (actionKillSession != null) {
+            actionKillSession.setOnClickListener(v -> {
+                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                TerminalSession current = getCurrentSession();
+                if (current != null) current.finishIfRunning();
+            });
+        }
+
+        View actionKeyboard = drawer.findViewById(R.id.sidebar_action_keyboard);
+        if (actionKeyboard != null) {
+            actionKeyboard.setOnClickListener(v -> {
+                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                if (mTermuxTerminalViewClient != null) {
+                    mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
+                }
+            });
+        }
+
+        View actionReset = drawer.findViewById(R.id.sidebar_action_reset);
+        if (actionReset != null) {
+            actionReset.setOnClickListener(v -> {
+                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                TerminalSession current = getCurrentSession();
+                if (current != null) {
+                    current.reset();
+                    showToast(getString(R.string.msg_terminal_reset), true);
+                }
+            });
+        }
+
+        // ── App Settings ──
+        View actionAppearance = drawer.findViewById(R.id.sidebar_action_appearance);
+        if (actionAppearance != null) {
+            actionAppearance.setOnClickListener(v -> {
+                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                startActivity(new Intent(this, TerminalAppearanceActivity.class));
+            });
+        }
+
+        View actionSettings = drawer.findViewById(R.id.sidebar_action_settings);
+        if (actionSettings != null) {
+            actionSettings.setOnClickListener(v -> {
+                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                startActivity(new Intent(this, SettingsActivity.class));
+            });
+        }
+
+        View actionDevInfo = drawer.findViewById(R.id.sidebar_action_devinfo);
+        if (actionDevInfo != null) {
+            actionDevInfo.setOnClickListener(v -> {
+                drawer.closeDrawer(android.view.Gravity.RIGHT);
+                startActivity(new Intent(this, DeveloperInfoActivity.class));
+            });
+        }
+    }
+
+    /** Isi data sistem di right sidebar setiap kali dibuka. */
+    private void populateRightDrawerInfo() {
+        DrawerLayout drawer = getDrawer();
+        if (drawer == null) return;
+
+        // Android API level
+        android.widget.TextView androidView = drawer.findViewById(R.id.sidebar_info_android);
+        if (androidView != null) {
+            androidView.setText("API " + android.os.Build.VERSION.SDK_INT
+                + " (Android " + android.os.Build.VERSION.RELEASE + ")");
+        }
+
+        // CPU architecture
+        android.widget.TextView archView = drawer.findViewById(R.id.sidebar_info_arch);
+        if (archView != null) {
+            String[] abis = android.os.Build.SUPPORTED_ABIS;
+            archView.setText(abis != null && abis.length > 0 ? abis[0] : "unknown");
+        }
+
+        // Free internal storage
+        android.widget.TextView storageView = drawer.findViewById(R.id.sidebar_info_storage);
+        if (storageView != null) {
+            android.os.StatFs stat = new android.os.StatFs(getFilesDir().getPath());
+            long freeBytes = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
+            storageView.setText(formatBytes(freeBytes));
+        }
+
+        // Termux prefix directory size (background thread agar tidak freeze)
+        android.widget.TextView prefixView = drawer.findViewById(R.id.sidebar_info_prefix);
+        if (prefixView != null) {
+            prefixView.setText("...");
+            new Thread(() -> {
+                File prefix = new File(com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR_PATH);
+                final String size = prefix.exists() ? formatBytes(getDirSize(prefix)) : "N/A";
+                runOnUiThread(() -> {
+                    android.widget.TextView v = drawer.findViewById(R.id.sidebar_info_prefix);
+                    if (v != null) v.setText(size);
+                });
+            }).start();
+        }
+
+        // Active sessions count
+        android.widget.TextView sessView = drawer.findViewById(R.id.sidebar_info_sessions);
+        if (sessView != null) {
+            int count = (mTermuxService != null)
+                ? mTermuxService.getTermuxSessions().size() : 0;
+            sessView.setText(String.valueOf(count));
+        }
+    }
+
+    /** Hitung total ukuran direktori secara rekursif. */
+    private long getDirSize(File dir) {
+        long size = 0;
+        if (dir == null || !dir.exists()) return 0;
+        File[] files = dir.listFiles();
+        if (files == null) return 0;
+        for (File f : files) {
+            size += f.isDirectory() ? getDirSize(f) : f.length();
+        }
+        return size;
+    }
+
+    /** Format bytes ke string human-readable (KB / MB / GB). */
+    private String formatBytes(long bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
+        if (bytes < 1024 * 1024 * 1024) return String.format("%.1f MB", bytes / (1024.0 * 1024));
+        return String.format("%.2f GB", bytes / (1024.0 * 1024 * 1024));
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    // PACKAGES AUTO-SYNC
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Sinkronkan status install/uninstall semua paket secara langsung.
+     * Cukup panggil notifyDataSetChanged() — adapter sudah cek file existence di getView().
+     */
+    private void refreshPackageStatus() {
+        if (mPackageAdapter != null) {
+            mPackageAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * Jadwalkan auto-refresh paket setelah delay (dipanggil setelah command pkg install/uninstall).
+     * Delay diperlukan karena pkg butuh waktu beberapa detik untuk selesai.
+     */
+    private void schedulePackageRefresh(long delayMs) {
+        if (mPkgRefreshHandler == null) {
+            mPkgRefreshHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+        }
+        if (mPkgRefreshRunnable == null) {
+            mPkgRefreshRunnable = this::refreshPackageStatus;
+        }
+        mPkgRefreshHandler.removeCallbacks(mPkgRefreshRunnable);
+        mPkgRefreshHandler.postDelayed(mPkgRefreshRunnable, delayMs);
     }
 
 }
