@@ -70,13 +70,16 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/tool_install_btn"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="80dp"
-        android:layout_height="48dp"
+        android:layout_width="108dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:text="@string/packages_install"
-        android:textSize="12sp"
+        android:textSize="11sp"
+        android:singleLine="true"
         android:textColor="@color/color_accent_primary"
         app:strokeColor="@color/color_accent_primary"
-        app:cornerRadius="6dp" />
+        app:cornerRadius="8dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp" />
 
 </LinearLayout>
