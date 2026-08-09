@@ -64,12 +64,20 @@ android {
         }
     }
 
+    // Never commit signing credentials or keystores to the repository.
+    // If a local keystore is not configured, Android's standard debug signing is used.
     signingConfigs {
         debug {
-            storeFile file('dev_keystore.jks')
-            keyAlias 'alias'
-            storePassword 'xrj45yWGLbsO7W0v'
-            keyPassword 'xrj45yWGLbsO7W0v'
+            def localKeystore = file('dev_keystore.jks')
+            def localPassword = project.findProperty('TERMUX_DEBUG_KEYSTORE_PASSWORD')
+            def localAlias = project.findProperty('TERMUX_DEBUG_KEY_ALIAS') ?: 'alias'
+
+            if (localKeystore.exists() && localPassword) {
+                storeFile localKeystore
+                keyAlias localAlias
+                storePassword localPassword
+                keyPassword localPassword
+            }
         }
     }
 
@@ -157,6 +165,7 @@ def downloadBootstrap(String arch, String expectedChecksum, String version) {
             if (readBytes < 0) break
             digest.update(buffer, 0, readBytes)
         }
+        input.close()
         def checksum = new BigInteger(1, digest.digest()).toString(16)
         while (checksum.length() < 64) { checksum = "0" + checksum }
         if (checksum == expectedChecksum) {
