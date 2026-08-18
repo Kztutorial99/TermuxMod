@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_back">Back</string>
+    <string name="account_login_title">Account</string>
+    <string name="account_login_headline">Sign in to TermuxMod</string>
+    <string name="account_login_subtitle">Use your email and password to access your account.</string>
+    <string name="account_email_label">Email</string>
+    <string name="account_password_label">Password</string>
+    <string name="account_login_button">Login</string>
+    <string name="account_signup_button">Sign up</string>
+    <string name="account_switch_to_signup">Don&apos;t have an account? Sign up</string>
+    <string name="account_switch_to_login">Already have an account? Login</string>
+    <string name="account_forgot_password">Forgot password?</string>
+    <string name="account_login_hint">Enter your email and password.</string>
+    <string name="account_signup_hint">Create an account with your email and password.</string>
+    <string name="account_error_email">Enter a valid email address.</string>
+    <string name="account_error_password">Password must be at least 6 characters.</string>
+    <string name="account_status_signing_in">Please wait…</string>
+    <string name="account_status_sign_in_failed">Authentication failed.</string>
+    <string name="account_status_signed_in">Signed in successfully.</string>
+    <string name="account_status_sending_reset">Sending password reset email…</string>
+    <string name="account_password_reset_sent">Password reset email sent.</string>
+    <string name="account_signup_success">Account created successfully.</string>
+    <string name="account_login_google_button">Google login removed</string>
+    <string name="account_login_privacy_note">Your password is handled by Firebase Authentication and is not stored by TermuxMod.</string>
+</resources>
