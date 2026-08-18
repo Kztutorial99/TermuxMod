@@ -1,0 +1,26 @@
+name: Firebase Auth PR Build
+
+on:
+  push:
+    branches: [firebase-auth-google-email]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - run: chmod +x gradlew
+      - run: ./gradlew :app:assembleDebug --stacktrace --no-daemon
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: termuxmod-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
