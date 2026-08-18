@@ -8,17 +8,9 @@
     -->
     <string name="google_oauth_web_client_id" translatable="false"></string>
 
-    <string name="account_back">Kembali</string>
 
-    <string name="account_login_title">Akun</string>
-    <string name="account_login_headline">Masuk ke TermuxMod</string>
-    <string name="account_login_subtitle">Gunakan akun Google untuk membuat atau membuka profil kamu.</string>
     <string name="account_login_google_button">LANJUT DENGAN GOOGLE</string>
-    <string name="account_login_privacy_note">Data akun hanya disimpan di perangkat ini dan tidak dikirim ke server mana pun.</string>
 
-    <string name="account_status_signing_in">Menghubungkan ke Google…</string>
-    <string name="account_status_signed_in">Berhasil masuk</string>
-    <string name="account_status_sign_in_failed">Gagal masuk, coba lagi</string>
     <string name="account_signed_out">Kamu sudah keluar</string>
 
     <string name="account_profile_title">Profil Akun</string>
