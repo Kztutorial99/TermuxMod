@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        OAuth 2.0 "Web application" client id from Google Cloud Console.
+        Leave empty to sign in without an id token (profile only).
+        See docs/GOOGLE_SIGN_IN_SETUP.md.
+    -->
+    <string name="google_oauth_web_client_id" translatable="false"></string>
+
+    <string name="account_back">Kembali</string>
+
+    <string name="account_login_title">Akun</string>
+    <string name="account_login_headline">Masuk ke TermuxMod</string>
+    <string name="account_login_subtitle">Gunakan akun Google untuk membuat atau membuka profil kamu.</string>
+    <string name="account_login_google_button">LANJUT DENGAN GOOGLE</string>
+    <string name="account_login_privacy_note">Data akun hanya disimpan di perangkat ini dan tidak dikirim ke server mana pun.</string>
+
+    <string name="account_status_signing_in">Menghubungkan ke Google…</string>
+    <string name="account_status_signed_in">Berhasil masuk</string>
+    <string name="account_status_sign_in_failed">Gagal masuk, coba lagi</string>
+    <string name="account_signed_out">Kamu sudah keluar</string>
+
+    <string name="account_profile_title">Profil Akun</string>
+    <string name="account_section_details">DETAIL AKUN GOOGLE</string>
+    <string name="account_section_profile">PROFIL SAYA</string>
+    <string name="account_field_photo">Foto profil</string>
+    <string name="account_field_account_id">ID Akun</string>
+    <string name="account_field_signed_in_at">Masuk sejak</string>
+    <string name="account_field_username">Username</string>
+    <string name="account_field_bio">Bio</string>
+    <string name="account_hint_username">username kamu</string>
+    <string name="account_hint_bio">Ceritakan sedikit tentang kamu</string>
+    <string name="account_save_button">SIMPAN PROFIL</string>
+    <string name="account_sign_out_button">Keluar dari akun</string>
+    <string name="account_profile_saved">Profil disimpan</string>
+    <string name="account_value_unknown">-</string>
+
+    <string name="account_error_username_required">Username tidak boleh kosong</string>
+    <string name="account_error_username_too_long">Username maksimal 32 karakter</string>
+    <string name="account_error_bio_too_long">Bio maksimal 200 karakter</string>
+
+    <string name="account_preference_title">Akun</string>
+    <string name="account_preference_summary">Masuk dengan Google dan atur profil kamu</string>
+
+</resources>
