@@ -9,7 +9,7 @@
     <string name="account_password_label">Password</string>
     <string name="account_login_button">Login</string>
     <string name="account_signup_button">Sign up</string>
-    <string name="account_switch_to_signup">Don&apos;t have an account? Sign up</string>
+    <string name="account_switch_to_signup">No account yet? Sign up</string>
     <string name="account_switch_to_login">Already have an account? Login</string>
     <string name="account_forgot_password">Forgot password?</string>
     <string name="account_login_hint">Enter your email and password.</string>
