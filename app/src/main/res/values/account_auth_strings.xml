@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="default_web_client_id" translatable="false">339934174022-gdko3him6mu56idui52b0fd2re48jo24.apps.googleusercontent.com</string>
     <string name="account_back">Back</string>
     <string name="account_login_title">Account</string>
     <string name="account_login_headline">Sign in to TermuxMod</string>
-    <string name="account_login_subtitle">Use your email and password to access your account.</string>
+    <string name="account_login_subtitle">Use Google or your email and password to access your account.</string>
     <string name="account_email_label">Email</string>
     <string name="account_password_label">Password</string>
     <string name="account_login_button">Login</string>
@@ -21,6 +22,9 @@
     <string name="account_status_sending_reset">Sending password reset email…</string>
     <string name="account_password_reset_sent">Password reset email sent.</string>
     <string name="account_signup_success">Account created successfully.</string>
-    <string name="account_login_google_button">Google login removed</string>
+    <string name="account_or_continue_with">OR CONTINUE WITH</string>
+    <string name="account_google_button">Continue with Google</string>
+    <string name="account_google_sign_in_cancelled">Google sign-in cancelled.</string>
+    <string name="account_google_sign_in_failed">Google sign-in failed.</string>
     <string name="account_login_privacy_note">Your password is handled by Firebase Authentication and is not stored by TermuxMod.</string>
 </resources>
