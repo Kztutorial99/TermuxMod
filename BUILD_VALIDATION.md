@@ -1,0 +1,1 @@
+Build validation is performed on firebase-auth-google-email before merge to main.
