@@ -7,12 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * Local, on-device storage for the signed in Google account and the
- * user editable profile fields (username and bio).
- *
- * Nothing is uploaded anywhere: the Google account only provides the
- * identity (id, name, email, photo) and everything is kept in a private
- * SharedPreferences file of the app.
+ * Local, on-device cache of Firebase account metadata and user-editable
+ * profile fields. Firebase Authentication remains the source of truth for
+ * authentication state and credentials; passwords are never stored here.
  */
 public class AccountSession {
 
@@ -64,38 +61,24 @@ public class AccountSession {
     }
 
     @Nullable
-    public String getId() {
-        return emptyToNull(mPreferences.getString(KEY_ID, null));
-    }
+    public String getId() { return emptyToNull(mPreferences.getString(KEY_ID, null)); }
 
     @Nullable
-    public String getName() {
-        return emptyToNull(mPreferences.getString(KEY_NAME, null));
-    }
+    public String getName() { return emptyToNull(mPreferences.getString(KEY_NAME, null)); }
 
     @Nullable
-    public String getEmail() {
-        return emptyToNull(mPreferences.getString(KEY_EMAIL, null));
-    }
+    public String getEmail() { return emptyToNull(mPreferences.getString(KEY_EMAIL, null)); }
 
     @Nullable
-    public String getPhotoUrl() {
-        return emptyToNull(mPreferences.getString(KEY_PHOTO_URL, null));
-    }
+    public String getPhotoUrl() { return emptyToNull(mPreferences.getString(KEY_PHOTO_URL, null)); }
 
     @Nullable
-    public String getUsername() {
-        return emptyToNull(mPreferences.getString(KEY_USERNAME, null));
-    }
+    public String getUsername() { return emptyToNull(mPreferences.getString(KEY_USERNAME, null)); }
 
     @Nullable
-    public String getBio() {
-        return emptyToNull(mPreferences.getString(KEY_BIO, null));
-    }
+    public String getBio() { return emptyToNull(mPreferences.getString(KEY_BIO, null)); }
 
-    public long getSignedInAt() {
-        return mPreferences.getLong(KEY_SIGNED_IN_AT, 0L);
-    }
+    public long getSignedInAt() { return mPreferences.getLong(KEY_SIGNED_IN_AT, 0L); }
 
     @NonNull
     private static String suggestUsername(@NonNull String name, @Nullable String email) {
@@ -112,5 +95,4 @@ public class AccountSession {
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
     }
-
 }
