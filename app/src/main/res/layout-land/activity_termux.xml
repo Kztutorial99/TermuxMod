@@ -305,21 +305,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- ExtraKeys toggle — menyatu dengan bottom nav (off) atau extrakeys bar (on) -->
-        <ImageView
-            android:id="@+id/btn_toggle_extrakeys"
-            android:layout_width="52dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_arrow_up"
-            android:tint="@color/color_text_secondary"
-            android:scaleType="center"
-            android:background="@drawable/bg_extrakeys_tab"
-            android:clickable="true"
-            android:focusable="true"
-            android:contentDescription="@string/action_toggle_extrakeys"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/terminal_toolbar_view_pager" />
+        
 
 
         <include layout="@layout/view_nav_menu" />

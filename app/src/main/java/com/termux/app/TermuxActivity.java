@@ -1206,6 +1206,27 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         });
     }
 
+    /** Tutup nav menu otomatis saat pengguna menyentuh area lain di layar. */
+    @Override
+    public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
+        if (mNavMenuOpen && ev.getActionMasked() == android.view.MotionEvent.ACTION_DOWN) {
+            if (!isTouchInsideView(ev, mNavMenuPanel) && !isTouchInsideView(ev, findViewById(R.id.btn_nav_menu))) {
+                closeNavMenu();
+                return true;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean isTouchInsideView(android.view.MotionEvent ev, View view) {
+        if (view == null || view.getVisibility() != View.VISIBLE) return false;
+        int[] loc = new int[2];
+        view.getLocationOnScreen(loc);
+        float x = ev.getRawX(), y = ev.getRawY();
+        return x >= loc[0] && x <= loc[0] + view.getWidth()
+            && y >= loc[1] && y <= loc[1] + view.getHeight();
+    }
+
     private void toggleNavMenu() {
         if (mNavMenuOpen) closeNavMenu(); else openNavMenu();
     }

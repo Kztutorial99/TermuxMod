@@ -34,6 +34,15 @@ import java.net.URL;
 public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private final FirebaseAuth.AuthStateListener mAuthListener = auth -> {
+        FirebaseUser u = auth.getCurrentUser();
+        if (u == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        } else if (!isFinishing() && !isDestroyed()) {
+            bindUser(u);
+        }
+    };
     private GoogleSignInOptions mGso;
 
     @Override
@@ -45,17 +54,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         View back = findViewById(R.id.btn_profile_back);
         if (back != null) back.setOnClickListener(v -> finish());
-
-        View refresh = findViewById(R.id.btn_profile_refresh);
-        if (refresh != null) refresh.setOnClickListener(v -> {
-            FirebaseUser u = mAuth.getCurrentUser();
-            if (u == null) return;
-            u.reload().addOnCompleteListener(t -> {
-                FirebaseUser fresh = mAuth.getCurrentUser();
-                if (fresh != null) bindUser(fresh);
-                Toast.makeText(this, R.string.profile_refreshed, Toast.LENGTH_SHORT).show();
-            });
-        });
 
         View logout = findViewById(R.id.btn_profile_logout);
         if (logout != null) logout.setOnClickListener(v -> confirmLogout());
@@ -71,6 +69,26 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
         bindUser(user);
+        // Sinkronisasi otomatis: pantau perubahan akun & segarkan data tanpa tombol.
+        mAuth.addAuthStateListener(mAuthListener);
+        syncAccount();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAuth.removeAuthStateListener(mAuthListener);
+    }
+
+    /** Ambil data akun terbaru dari server lalu perbarui tampilan otomatis. */
+    private void syncAccount() {
+        FirebaseUser current = mAuth.getCurrentUser();
+        if (current == null) return;
+        current.reload().addOnCompleteListener(t -> {
+            if (isFinishing() || isDestroyed()) return;
+            FirebaseUser fresh = mAuth.getCurrentUser();
+            if (fresh != null) bindUser(fresh);
+        });
     }
 
     private void bindUser(FirebaseUser user) {
@@ -183,20 +201,14 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         addRow(container, getString(R.string.profile_field_name), user.getDisplayName());
-        addRow(container, getString(R.string.profile_field_given_name), givenName);
-        addRow(container, getString(R.string.profile_field_family_name), familyName);
         addRow(container, getString(R.string.profile_field_email), user.getEmail());
         addRow(container, getString(R.string.profile_field_email_verified),
             getString(user.isEmailVerified() ? R.string.profile_verified : R.string.profile_not_verified));
         addRow(container, getString(R.string.profile_field_phone), user.getPhoneNumber());
         addRow(container, getString(R.string.profile_field_uid), user.getUid());
-        addRow(container, getString(R.string.profile_field_google_id), googleId);
         addRow(container, getString(R.string.profile_field_provider), providerNames);
         addRow(container, getString(R.string.profile_field_anonymous),
             getString(user.isAnonymous() ? R.string.profile_yes : R.string.profile_no));
-        addRow(container, getString(R.string.profile_field_photo_url),
-            user.getPhotoUrl() == null ? null : user.getPhotoUrl().toString());
-        addRow(container, getString(R.string.profile_field_tenant), user.getTenantId());
         if (user.getMetadata() != null) {
             addRow(container, getString(R.string.profile_field_created),
                 formatTime(user.getMetadata().getCreationTimestamp()));
