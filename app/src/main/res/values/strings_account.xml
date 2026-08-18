@@ -64,4 +64,8 @@
     <string name="extrakeys_order_reset">Kembalikan ke Default</string>
     <string name="extrakeys_order_reset_done">Urutan extra keys dikembalikan ke default</string>
 
+    <string name="nav_menu_title">Menu Navigasi</string>
+    <string name="login_secure_note">Terenkripsi &amp; aman lewat Google Sign-In</string>
+    <string name="login_brand_tag">TERMUX MOD ACCOUNT</string>
+
 </resources>

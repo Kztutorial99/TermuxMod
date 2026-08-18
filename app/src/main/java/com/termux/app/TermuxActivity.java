@@ -39,7 +39,6 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.termux.app.activities.DeveloperInfoActivity;
 
 import java.io.File;
@@ -182,7 +181,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     private int mTerminalToolbarDefaultHeight;
 
     // Bottom navigation
-    private BottomNavigationView mBottomNav;
+    private View mNavMenuPanel;
+    private boolean mNavMenuOpen = false;
     private FrameLayout mFilesContainer;
     private FrameLayout mPackagesContainer;
     private FrameLayout mToolsContainer;
@@ -677,6 +677,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
 
     @Override
     public void onBackPressed() {
+        if (mNavMenuOpen) { closeNavMenu(); return; }
         DrawerLayout d = getDrawer();
         if (d != null && d.isDrawerOpen(GravityCompat.START)) {
             d.closeDrawer(GravityCompat.START);
@@ -1154,7 +1155,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
                     }
                     // Tampilkan terminal dulu kalau sedang di tab lain
                     if (mCurrentTabId != R.id.nav_terminal) {
-                        if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);
                         showTab(R.id.nav_terminal);
                     }
                     populateRightDrawerInfo();
@@ -1181,15 +1181,51 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         mPackagesContainer = findViewById(R.id.packages_container);
         mToolsContainer    = findViewById(R.id.tools_container);
 
-        mBottomNav = findViewById(R.id.bottom_nav);
-        if (mBottomNav == null) return;
+        setupNavMenu();
+    }
 
-        mBottomNav.setOnNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == mCurrentTabId) return true;
-            showTab(id);
-            return true;
+    /** Slide-down menu di pojok kanan atas (pengganti bottom navigation). */
+    private void setupNavMenu() {
+        mNavMenuPanel = findViewById(R.id.nav_menu_panel);
+        View menuBtn  = findViewById(R.id.btn_nav_menu);
+        if (menuBtn != null) menuBtn.setOnClickListener(v -> toggleNavMenu());
+
+        bindNavItem(R.id.nav_item_terminal, R.id.nav_terminal);
+        bindNavItem(R.id.nav_item_files,    R.id.nav_files);
+        bindNavItem(R.id.nav_item_packages, R.id.nav_packages);
+        bindNavItem(R.id.nav_item_tools,    R.id.nav_tools);
+        bindNavItem(R.id.nav_item_profile,  R.id.nav_profile);
+    }
+
+    private void bindNavItem(int rowId, final int tabId) {
+        View row = findViewById(rowId);
+        if (row == null) return;
+        row.setOnClickListener(v -> {
+            closeNavMenu();
+            showTab(tabId);
         });
+    }
+
+    private void toggleNavMenu() {
+        if (mNavMenuOpen) closeNavMenu(); else openNavMenu();
+    }
+
+    private void openNavMenu() {
+        if (mNavMenuPanel == null) return;
+        mNavMenuOpen = true;
+        mNavMenuPanel.setVisibility(View.VISIBLE);
+        mNavMenuPanel.setAlpha(0f);
+        mNavMenuPanel.setTranslationY(-mNavMenuPanel.getHeight() > 0 ? -mNavMenuPanel.getHeight() : -40f);
+        mNavMenuPanel.animate().alpha(1f).translationY(0f).setDuration(180).start();
+    }
+
+    private void closeNavMenu() {
+        if (mNavMenuPanel == null || !mNavMenuOpen) return;
+        mNavMenuOpen = false;
+        final View panel = mNavMenuPanel;
+        float h = panel.getHeight() > 0 ? panel.getHeight() : 40f;
+        panel.animate().alpha(0f).translationY(-h).setDuration(160)
+            .withEndAction(() -> panel.setVisibility(View.GONE)).start();
     }
 
     private void showTab(int tabId) {
@@ -1230,7 +1266,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
             startActivity(new Intent(this, ProfileActivity.class));
             // Revert selection back to terminal
             mCurrentTabId = R.id.nav_terminal;
-            if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);
             showTab(R.id.nav_terminal);
             return;
         }
@@ -1497,7 +1532,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         if (session == null || command == null) return;
         // Switch back to terminal tab first
         showTab(R.id.nav_terminal);
-        if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);
         // Feed the command bytes
         byte[] bytes = command.getBytes();
         session.write(bytes, 0, bytes.length);

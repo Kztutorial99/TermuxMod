@@ -102,6 +102,19 @@
 
         </LinearLayout>
 
+
+        <!-- Nav menu button (top-right) -->
+        <ImageButton
+            android:id="@+id/btn_nav_menu"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="6dp"
+            android:src="@drawable/ic_nav_grid"
+            android:scaleType="centerInside"
+            android:background="@drawable/bg_nav_menu_btn"
+            android:tint="@color/color_accent_primary"
+            android:contentDescription="@string/nav_menu_title" />
+
     </LinearLayout>
 
     <!-- ═══════════════════════════════════════
@@ -308,7 +321,6 @@
         <!-- Extra keys ViewPager -->
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/terminal_toolbar_view_pager"
-            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:background="@color/color_surface_high"
@@ -316,24 +328,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        
+        <!-- ExtraKeys toggle tab -->
+        <ImageView
+            android:id="@+id/btn_toggle_extrakeys"
+            android:layout_width="52dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_arrow_down"
+            android:tint="@color/color_text_secondary"
+            android:scaleType="center"
+            android:background="@drawable/bg_extrakeys_tab"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@string/action_toggle_extrakeys"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/terminal_toolbar_view_pager" />
+
+        <include layout="@layout/view_nav_menu" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- ═══════════════════════════════════════
-         BOTTOM NAVIGATION
-         ═══════════════════════════════════════ -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/color_background"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@drawable/bottom_nav_item_color"
-        app:itemTextColor="@drawable/bottom_nav_item_color"
-        app:labelVisibilityMode="labeled"
-        app:itemRippleColor="@color/color_ripple"
-        app:elevation="8dp" />
 
     <!-- Bottom space (kept for keyboard insets) -->
     <View

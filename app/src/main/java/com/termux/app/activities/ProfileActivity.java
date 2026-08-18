@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.termux.R;
-import com.termux.app.extrakeys.ExtraKeysOrderActivity;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -47,13 +46,16 @@ public class ProfileActivity extends AppCompatActivity {
         View back = findViewById(R.id.btn_profile_back);
         if (back != null) back.setOnClickListener(v -> finish());
 
-        View extraKeys = findViewById(R.id.btn_profile_extrakeys);
-        if (extraKeys != null) extraKeys.setOnClickListener(v ->
-            startActivity(new Intent(ProfileActivity.this, ExtraKeysOrderActivity.class)));
-
-        View settings = findViewById(R.id.btn_profile_settings);
-        if (settings != null) settings.setOnClickListener(v ->
-            startActivity(new Intent(ProfileActivity.this, SettingsActivity.class)));
+        View refresh = findViewById(R.id.btn_profile_refresh);
+        if (refresh != null) refresh.setOnClickListener(v -> {
+            FirebaseUser u = mAuth.getCurrentUser();
+            if (u == null) return;
+            u.reload().addOnCompleteListener(t -> {
+                FirebaseUser fresh = mAuth.getCurrentUser();
+                if (fresh != null) bindUser(fresh);
+                Toast.makeText(this, R.string.profile_refreshed, Toast.LENGTH_SHORT).show();
+            });
+        });
 
         View logout = findViewById(R.id.btn_profile_logout);
         if (logout != null) logout.setOnClickListener(v -> confirmLogout());
@@ -94,6 +96,7 @@ public class ProfileActivity extends AppCompatActivity {
         status.setText(providers.length() > 0 ? providers + " • " + verified : verified);
 
         loadPhoto(user.getPhotoUrl(), photo);
+        buildInfoRows(user);
 
         mGso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail().build();
@@ -153,6 +156,98 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
+    }
+
+    /** Bangun daftar info akun lengkap (read-only, long-press utk copy). */
+    private void buildInfoRows(FirebaseUser user) {
+        android.widget.LinearLayout container = findViewById(R.id.profile_info_container);
+        if (container == null) return;
+        container.removeAllViews();
+
+        String googleId = null, givenName = null, familyName = null, providerNames = "";
+        for (UserInfo info : user.getProviderData()) {
+            String pretty = prettyProvider(info.getProviderId());
+            if (pretty == null || "Firebase".equals(pretty)) continue;
+            providerNames = providerNames.isEmpty() ? pretty : providerNames + ", " + pretty;
+            if ("google.com".equals(info.getProviderId())) {
+                googleId = info.getUid();
+                String display = info.getDisplayName();
+                if (display != null && display.contains(" ")) {
+                    int i = display.indexOf(' ');
+                    givenName = display.substring(0, i);
+                    familyName = display.substring(i + 1);
+                } else {
+                    givenName = display;
+                }
+            }
+        }
+
+        addRow(container, getString(R.string.profile_field_name), user.getDisplayName());
+        addRow(container, getString(R.string.profile_field_given_name), givenName);
+        addRow(container, getString(R.string.profile_field_family_name), familyName);
+        addRow(container, getString(R.string.profile_field_email), user.getEmail());
+        addRow(container, getString(R.string.profile_field_email_verified),
+            getString(user.isEmailVerified() ? R.string.profile_verified : R.string.profile_not_verified));
+        addRow(container, getString(R.string.profile_field_phone), user.getPhoneNumber());
+        addRow(container, getString(R.string.profile_field_uid), user.getUid());
+        addRow(container, getString(R.string.profile_field_google_id), googleId);
+        addRow(container, getString(R.string.profile_field_provider), providerNames);
+        addRow(container, getString(R.string.profile_field_anonymous),
+            getString(user.isAnonymous() ? R.string.profile_yes : R.string.profile_no));
+        addRow(container, getString(R.string.profile_field_photo_url),
+            user.getPhotoUrl() == null ? null : user.getPhotoUrl().toString());
+        addRow(container, getString(R.string.profile_field_tenant), user.getTenantId());
+        if (user.getMetadata() != null) {
+            addRow(container, getString(R.string.profile_field_created),
+                formatTime(user.getMetadata().getCreationTimestamp()));
+            addRow(container, getString(R.string.profile_field_last_signin),
+                formatTime(user.getMetadata().getLastSignInTimestamp()));
+        }
+    }
+
+    private String formatTime(long millis) {
+        if (millis <= 0) return null;
+        return new java.text.SimpleDateFormat("dd MMM yyyy • HH:mm", java.util.Locale.getDefault())
+            .format(new java.util.Date(millis));
+    }
+
+    private void addRow(android.widget.LinearLayout parent, final String label, @Nullable String value) {
+        final String shown = isEmpty(value) ? getString(R.string.profile_value_empty) : value;
+        float d = getResources().getDisplayMetrics().density;
+
+        android.widget.LinearLayout row = new android.widget.LinearLayout(this);
+        row.setOrientation(android.widget.LinearLayout.VERTICAL);
+        row.setPadding((int) (12 * d), (int) (11 * d), (int) (12 * d), (int) (11 * d));
+
+        TextView lbl = new TextView(this);
+        lbl.setText(label);
+        lbl.setTextSize(11f);
+        lbl.setTextColor(getResources().getColor(R.color.color_text_secondary));
+
+        TextView val = new TextView(this);
+        val.setText(shown);
+        val.setTextSize(14f);
+        val.setTextColor(getResources().getColor(R.color.color_text_primary));
+
+        row.addView(lbl);
+        row.addView(val);
+        row.setOnLongClickListener(v -> {
+            android.content.ClipboardManager cm =
+                (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            if (cm != null) cm.setPrimaryClip(android.content.ClipData.newPlainText(label, shown));
+            Toast.makeText(this, getString(R.string.profile_copied, label), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+        parent.addView(row);
+
+        View divider = new View(this);
+        android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
+            android.widget.LinearLayout.LayoutParams.MATCH_PARENT, (int) Math.max(1, d));
+        lp.leftMargin = (int) (12 * d);
+        lp.rightMargin = (int) (12 * d);
+        divider.setLayoutParams(lp);
+        divider.setBackgroundColor(getResources().getColor(R.color.color_border));
+        parent.addView(divider);
     }
 
     private boolean isEmpty(@Nullable String s) {

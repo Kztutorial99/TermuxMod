@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/nav_menu_panel"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        android:padding="6dp"
+        android:elevation="12dp"
+        android:visibility="gone"
+        android:background="@drawable/bg_nav_menu_panel"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/nav_item_terminal"
+            style="@style/NavMenuRow">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_terminal"
+                android:tint="@color/color_accent_primary"
+                android:contentDescription="@string/nav_terminal" />
+            <TextView
+                style="@style/NavMenuRowText"
+                android:text="@string/nav_terminal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_item_files"
+            style="@style/NavMenuRow">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_files"
+                android:tint="@color/color_accent_primary"
+                android:contentDescription="@string/nav_files" />
+            <TextView
+                style="@style/NavMenuRowText"
+                android:text="@string/nav_files" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_item_packages"
+            style="@style/NavMenuRow">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_packages"
+                android:tint="@color/color_accent_primary"
+                android:contentDescription="@string/nav_packages" />
+            <TextView
+                style="@style/NavMenuRowText"
+                android:text="@string/nav_packages" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_item_tools"
+            style="@style/NavMenuRow">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_tools"
+                android:tint="@color/color_accent_primary"
+                android:contentDescription="@string/nav_tools" />
+            <TextView
+                style="@style/NavMenuRowText"
+                android:text="@string/nav_tools" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="@color/color_border" />
+
+        <LinearLayout
+            android:id="@+id/nav_item_profile"
+            style="@style/NavMenuRow">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_profile"
+                android:tint="@color/color_accent_secondary"
+                android:contentDescription="@string/nav_profile" />
+            <TextView
+                style="@style/NavMenuRowText"
+                android:text="@string/nav_profile" />
+        </LinearLayout>
+
+    </LinearLayout>
