@@ -71,23 +71,34 @@ android {
     }
 
     signingConfigs {
+        // Keystore tetap TermuxMod: SHA-1 tidak pernah berubah di build manapun
+        // SHA-1  : 43:7B:3D:A3:4E:97:8D:47:17:B8:80:88:9B:DE:22:DE:7A:00:1F:35
+        // SHA-256: F0:6E:A0:B6:13:8F:B0:19:89:D7:4F:6E:61:A5:74:4F:B4:A4:62:1A:69:2C:04:2F:3D:A9:C8:C4:46:A9:06:A0
+        termuxmod {
+            storeFile file('termuxmod.keystore')
+            keyAlias 'termuxmod'
+            storePassword 'termuxmod'
+            keyPassword 'termuxmod'
+        }
+
         debug {
-            storeFile file('dev_keystore.jks')
-            keyAlias 'alias'
-            storePassword 'xrj45yWGLbsO7W0v'
-            keyPassword 'xrj45yWGLbsO7W0v'
+            storeFile file('termuxmod.keystore')
+            keyAlias 'termuxmod'
+            storePassword 'termuxmod'
+            keyPassword 'termuxmod'
         }
     }
 
     buildTypes {
         release {
+            signingConfig signingConfigs.termuxmod
             minifyEnabled true
             shrinkResources false // Reproducible builds
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.termuxmod
         }
     }
 
