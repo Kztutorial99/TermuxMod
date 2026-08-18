@@ -4,6 +4,9 @@ plugins {
 }
 
 android {
+    def termuxmodKeystoreFile = file(System.getenv("TERMUX_KEYSTORE_PATH") ?: "termuxmod.keystore")
+    def hasTermuxmodKeystore = termuxmodKeystoreFile.exists()
+
     compileSdkVersion project.properties.compileSdkVersion.toInteger()
     ndkVersion = System.getenv("JITPACK_NDK_VERSION") ?: project.properties.ndkVersion
     def appVersionName = System.getenv("TERMUX_APP_VERSION_NAME") ?: ""
@@ -71,34 +74,35 @@ android {
     }
 
     signingConfigs {
-        // Keystore tetap TermuxMod: SHA-1 tidak pernah berubah di build manapun
+        // Keystore tetap TermuxMod. File-nya TIDAK disimpan di repo:
+        // GitHub Actions menulisnya dari secret KEYSTORE_BASE64 saat build.
         // SHA-1  : 43:7B:3D:A3:4E:97:8D:47:17:B8:80:88:9B:DE:22:DE:7A:00:1F:35
         // SHA-256: F0:6E:A0:B6:13:8F:B0:19:89:D7:4F:6E:61:A5:74:4F:B4:A4:62:1A:69:2C:04:2F:3D:A9:C8:C4:46:A9:06:A0
         termuxmod {
-            storeFile file('termuxmod.keystore')
-            keyAlias 'termuxmod'
-            storePassword 'termuxmod'
-            keyPassword 'termuxmod'
+            storeFile termuxmodKeystoreFile
+            keyAlias System.getenv("KEY_ALIAS") ?: "termuxmod"
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "termuxmod"
+            keyPassword System.getenv("KEY_PASSWORD") ?: "termuxmod"
         }
 
         debug {
-            storeFile file('termuxmod.keystore')
-            keyAlias 'termuxmod'
-            storePassword 'termuxmod'
-            keyPassword 'termuxmod'
+            storeFile file('dev_keystore.jks')
+            keyAlias 'alias'
+            storePassword 'xrj45yWGLbsO7W0v'
+            keyPassword 'xrj45yWGLbsO7W0v'
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.termuxmod
+            if (hasTermuxmodKeystore) signingConfig signingConfigs.termuxmod
             minifyEnabled true
             shrinkResources false // Reproducible builds
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
-            signingConfig signingConfigs.termuxmod
+            signingConfig hasTermuxmodKeystore ? signingConfigs.termuxmod : signingConfigs.debug
         }
     }
 

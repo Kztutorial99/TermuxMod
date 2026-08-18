@@ -21,13 +21,26 @@ jobs:
           distribution: temurin
           java-version: '11'
 
+      - name: Pulihkan keystore TermuxMod dari GitHub Secrets
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::Secret KEYSTORE_BASE64 belum diisi di Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > app/termuxmod.keystore
+          echo "Keystore dipulihkan ($(stat -c%s app/termuxmod.keystore) byte)"
+
       - name: Tampilkan SHA-1 & SHA-256 keystore TermuxMod
-        id: sha
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           keytool -list -v \
             -keystore app/termuxmod.keystore \
-            -alias termuxmod \
-            -storepass termuxmod > /tmp/keystore.txt
+            -alias "$KEY_ALIAS" \
+            -storepass "$KEYSTORE_PASSWORD" > /tmp/keystore.txt
 
           SHA1=$(grep -m1 "SHA1:" /tmp/keystore.txt | sed 's/.*SHA1: //' | tr -d ' \r')
           SHA256=$(grep -m1 "SHA256:" /tmp/keystore.txt | sed 's/.*SHA256: //' | tr -d ' \r')
@@ -40,7 +53,7 @@ jobs:
           {
             echo "## Sidik Jari Keystore TermuxMod (tetap, tidak berubah)"
             echo ""
-            echo "Salin dan tempel ke Firebase Console > Project Settings > App \`com.termux\` > Add fingerprint."
+            echo "Salin ke Firebase Console > Project Settings > app \`com.termux\` > Add fingerprint."
             echo ""
             echo "**SHA-1**"
             echo '```'
@@ -56,6 +69,10 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build APK debug (ditandatangani keystore TermuxMod)
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Verifikasi tanda tangan APK
@@ -70,3 +87,7 @@ jobs:
           name: termuxmod-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: warn
+
+      - name: Hapus keystore dari runner
+        if: always()
+        run: rm -f app/termuxmod.keystore
