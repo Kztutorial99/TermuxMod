@@ -17,6 +17,14 @@ allprojects {
     }
 }
 
+subprojects {
+    configurations.all {
+        // guava:listenablefuture and the empty listenablefuture:1.0 stub both
+        // provide ListenableFuture, which breaks checkDuplicateClasses.
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
