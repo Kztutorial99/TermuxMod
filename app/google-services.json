@@ -36,7 +36,16 @@
           "package_name": "com.termux"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "339934174022-areelm4moasjkauacei7tfdhbqhuboru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.termux",
+            "certificate_hash": "437b3da34e978d4717b880889bde22de7a001f35"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDsdOdqzZaaRMOwUFYazPscpBv8YJq5UpQ"
