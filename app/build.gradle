@@ -12,7 +12,7 @@ android {
     def appVersionName = System.getenv("TERMUX_APP_VERSION_NAME") ?: ""
     def apkVersionTag = System.getenv("TERMUX_APK_VERSION_TAG") ?: ""
     def splitAPKsForDebugBuilds = System.getenv("TERMUX_SPLIT_APKS_FOR_DEBUG_BUILDS") ?: "1"
-    def splitAPKsForReleaseBuilds = System.getenv("TERMUX_SPLIT_APKS_FOR_RELEASE_BUILDS") ?: "0" // F-Droid does not support split APKs #1904
+    def splitAPKsForReleaseBuilds = System.getenv("TERMUX_SPLIT_APKS_FOR_RELEASE_BUILDS") ?: "0"
 
     dependencies {
         implementation "androidx.annotation:annotation:1.3.0"
@@ -27,12 +27,9 @@ android {
         implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"
         implementation "io.noties.markwon:linkify:$markwonVersion"
         implementation "io.noties.markwon:recycler:$markwonVersion"
-
-        // Login Google + Firebase Auth (menu Profil TermuxMod)
         implementation platform("com.google.firebase:firebase-bom:29.0.4")
         implementation "com.google.firebase:firebase-auth"
         implementation "com.google.android.gms:play-services-auth:19.2.0"
-
         implementation project(":terminal-view")
         implementation project(":termux-shared")
     }
@@ -43,10 +40,8 @@ android {
         targetSdkVersion project.properties.targetSdkVersion.toInteger()
         versionCode 1002
         versionName "0.118.3"
-
         if (appVersionName) versionName = appVersionName
         validateVersionName(versionName)
-
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
         manifestPlaceholders.TERMUX_APP_NAME = "Termux"
         manifestPlaceholders.TERMUX_API_APP_NAME = "Termux:API"
@@ -55,13 +50,11 @@ android {
         manifestPlaceholders.TERMUX_STYLING_APP_NAME = "Termux:Styling"
         manifestPlaceholders.TERMUX_TASKER_APP_NAME = "Termux:Tasker"
         manifestPlaceholders.TERMUX_WIDGET_APP_NAME = "Termux:Widget"
-
         externalNativeBuild {
             ndkBuild {
                 cFlags "-std=c11", "-Wall", "-Wextra", "-Werror", "-Os", "-fno-stack-protector", "-Wl,--gc-sections"
             }
         }
-
         splits {
             abi {
                 enable ((gradle.startParameter.taskNames.any { it.contains("Debug") } && splitAPKsForDebugBuilds == "1") ||
@@ -74,22 +67,11 @@ android {
     }
 
     signingConfigs {
-        // Keystore tetap TermuxMod. File-nya TIDAK disimpan di repo:
-        // GitHub Actions menulisnya dari secret KEYSTORE_BASE64 saat build.
-        // SHA-1  : 43:7B:3D:A3:4E:97:8D:47:17:B8:80:88:9B:DE:22:DE:7A:00:1F:35
-        // SHA-256: F0:6E:A0:B6:13:8F:B0:19:89:D7:4F:6E:61:A5:74:4F:B4:A4:62:1A:69:2C:04:2F:3D:A9:C8:C4:46:A9:06:A0
         termuxmod {
             storeFile termuxmodKeystoreFile
             keyAlias System.getenv("KEY_ALIAS") ?: "termuxmod"
             storePassword System.getenv("KEYSTORE_PASSWORD") ?: "termuxmod"
             keyPassword System.getenv("KEY_PASSWORD") ?: "termuxmod"
-        }
-
-        debug {
-            storeFile file('dev_keystore.jks')
-            keyAlias 'alias'
-            storePassword 'xrj45yWGLbsO7W0v'
-            keyPassword 'xrj45yWGLbsO7W0v'
         }
     }
 
@@ -97,10 +79,11 @@ android {
         release {
             if (hasTermuxmodKeystore) signingConfig signingConfigs.termuxmod
             minifyEnabled true
-            shrinkResources false // Reproducible builds
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
+        // Use Gradle's generated debug keystore locally. Never commit a debug keystore or its password.
         debug {
             signingConfig hasTermuxmodKeystore ? signingConfigs.termuxmod : signingConfigs.debug
         }
@@ -117,34 +100,17 @@ android {
         }
     }
 
-    lintOptions {
-        disable 'ProtectedPermissions'
-    }
-
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-        }
-    }
-
-    packagingOptions {
-        jniLibs {
-            useLegacyPackaging true
-        }
-    }
+    lintOptions { disable 'ProtectedPermissions' }
+    testOptions { unitTests { includeAndroidResources = true } }
+    packagingOptions { jniLibs { useLegacyPackaging true } }
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            if (variant.buildType.name == "debug") {
-                def abi = output.getFilter(com.android.build.OutputFile.ABI)
-                outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : "debug") + "_" + (abi ? abi : "universal") + ".apk")
-            } else if (variant.buildType.name == "release") {
-                def abi = output.getFilter(com.android.build.OutputFile.ABI)
-                outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : "release") + "_" + (abi ? abi : "universal") + ".apk")
-            }
+            def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            def type = variant.buildType.name
+            outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : type) + "_" + (abi ? abi : "universal") + ".apk")
         }
     }
-
 }
 
 dependencies {
@@ -153,21 +119,17 @@ dependencies {
 }
 
 task versionName {
-    doLast {
-        print android.defaultConfig.versionName
-    }
+    doLast { print android.defaultConfig.versionName }
 }
 
 def validateVersionName(String versionName) {
-    // https://semver.org/spec/v2.0.0.html#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-    // ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
-    if (!java.util.regex.Pattern.matches("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?\$", versionName))
-        throw new GradleException("The versionName '"  + versionName + "' is not a valid version as per semantic version '2.0.0' spec in the format 'major.minor.patch(-prerelease)(+buildmetadata)'. https://semver.org/spec/v2.0.0.html.")
+    if (!java.util.regex.Pattern.matches("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?\$", versionName)) {
+        throw new GradleException("The versionName '" + versionName + "' is not a valid semantic version.")
+    }
 }
 
 def downloadBootstrap(String arch, String expectedChecksum, String version) {
     def digest = java.security.MessageDigest.getInstance("SHA-256")
-
     def localUrl = "src/main/cpp/bootstrap-" + arch + ".zip"
     def file = new File(projectDir, localUrl)
     if (file.exists()) {
@@ -178,30 +140,23 @@ def downloadBootstrap(String arch, String expectedChecksum, String version) {
             if (readBytes < 0) break
             digest.update(buffer, 0, readBytes)
         }
+        input.close()
         def checksum = new BigInteger(1, digest.digest()).toString(16)
-        while (checksum.length() < 64) { checksum = "0" + checksum }
-        if (checksum == expectedChecksum) {
-            return
-        } else {
-            logger.quiet("Deleting old local file with wrong hash: " + localUrl)
-            file.delete()
-        }
+        while (checksum.length() < 64) checksum = "0" + checksum
+        if (checksum == expectedChecksum) return
+        file.delete()
     }
-
     def remoteUrl = "https://github.com/termux/termux-packages/releases/download/bootstrap-" + version + "/bootstrap-" + arch + ".zip"
     logger.quiet("Downloading " + remoteUrl + " ...")
-
     file.parentFile.mkdirs()
     def out = new BufferedOutputStream(new FileOutputStream(file))
-
     def connection = new URL(remoteUrl).openConnection()
     connection.setInstanceFollowRedirects(true)
     def digestStream = new java.security.DigestInputStream(connection.inputStream, digest)
     out << digestStream
     out.close()
-
     def checksum = new BigInteger(1, digest.digest()).toString(16)
-    while (checksum.length() < 64) { checksum = "0" + checksum }
+    while (checksum.length() < 64) checksum = "0" + checksum
     if (checksum != expectedChecksum) {
         file.delete()
         throw new GradleException("Wrong checksum for " + remoteUrl + ": expected: " + expectedChecksum + ", actual: " + checksum)
@@ -220,9 +175,9 @@ task downloadBootstraps() {
     doLast {
         def version = "2025.03.28-r1+apt-android-7"
         downloadBootstrap("aarch64", "c8d702b6f742935001c37cda81b8ac69504a95d5cf28f2899532dd8cd4b057eb", version)
-        downloadBootstrap("arm",     "f3bb9d1b32552b34fff41861dbf193ec5ba2848d67d779ac1c7256da6640f85d", version)
-        downloadBootstrap("i686",    "36db3e1ac3547f9a174fd763bd9a484fa1a3449cdd81e1cf2408ff0454f839c6", version)
-        downloadBootstrap("x86_64",  "1c124ec2396ee70a51b0b0a574f29aa659526aa2b9f558f993b2fb05d1e51855", version)
+        downloadBootstrap("arm", "f3bb9d1b32552b34fff41861dbf193ec5ba2848d67d779ac1c7256da6640f85d", version)
+        downloadBootstrap("i686", "36db3e1ac3547f9a174fd763bd9a484fa1a3449cdd81e1cf2408ff0454f839c6", version)
+        downloadBootstrap("x86_64", "1c124ec2396ee70a51b0b0a574f29aa659526aa2b9f558f993b2fb05d1e51855", version)
     }
 }
 
