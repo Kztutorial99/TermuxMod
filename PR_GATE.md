@@ -1,0 +1,1 @@
+CI gate: Firebase Auth build must be green.
