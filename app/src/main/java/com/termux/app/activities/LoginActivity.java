@@ -41,13 +41,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mStatusView;
     private boolean mSignupMode;
 
-    public static void startLoginActivity(@NonNull Context context) {
-        context.startActivity(new Intent(context, LoginActivity.class));
-    }
-
+    public static void startLoginActivity(@NonNull Context context) { context.startActivity(new Intent(context, LoginActivity.class)); }
     public static void startAccountActivity(@NonNull Context context) {
-        if (new AccountSession(context).isSignedIn()) ProfileActivity.startProfileActivity(context);
-        else startLoginActivity(context);
+        if (new AccountSession(context).isSignedIn()) ProfileActivity.startProfileActivity(context); else startLoginActivity(context);
     }
 
     @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,11 +57,9 @@ public class LoginActivity extends AppCompatActivity {
         mPrimaryButton = findViewById(R.id.login_primary_button);
         mGoogleButton = findViewById(R.id.login_google_button);
         mStatusView = findViewById(R.id.login_status);
-
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         mGoogleClient = GoogleSignIn.getClient(this, options);
-
         View back = findViewById(R.id.login_back);
         if (back != null) back.setOnClickListener(v -> finish());
         mPrimaryButton.setOnClickListener(v -> submitEmail());
@@ -92,15 +86,10 @@ public class LoginActivity extends AppCompatActivity {
     private void submitEmail() {
         String email = mEmailInput.getText().toString().trim();
         String password = mPasswordInput.getText().toString();
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailInput.setError(getString(R.string.account_error_email)); return;
-        }
-        if (password.length() < 6) {
-            mPasswordInput.setError(getString(R.string.account_error_password)); return;
-        }
+        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) { mEmailInput.setError(getString(R.string.account_error_email)); return; }
+        if (password.length() < 6) { mPasswordInput.setError(getString(R.string.account_error_password)); return; }
         setBusy(true);
-        Task<?> task = mSignupMode ? mAuth.createUserWithEmailAndPassword(email, password)
-            : mAuth.signInWithEmailAndPassword(email, password);
+        Task<?> task = mSignupMode ? mAuth.createUserWithEmailAndPassword(email, password) : mAuth.signInWithEmailAndPassword(email, password);
         task.addOnCompleteListener(this, result -> {
             setBusy(false);
             if (result.isSuccessful() && mAuth.getCurrentUser() != null) {
@@ -111,10 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void signInWithGoogle() {
-        setBusy(true);
-        startActivityForResult(mGoogleClient.getSignInIntent(), RC_GOOGLE_SIGN_IN);
-    }
+    private void signInWithGoogle() { setBusy(true); startActivityForResult(mGoogleClient.getSignInIntent(), RC_GOOGLE_SIGN_IN); }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -122,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         if (data == null) { setBusy(false); setStatus(getString(R.string.account_google_sign_in_cancelled)); return; }
         try {
             GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-            if (account == null || account.getIdToken() == null) throw new ApiException(new com.google.android.gms.common.api.Status(8));
+            if (account == null || account.getIdToken() == null) { setBusy(false); setStatus(getString(R.string.account_google_sign_in_failed)); return; }
             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             mAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
                 setBusy(false);
@@ -132,22 +118,14 @@ public class LoginActivity extends AppCompatActivity {
                     openProfile();
                 } else showFirebaseError(task.getException());
             });
-        } catch (ApiException e) {
-            setBusy(false);
-            setStatus(getString(R.string.account_google_sign_in_failed));
-        }
+        } catch (ApiException e) { setBusy(false); setStatus(getString(R.string.account_google_sign_in_failed)); }
     }
 
     private void sendPasswordReset() {
         String email = mEmailInput.getText().toString().trim();
-        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mEmailInput.setError(getString(R.string.account_error_email)); return;
-        }
+        if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) { mEmailInput.setError(getString(R.string.account_error_email)); return; }
         setStatus(getString(R.string.account_status_sending_reset));
-        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(this, task -> {
-            if (task.isSuccessful()) setStatus(getString(R.string.account_password_reset_sent));
-            else showFirebaseError(task.getException());
-        });
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(this, task -> { if (task.isSuccessful()) setStatus(getString(R.string.account_password_reset_sent)); else showFirebaseError(task.getException()); });
     }
 
     private void persistFirebaseUser(@NonNull FirebaseUser user) {
@@ -156,23 +134,11 @@ public class LoginActivity extends AppCompatActivity {
         if (name == null || name.trim().isEmpty()) name = email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : email;
         mSession.save(user.getUid(), name, email, user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null);
     }
-
     private void openProfile() { ProfileActivity.startProfileActivity(this); finish(); }
-
     private void setBusy(boolean busy) {
-        mPrimaryButton.setEnabled(!busy); mModeToggle.setEnabled(!busy); mGoogleButton.setEnabled(!busy);
-        mEmailInput.setEnabled(!busy); mPasswordInput.setEnabled(!busy);
+        mPrimaryButton.setEnabled(!busy); mModeToggle.setEnabled(!busy); mGoogleButton.setEnabled(!busy); mEmailInput.setEnabled(!busy); mPasswordInput.setEnabled(!busy);
         setStatus(getString(busy ? R.string.account_status_signing_in : R.string.account_login_hint));
     }
-
-    private void showFirebaseError(@Nullable Exception exception) {
-        String message = getString(R.string.account_status_sign_in_failed);
-        if (exception != null && exception.getMessage() != null) message = exception.getMessage();
-        setStatus(message);
-    }
-
-    private void setStatus(@NonNull String status) {
-        if (mStatusView == null) return;
-        mStatusView.setText(status); mStatusView.setVisibility(View.VISIBLE);
-    }
+    private void showFirebaseError(@Nullable Exception exception) { setStatus(exception != null && exception.getMessage() != null ? exception.getMessage() : getString(R.string.account_status_sign_in_failed)); }
+    private void setStatus(@NonNull String status) { if (mStatusView != null) { mStatusView.setText(status); mStatusView.setVisibility(View.VISIBLE); } }
 }
