@@ -109,6 +109,19 @@
             android:theme="@style/Theme.Termux" />
 
         <activity
+            android:name=".app.activities.LoginActivity"
+            android:exported="false"
+            android:label="@string/account_login_title"
+            android:theme="@style/Theme.Termux" />
+
+        <activity
+            android:name=".app.activities.ProfileActivity"
+            android:exported="false"
+            android:label="@string/account_profile_title"
+            android:theme="@style/Theme.Termux" />
+
+
+        <activity
             android:name=".shared.activities.ReportActivity"
             android:theme="@style/Theme.AppCompat.TermuxReportActivity"
             android:documentLaunchMode="intoExisting"

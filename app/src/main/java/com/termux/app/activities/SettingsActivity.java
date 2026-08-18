@@ -66,12 +66,23 @@ public class SettingsActivity extends AppCompatActivity {
 
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            configureAccountPreference(context);
             configureTermuxAPIPreference(context);
             configureTermuxFloatPreference(context);
             configureTermuxTaskerPreference(context);
             configureTermuxWidgetPreference(context);
             configureAboutPreference(context);
             configureDonatePreference(context);
+        }
+
+        private void configureAccountPreference(@NonNull Context context) {
+            Preference accountPreference = findPreference("account");
+            if (accountPreference != null) {
+                accountPreference.setOnPreferenceClickListener(preference -> {
+                    LoginActivity.startAccountActivity(context);
+                    return true;
+                });
+            }
         }
 
         private void configureTermuxAPIPreference(@NonNull Context context) {
