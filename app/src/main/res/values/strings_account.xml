@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Login Google -->
+    <string name="login_title">Masuk ke TermuxMod</string>
+    <string name="login_subtitle">Login dengan akun Google kamu untuk mengaktifkan menu Profil dan sinkronisasi akun.</string>
+    <string name="login_with_google">Masuk dengan Google</string>
+    <string name="login_back">← Kembali</string>
+    <string name="login_status_connecting">Menghubungkan ke Google…</string>
+    <string name="login_status_verifying">Memverifikasi akun…</string>
+    <string name="login_success">Berhasil masuk</string>
+    <string name="login_error_failed">Login gagal</string>
+    <string name="login_error_no_token">Token Google tidak diterima. Coba lagi.</string>
+    <string name="login_privacy_note">Kami hanya membaca nama, email, dan foto profil akun Google kamu.</string>
+
+    <!-- Profil User -->
+    <string name="profile_title">Profil Pengguna</string>
+    <string name="profile_section_account">Informasi Akun Lengkap</string>
+    <string name="profile_field_name">Nama Lengkap</string>
+    <string name="profile_field_email">Email</string>
+    <string name="profile_field_email_verified">Status Email</string>
+    <string name="profile_field_phone">Nomor Telepon</string>
+    <string name="profile_field_uid">User ID (UID)</string>
+    <string name="profile_field_anonymous">Akun Anonim</string>
+    <string name="profile_field_photo_url">URL Foto Profil</string>
+    <string name="profile_field_tenant">Tenant ID</string>
+    <string name="profile_field_created">Tanggal Daftar</string>
+    <string name="profile_field_last_signin">Terakhir Masuk</string>
+    <string name="profile_field_provider">Metode Login</string>
+    <string name="profile_field_google_id">Google Account ID</string>
+    <string name="profile_field_given_name">Nama Depan</string>
+    <string name="profile_field_family_name">Nama Belakang</string>
+    <string name="profile_verified">Terverifikasi</string>
+    <string name="profile_not_verified">Belum diverifikasi</string>
+    <string name="profile_yes">Ya</string>
+    <string name="profile_no">Tidak</string>
+    <string name="profile_value_empty">Tidak tersedia</string>
+    <string name="profile_copy_hint">Tekan lama pada baris untuk menyalin datanya.</string>
+    <string name="profile_copied">%1$s disalin</string>
+    <string name="profile_refresh">Muat Ulang Data Akun</string>
+    <string name="profile_refreshed">Data akun diperbarui</string>
+    <string name="profile_logout">Keluar Akun</string>
+    <string name="profile_logout_title">Keluar Akun</string>
+    <string name="profile_logout_message">Yakin mau keluar dari akun Google ini?</string>
+    <string name="profile_logout_done">Kamu sudah keluar</string>
+    <string name="profile_cancel">Batal</string>
+
+    <!-- Entri di Pengaturan -->
+    <string name="account_preference_title">Akun &amp; Profil</string>
+    <string name="account_preference_summary">Login Google dan lihat info akun lengkap</string>
+
+</resources>

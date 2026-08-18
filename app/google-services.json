@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "339934174022",
+    "project_id": "kztutorial",
+    "storage_bucket": "kztutorial.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339934174022:android:97b81bb8df5590750a2347",
+        "android_client_info": {
+          "package_name": "com.myKztutorial.Kztutorial"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsdOdqzZaaRMOwUFYazPscpBv8YJq5UpQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "339934174022-gdko3him6mu56idui52b0fd2re48jo24.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339934174022:android:fdfd54bc04cf07280a2347",
+        "android_client_info": {
+          "package_name": "com.termux"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsdOdqzZaaRMOwUFYazPscpBv8YJq5UpQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "339934174022-gdko3him6mu56idui52b0fd2re48jo24.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

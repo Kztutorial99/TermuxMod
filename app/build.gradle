@@ -1,5 +1,6 @@
 plugins {
     id "com.android.application"
+    id "com.google.gms.google-services"
 }
 
 android {
@@ -23,6 +24,11 @@ android {
         implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"
         implementation "io.noties.markwon:linkify:$markwonVersion"
         implementation "io.noties.markwon:recycler:$markwonVersion"
+
+        // Login Google + Firebase Auth (menu Profil TermuxMod)
+        implementation platform("com.google.firebase:firebase-bom:29.0.4")
+        implementation "com.google.firebase:firebase-auth"
+        implementation "com.google.android.gms:play-services-auth:19.2.0"
 
         implementation project(":terminal-view")
         implementation project(":termux-shared")

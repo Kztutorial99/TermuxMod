@@ -1,6 +1,7 @@
 package com.termux.app.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 
@@ -70,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
             configureTermuxFloatPreference(context);
             configureTermuxTaskerPreference(context);
             configureTermuxWidgetPreference(context);
+            configureAccountPreference(context);
             configureAboutPreference(context);
             configureDonatePreference(context);
         }
@@ -103,6 +105,16 @@ public class SettingsActivity extends AppCompatActivity {
             if (termuxWidgetPreference != null) {
                 TermuxWidgetAppSharedPreferences preferences = TermuxWidgetAppSharedPreferences.build(context, false);
                 termuxWidgetPreference.setVisible(preferences != null);
+            }
+        }
+
+        private void configureAccountPreference(@NonNull Context context) {
+            Preference accountPreference = findPreference("akun");
+            if (accountPreference != null) {
+                accountPreference.setOnPreferenceClickListener(preference -> {
+                    context.startActivity(new Intent(context, ProfileActivity.class));
+                    return true;
+                });
             }
         }
 
