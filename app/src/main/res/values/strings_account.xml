@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="default_web_client_id" translatable="false">339934174022-gdko3him6mu56idui52b0fd2re48jo24.apps.googleusercontent.com</string>
+    
+
     <!-- Login Google -->
     <string name="login_title">Masuk ke TermuxMod</string>
     <string name="login_subtitle">Login dengan akun Google kamu untuk mengaktifkan menu Profil dan sinkronisasi akun.</string>
