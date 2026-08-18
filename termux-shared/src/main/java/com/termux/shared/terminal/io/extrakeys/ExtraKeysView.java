@@ -169,6 +169,13 @@ public final class ExtraKeysView extends GridLayout {
      * {@link #DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR}. */
     private int mButtonActiveBackgroundColor;
 
+    /**
+     * Jumlah tombol extra keys yang terlihat sekaligus di layar. Jika lebih besar dari 0, maka
+     * setiap tombol akan memiliki lebar tetap (lebar layar / nilai ini) sehingga sisa tombol bisa
+     * digeser ke kiri/kanan di dalam HorizontalScrollView induknya.
+     */
+    private int mKeysPerScreen = 0;
+
     /** Defines whether text for the extra keys button should be all capitalized automatically. */
     private boolean mButtonTextAllCaps = true;
 
@@ -362,6 +369,11 @@ public final class ExtraKeysView extends GridLayout {
 
 
 
+    /** Set {@link #mKeysPerScreen}. Panggil sebelum {@link #reload(ExtraKeysInfo)}. */
+    public void setKeysPerScreen(int keysPerScreen) {
+        mKeysPerScreen = keysPerScreen;
+    }
+
     /**
      * Reload this instance of {@link ExtraKeysView} with the info passed in {@code extraKeysInfo}.
      *
@@ -384,6 +396,13 @@ public final class ExtraKeysView extends GridLayout {
 
         float density = getResources().getDisplayMetrics().density;
         int numCols = maximumLength(buttons);
+
+        // Lebar tetap per tombol bila mKeysPerScreen di-set, agar bar bisa digeser horizontal
+        int fixedButtonWidth = 0;
+        if (mKeysPerScreen > 0) {
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            fixedButtonWidth = Math.max((int) (40 * density), screenWidth / mKeysPerScreen);
+        }
 
         // GridLayout background = divider color — 1dp gaps between buttons will show this color
         // as natural separator lines between keys
@@ -487,11 +506,16 @@ public final class ExtraKeysView extends GridLayout {
                 });
 
                 LayoutParams param = new GridLayout.LayoutParams();
-                param.width = 0;
                 param.height = 0;
                 // No left margin; right margin = 1dp divider gap (except last column)
                 param.setMargins(0, 0, isLastCol ? 0 : dividerPx, 0);
-                param.columnSpec = GridLayout.spec(col, GridLayout.FILL, 1.f);
+                if (fixedButtonWidth > 0) {
+                    param.width = fixedButtonWidth;
+                    param.columnSpec = GridLayout.spec(col, GridLayout.FILL);
+                } else {
+                    param.width = 0;
+                    param.columnSpec = GridLayout.spec(col, GridLayout.FILL, 1.f);
+                }
                 param.rowSpec = GridLayout.spec(row, GridLayout.FILL, 1.f);
                 button.setLayoutParams(param);
 

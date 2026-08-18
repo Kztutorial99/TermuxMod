@@ -9,6 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.termux.R;
 import com.termux.app.TermuxActivity;
+import com.termux.app.extrakeys.ExtraKeysPrefs;
 import com.termux.shared.terminal.io.extrakeys.ExtraKeysView;
 
 public class TerminalToolbarViewPager {
@@ -39,6 +40,7 @@ public class TerminalToolbarViewPager {
             ExtraKeysView extraKeysView = layout.findViewById(R.id.terminal_toolbar_extra_keys);
             extraKeysView.setExtraKeysViewClient(new TermuxTerminalExtraKeys(mActivity.getTerminalView(),
                 mActivity.getTermuxTerminalViewClient(), mActivity.getTermuxTerminalSessionClient()));
+            extraKeysView.setKeysPerScreen(ExtraKeysPrefs.getKeysPerScreen(mActivity));
             extraKeysView.setButtonTextAllCaps(mActivity.getProperties().shouldExtraKeysTextBeAllCaps());
             mActivity.setExtraKeysView(extraKeysView);
             extraKeysView.reload(mActivity.getProperties().getExtraKeysInfo());

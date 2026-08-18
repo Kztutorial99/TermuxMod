@@ -55,4 +55,13 @@
     <string name="profile_settings">Pengaturan Aplikasi</string>
     <string name="profile_settings_hint">Buka semua pengaturan TermuxMod</string>
 
+    <!-- Pengaturan Extra Keys -->
+    <string name="extrakeys_order_title">Atur Extra Keys</string>
+    <string name="extrakeys_order_summary">Pilih tombol dan ubah urutan posisinya</string>
+    <string name="extrakeys_order_hint">Centang untuk mengaktifkan tombol, pakai ↑ / ↓ untuk memindahkan posisinya. Urutan teratas tampil paling kiri, sisanya bisa digeser di bar extra keys.</string>
+    <string name="extrakeys_order_active">Tombol aktif</string>
+    <string name="extrakeys_order_inactive">Tombol tersedia</string>
+    <string name="extrakeys_order_reset">Kembalikan ke Default</string>
+    <string name="extrakeys_order_reset_done">Urutan extra keys dikembalikan ke default</string>
+
 </resources>

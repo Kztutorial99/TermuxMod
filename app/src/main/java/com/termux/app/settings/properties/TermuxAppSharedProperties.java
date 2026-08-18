@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.termux.app.extrakeys.ExtraKeysPrefs;
 import com.termux.app.terminal.io.KeyboardShortcut;
 import com.termux.shared.terminal.io.extrakeys.ExtraKeysConstants;
 import com.termux.shared.terminal.io.extrakeys.ExtraKeysConstants.EXTRA_KEY_DISPLAY_MAPS;
@@ -52,7 +53,8 @@ public class TermuxAppSharedProperties extends TermuxSharedProperties {
             // The mMap stores the extra key and style string values while loading properties
             // Check {@link #getExtraKeysInternalPropertyValueFromValue(String)} and
             // {@link #getExtraKeysStyleInternalPropertyValueFromValue(String)}
-            String extrakeys = (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS, true);
+            // Urutan extra keys diambil dari pengaturan user (satu baris, bisa digeser horizontal)
+            String extrakeys = ExtraKeysPrefs.buildExtraKeysJson(mContext);
             String extraKeysStyle = (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS_STYLE, true);
 
             ExtraKeysConstants.ExtraKeyDisplayMap extraKeyDisplayMap = ExtraKeysInfo.getCharDisplayMapForStyle(extraKeysStyle);

@@ -121,6 +121,12 @@
             android:theme="@style/Theme.Termux" />
 
         <activity
+            android:name=".app.extrakeys.ExtraKeysOrderActivity"
+            android:exported="false"
+            android:label="@string/extrakeys_order_title"
+            android:theme="@style/Theme.Termux" />
+
+        <activity
             android:name=".shared.activities.ReportActivity"
             android:theme="@style/Theme.AppCompat.TermuxReportActivity"
             android:documentLaunchMode="intoExisting"
