@@ -1,0 +1,4 @@
+- Firebase Google auth
+- Firebase Email/Password auth
+- Debug APK build
+- Do not merge until green
