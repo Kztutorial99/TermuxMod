@@ -52,4 +52,7 @@
     <string name="account_preference_title">Akun &amp; Profil</string>
     <string name="account_preference_summary">Login Google dan lihat info akun lengkap</string>
 
+    <string name="profile_settings">Pengaturan Aplikasi</string>
+    <string name="profile_settings_hint">Buka semua pengaturan TermuxMod</string>
+
 </resources>

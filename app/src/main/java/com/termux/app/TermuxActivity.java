@@ -60,6 +60,7 @@ import com.termux.shared.data.DataUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY;
 import com.termux.app.activities.HelpActivity;
+import com.termux.app.activities.ProfileActivity;
 import com.termux.app.activities.SettingsActivity;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.app.terminal.TermuxSessionsListViewController;
@@ -1224,9 +1225,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         if (mPackagesContainer != null) mPackagesContainer.setVisibility(tabId == R.id.nav_packages ? View.VISIBLE : View.GONE);
         if (mToolsContainer    != null) mToolsContainer.setVisibility(tabId == R.id.nav_tools    ? View.VISIBLE : View.GONE);
 
-        // Settings tab → open SettingsActivity
-        if (tabId == R.id.nav_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
+        // Profile tab → open ProfileActivity (Settings kini ada di dalam Profile)
+        if (tabId == R.id.nav_profile) {
+            startActivity(new Intent(this, ProfileActivity.class));
             // Revert selection back to terminal
             mCurrentTabId = R.id.nav_terminal;
             if (mBottomNav != null) mBottomNav.setSelectedItemId(R.id.nav_terminal);

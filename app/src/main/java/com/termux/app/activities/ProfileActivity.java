@@ -58,6 +58,10 @@ public class ProfileActivity extends AppCompatActivity {
         View back = findViewById(R.id.btn_profile_back);
         if (back != null) back.setOnClickListener(v -> finish());
 
+        View settings = findViewById(R.id.btn_profile_settings);
+        if (settings != null) settings.setOnClickListener(v ->
+            startActivity(new Intent(ProfileActivity.this, SettingsActivity.class)));
+
         findViewById(R.id.btn_profile_refresh).setOnClickListener(v -> reloadUser());
         findViewById(R.id.btn_profile_logout).setOnClickListener(v -> confirmLogout());
     }

@@ -292,6 +292,7 @@
     <string name="nav_files">Files</string>
     <string name="nav_packages">Packages</string>
     <string name="nav_tools">Tools</string>
+    <string name="nav_profile">Profile</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Sessions drawer -->
